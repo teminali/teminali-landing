@@ -18,7 +18,7 @@ const browser = await chromium.launch({
 })
 const page = await browser.newPage({
   viewport: { width: W, height: H },
-  deviceScaleFactor: 1,
+  deviceScaleFactor: Number(process.env.DPR ?? 1),
   // RM=1 exercises the prefers-reduced-motion path (Lenis off, rail replaced
   // by the static frame) at whatever W/H is set.
   ...(process.env.RM ? { reducedMotion: 'reduce' } : {}),
@@ -27,8 +27,10 @@ const errors = []
 page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
 page.on('pageerror', (e) => errors.push(String(e)))
 
-await page.goto(URL, { waitUntil: 'networkidle' })
-await page.waitForTimeout(1200)
+// `networkidle` never settles against the dev server — its HMR websocket stays
+// open forever — so wait on `load` and give the scene a fixed beat instead.
+await page.goto(URL, { waitUntil: 'load' })
+await page.waitForTimeout(1800)
 
 const scrollTo = async (y) =>
   page.evaluate((yy) => {

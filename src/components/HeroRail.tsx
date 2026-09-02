@@ -259,7 +259,7 @@ function Radar() {
 function HeroCopy() {
   return (
     <div className="mx-auto max-w-[60rem] text-center">
-      <h1 className="text-h1 font-extralight text-ink-bright balance">{hero.title}</h1>
+      <h1 className="text-h1 text-ink-bright balance">{hero.title}</h1>
       {hero.body.map((p) => (
         <p key={p} className="mx-auto mt-6 max-w-xl text-lead text-ink-soft pretty">
           {p}

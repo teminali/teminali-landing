@@ -53,18 +53,14 @@
   --dur: 0.15s;
   --dur-slow: 0.2s;
 
-  /* Landing-only. The drafting gutter the rule overlay is drawn on. */
-  --gutter: 56px;
+  /* Landing-only. The drafting gutter the rule overlay is drawn on. The
+     reference holds a flat 48px side padding from desktop down to tablet; only
+     the phone range gets relief, or 96px of a 320px viewport goes to margin. */
+  --gutter: 48px;
   --nav-h: 56px;
 }
 
-/* The gutter is the drafting rule the whole page is measured against, so it
-   steps rather than jumping 56 -> 24 at a single breakpoint. 860px is the
-   compact cutoff `isCompact()` uses. */
-@media (max-width: 1024px) {
-  :root { --gutter: 40px; }
-}
-
+/* Flat down to the compact cutoff `isCompact()` uses, then one step. */
 @media (max-width: 860px) {
   :root { --gutter: 24px; }
 }

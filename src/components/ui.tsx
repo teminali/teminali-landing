@@ -221,7 +221,7 @@ export function SectionHead({
         className={`mt-16 ${c ? 'mx-auto max-w-3xl text-center' : 'max-w-4xl'}`}
         data-reveal-stagger
       >
-        <h2 className="text-h2 font-light text-ink-bright balance" data-reveal>
+        <h2 className="text-h2 text-ink-bright balance" data-reveal>
           {title}
         </h2>
         {body && (

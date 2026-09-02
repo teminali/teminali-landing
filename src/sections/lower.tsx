@@ -15,11 +15,11 @@ import {
 
 export function Compare() {
   return (
-    <section id="compare" className="relative py-32 md:py-44">
+    <section id="compare" className="section-lg relative">
       <div className="shell">
         <Badge>{compare.badge}</Badge>
         <div className="mx-auto mt-16 max-w-2xl text-center" data-reveal-stagger>
-          <h2 className="text-h2 font-light text-ink-bright balance" data-reveal>
+          <h2 className="text-h2 text-ink-bright balance" data-reveal>
             {compare.title}
           </h2>
           <p className="mt-4 text-lead text-ink-dim" data-reveal>
@@ -63,7 +63,7 @@ function Column({
       className={`card p-8 md:p-10 ${lead ? 'border-line-strong bg-surface-sunken' : ''}`}
       data-reveal
     >
-      <h3 className="text-h3 font-light text-ink-bright">{title}</h3>
+      <h3 className="text-h3 text-ink-bright">{title}</h3>
       <ul className="mt-8">
         {items.map((t, i) => (
           <li key={t} className={`flex gap-4 py-5 ${i ? 'border-t border-line' : ''}`}>
@@ -84,7 +84,7 @@ function Column({
 
 export function MidCta() {
   return (
-    <section id="midcta" className="relative overflow-hidden border-y border-line py-28">
+    <section id="midcta" className="section-md relative overflow-hidden border-y border-line">
       <div className="pointer-events-none absolute inset-0 grid place-items-center" aria-hidden="true">
         <WorldDots className="h-full w-full text-[#565656]" />
       </div>
@@ -93,7 +93,7 @@ export function MidCta() {
         aria-hidden="true"
       />
       <div className="shell relative text-center" data-reveal-stagger>
-        <h2 className="text-h2 font-light text-ink-bright balance" data-reveal>
+        <h2 className="text-h2 text-ink-bright balance" data-reveal>
           {midCta.title}
         </h2>
         <p className="mt-5 text-lead text-ink-soft" data-reveal>
@@ -114,13 +114,13 @@ export function MidCta() {
 export function About() {
   const [first, second] = about.rows
   return (
-    <section id="about" className="relative py-32 md:py-44">
+    <section id="about" className="section-lg relative">
       <div className="shell">
         <SectionHead badge={about.badge} title={about.title} body={about.body} align="center" />
 
         <div className="mt-24 grid items-center gap-16 lg:grid-cols-2 lg:gap-20">
           <div data-reveal-stagger>
-            <h3 className="text-h3 font-light text-ink-bright balance" data-reveal>
+            <h3 className="text-h3 text-ink-bright balance" data-reveal>
               {first.title}
             </h3>
             {first.body.map((p) => (
@@ -144,7 +144,7 @@ export function About() {
         <div className="mt-28 grid items-center gap-16 lg:grid-cols-2 lg:gap-20">
           <FramedFigure variant="run" cardSide="bottom" />
           <div data-reveal-stagger>
-            <h3 className="text-h3 font-light text-ink-bright balance" data-reveal>
+            <h3 className="text-h3 text-ink-bright balance" data-reveal>
               {second.title}
             </h3>
             {second.body.map((p) => (
@@ -223,11 +223,11 @@ function FramedFigure({
 
 export function Mission() {
   return (
-    <section id="mission" className="relative py-32 md:py-44">
+    <section id="mission" className="section-lg relative">
       <div className="shell">
         <Badge>{mission.badge}</Badge>
         <div className="mt-16 max-w-4xl" data-reveal-stagger>
-          <h2 className="text-h2 font-light text-ink-bright balance" data-reveal>
+          <h2 className="text-h2 text-ink-bright balance" data-reveal>
             {mission.title}
           </h2>
           <p className="mt-7 text-[20px] font-medium text-ink-bright" data-reveal>
@@ -249,7 +249,7 @@ export function Mission() {
               <span className="plate">
                 <Icon name={c.icon} />
               </span>
-              <h3 className="mt-7 text-[17px] font-medium text-ink-bright">{c.title}</h3>
+              <h3 className="mt-7 text-h4 text-ink-bright">{c.title}</h3>
               <p className="mt-4 text-body text-ink-soft pretty">{c.body}</p>
             </div>
           ))}
@@ -263,7 +263,7 @@ export function Mission() {
 
 export function RoadmapCta() {
   return (
-    <section id="roadmap" className="shell py-16">
+    <section id="roadmap" className="section-sm shell">
       <div className="card relative overflow-hidden px-8 py-20 md:px-16" data-reveal>
         <div className="pointer-events-none absolute inset-0 grid place-items-center" aria-hidden="true">
           <WorldDots className="h-full w-full text-[#565656]" />
@@ -273,7 +273,7 @@ export function RoadmapCta() {
           aria-hidden="true"
         />
         <div className="relative mx-auto max-w-xl text-center">
-          <h2 className="text-h2 font-light text-ink-bright balance">{roadmapCta.title}</h2>
+          <h2 className="text-h2 text-ink-bright balance">{roadmapCta.title}</h2>
           <p className="mt-4 text-lead text-ink-dim">{roadmapCta.sub}</p>
           <p className="mx-auto mt-5 max-w-md text-body text-ink-soft pretty">{roadmapCta.body}</p>
           <div className="mt-9">
@@ -289,9 +289,9 @@ export function RoadmapCta() {
 
 export function Stats() {
   return (
-    <section id="stats" className="relative py-32 md:py-44">
+    <section id="stats" className="section-lg relative">
       <div className="shell">
-        <h2 className="max-w-2xl text-h2 font-light text-ink-bright balance" data-reveal>
+        <h2 className="max-w-2xl text-h2 text-ink-bright balance" data-reveal>
           {stats.title}
         </h2>
       </div>
@@ -333,11 +333,11 @@ export function Stats() {
 
 export function Contact() {
   return (
-    <section id="contact" className="relative border-t border-line pt-28">
+    <section id="contact" className="relative border-t border-line pt-[8.5rem]">
       <div className="shell">
         <div className="grid gap-16 lg:grid-cols-2 lg:gap-24">
           <div data-reveal-stagger>
-            <h2 className="text-display font-extralight tracking-tight text-ink-bright" data-reveal>
+            <h2 className="text-display text-ink-bright" data-reveal>
               {contact.title}
             </h2>
             <p className="mt-6 max-w-sm text-body text-ink-soft pretty" data-reveal>

@@ -17,8 +17,8 @@
     background: var(--ground);
     color: var(--text);
     font-family: theme('fontFamily.sans');
-    font-size: 15px;
-    line-height: 1.65;
+    font-size: 16px;
+    line-height: 1.5;
     overscroll-behavior-y: none;
   }
 
@@ -49,9 +49,21 @@
     padding-inline: var(--gutter);
   }
 
+  /* The reference's two narrower container variants. `is-medium` pulls a row in
+     off the outer rule; `is-small` is the measure for centred prose. */
+  .shell.is-medium { max-width: theme('maxWidth.shell-md'); }
+  .shell.is-small { max-width: theme('maxWidth.shell-sm'); }
+
+  /* Section rhythm, ported from the reference. Fixed rem, no breakpoint step —
+     the vertical scale holds at every width the same way the type does. */
+  .section-sm { padding-block: 4rem; }
+  .section-md { padding-block: 5.5rem; }
+  .section-lg { padding-block: 8.5rem; }
+  .section-hero { padding-top: 10rem; }
+
   .kicker {
     font-family: theme('fontFamily.mono');
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -138,4 +150,14 @@
   22%  { opacity: 1; }
   70%  { transform: translate(-50%, 14px); opacity: 0; }
   100% { transform: translate(-50%, 14px); opacity: 0; }
+}
+
+/* The ported scale is fixed and deliberately does not step at breakpoints — but
+   96px cannot physically hold at 320px (a single 7-character word measures
+   ~385px), so the display size alone gets one step down at the reference's own
+   mobile-portrait breakpoint. Every other step is untouched at every width. */
+@layer utilities {
+  @media (max-width: 479px) {
+    .text-display { font-size: 56px; }
+  }
 }

@@ -10,7 +10,7 @@ const FIGURES = { studio: 'run', gateway: 'route', verify: 'verify' } as const
 
 export function Platform() {
   return (
-    <section id="platform" className="relative py-32 md:py-44">
+    <section id="platform" className="section-lg relative">
       <div className="shell">
         <SectionHead badge={platform.badge} title={platform.title} body={platform.body} />
       </div>
@@ -29,7 +29,7 @@ export function Platform() {
                   <p className="kicker" data-reveal>
                     {row.kicker}
                   </p>
-                  <h3 className="mt-5 text-h3 font-light text-ink-bright balance" data-reveal>
+                  <h3 className="mt-5 text-h3 text-ink-bright balance" data-reveal>
                     {row.title}
                   </h3>
                   <p className="mt-5 max-w-md text-body text-ink-soft pretty" data-reveal>
@@ -115,7 +115,7 @@ function Figure({
 export function Studio() {
   const n = studio.modules.length
   return (
-    <section id="studio" className="relative py-32 md:py-44">
+    <section id="studio" className="section-lg relative">
       <div className="shell">
         <SectionHead badge={studio.badge} title={studio.title} body={studio.body} />
 
@@ -199,7 +199,7 @@ export function Studio() {
 
 export function DemoCta() {
   return (
-    <section id="demo" className="shell pb-32 md:pb-44">
+    <section id="demo" className="shell pb-[8.5rem]">
       <div className="card relative overflow-hidden px-8 py-20 md:px-16" data-reveal>
         {/* Tilted screenshot collage, exactly the reference's device. */}
         {/* Achromatic mocks on an achromatic card would vanish, so the collage
@@ -239,7 +239,7 @@ export function DemoCta() {
         />
 
         <div className="relative mx-auto max-w-xl text-center">
-          <h2 className="text-h2 font-light text-ink-bright balance">{demoCta.title}</h2>
+          <h2 className="text-h2 text-ink-bright balance">{demoCta.title}</h2>
           <p className="mx-auto mt-5 max-w-md text-body text-ink-soft pretty">{demoCta.body}</p>
           <div className="mt-9">
             <EmailCapture placeholder={demoCta.placeholder} action={demoCta.action} />
@@ -257,11 +257,11 @@ export function DemoCta() {
 
 export function Process() {
   return (
-    <section id="process" className="relative py-32 md:py-44">
+    <section id="process" className="section-lg relative">
       <div className="shell">
         <Badge>{flow.badge}</Badge>
         <div className="mx-auto mt-16 max-w-2xl text-center" data-reveal-stagger>
-          <h2 className="text-h2 font-light text-ink-bright balance" data-reveal>
+          <h2 className="text-h2 text-ink-bright balance" data-reveal>
             {flow.title}
           </h2>
           <p className="mt-5 text-lead text-ink-soft pretty" data-reveal>
@@ -279,7 +279,7 @@ export function Process() {
                 </span>
                 <span className="h-px flex-1 bg-line" />
               </div>
-              <h3 className="mt-7 text-[17px] font-medium leading-snug text-ink-bright balance">
+              <h3 className="mt-7 text-h4 text-ink-bright balance">
                 {s.title}
               </h3>
               {s.body.map((p) => (
