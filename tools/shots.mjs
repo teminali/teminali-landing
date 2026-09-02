@@ -15,7 +15,11 @@ const browser = await chromium.launch({
 })
 const W = Number(process.env.W ?? 1440)
 const H = Number(process.env.H ?? 900)
-const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 })
+const page = await browser.newPage({
+  viewport: { width: W, height: H },
+  deviceScaleFactor: 1,
+  ...(process.env.RM ? { reducedMotion: 'reduce' } : {}),
+})
 const errors = []
 page.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
 page.on('pageerror', (e) => errors.push(String(e)))

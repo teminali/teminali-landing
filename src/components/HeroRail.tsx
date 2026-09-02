@@ -16,6 +16,8 @@ import { hero, scenes } from '@/content/site'
  * jitter at the top of the rail. Sticky has no spacer to fight over.
  *
  * `scrub: 2` is the whole feel: a two-second eased catch-up, never a 1:1 lock.
+ * Under `prefers-reduced-motion` it drops to a 1:1 scrub instead of being
+ * removed — the scene is the page, so it stays; only the drift goes.
  */
 
 const VARIANTS = ['run', 'route', 'verify'] as const
@@ -32,7 +34,15 @@ export function HeroRail() {
   const copyRef = useRef<HTMLDivElement>(null)
   const indRef = useRef<HTMLDivElement>(null)
   const sceneRefs = useRef<(HTMLDivElement | null)[]>([])
-  const [fallback] = useState(() => isCompact() || prefersReducedMotion())
+  // `prefers-reduced-motion` used to drop the rail with the compact case, which
+  // took the laptop — the page's whole product visual — off the screen for
+  // anyone with macOS Reduce Motion on. Reduced motion now means *reduced*: the
+  // scene still plays, but Lenis smoothing is off (see `smoothScroll`) and the
+  // scrub is 1:1 rather than a two-second eased catch-up, so nothing drifts
+  // after the user's fingers stop. Only the compact breakpoint still swaps in
+  // the static frame, and that is a WebGL-cost decision, not a motion one.
+  const reduced = useState(() => prefersReducedMotion())[0]
+  const [fallback] = useState(() => isCompact())
 
   useGsap(
     () => {
@@ -106,7 +116,7 @@ export function HeroRail() {
         trigger: root.current,
         start: 'top top',
         end: 'bottom 150%',
-        scrub: 2,
+        scrub: reduced ? true : 2,
         onUpdate: (self) => draw(self.progress),
         onRefresh: (self) => draw(self.progress),
       })
