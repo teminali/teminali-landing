@@ -80,10 +80,24 @@ screen plane and floats in front of the laptop.
   still beneath it, and the nav's link row collapses into a sheet. The 560vh
   scroll only exists to scrub a scene; without one it is five screens of a
   motionless image.
-- **Mock frames size themselves with `1em = 1cqw`.** Every mock is laid out in
-  `em` against `1em = 1% of the frame width`; stepped `text-[Npx]` values only
-  held that at the width they were picked for. The one exception is the demo
-  CTA collage, which stays deliberately dense at `text-[3px]/[4px]`.
+- **The app frames are real screenshots, not drawings.** Every studio frame is
+  a capture of the shipping product, taken by `tools/studio-scenes.mjs` against
+  the real studio on `:3000` at a 900px CSS viewport and 4x DPR (3600x2252), so
+  it stays sharp all the way through the dolly push-in onto the laptop screen.
+  The viewport is deliberately narrow: at a 1280px capture the app's own 14px
+  type renders around 8px inside a figure and is unreadable, where at 900px it
+  is comfortably legible at the same figure size.
+
+  This reverses an earlier decision. The frames used to be drawn in DOM, which
+  could not go stale against a build and stayed sharp at any scale; realism won
+  instead, so **re-run the capture tool whenever the studio's shell changes**.
+  The session content is seeded through the store's own `localStorage` key, the
+  way any staged product screenshot is — the chrome, sidebar, tool-call cards
+  and run metrics are all the app's real components.
+- **`1em = 1cqw` still governs the DOM overlays.** The `BreakoutCard` — the
+  element that leaves the screen plane — is still laid out in `em` against
+  `1em = 1% of the frame width`, because stepped `text-[Npx]` values only hold
+  at the width they were picked for.
 - **Lid mechanism.** They morph-target the lid. We hinge it, which is visually
   identical for an opening lid and costs us no glTF, no Draco decoder and no
   third-party asset. Recorded here so it does not read as a missed requirement.
