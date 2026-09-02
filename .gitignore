@@ -1,0 +1,8 @@
+node_modules
+dist
+_ref
+.DS_Store
+*.local
+
+# Claude Code session state and handover notes — working files, not the site.
+.claude

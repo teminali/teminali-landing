@@ -1,0 +1,70 @@
+/* =============================================================================
+   TEMINALI CODE — landing token sheet.
+
+   Copied from frontier/studio/src/styles/tokens.css. The governing rule from
+   that file applies here unchanged: the interface is achromatic, depth comes
+   from a 1px border one step lighter than the fill, and from nothing else.
+   No gradients, no glow, no tinted surfaces. Colour appears only on state.
+
+   This is the only place a raw hex may appear.
+   ============================================================================= */
+
+:root {
+  --ground: #151515;
+  --rail: #181818;
+
+  --surface-sunken: #151515;
+  --surface: #212121;
+  --surface-raised: #262626;
+  --surface-control: #313131;
+  --surface-hover: #242424;
+
+  --border-subtle: #232323;
+  --border: #262626;
+  --border-strong: #313131;
+  --border-popover: #3a3a3a;
+
+  --text-bright: #f0f0f0;
+  --text: #ededed;
+  --text-body: #e0e0e0;
+  --text-dim: #c4c4c4;
+  --text-muted: #b8b8b8;
+  --text-soft: #9f9f9f;
+  --text-faint: #989898;
+  --text-ghost: #6b6b6b;
+
+  /* Primary is a terminal green, on the user's call — buttons, the wordmark
+     glyph, the scroll-spy link, selection and the focus ring. The rest of the
+     page stays achromatic, so this is the one hue that carries brand. */
+  --accent: #65c466;
+  --accent-hover: #7ad47b;
+  --accent-dim: #4f9b52;
+
+  /* The wordmark glyph. Same green; named separately so the mark can be
+     retuned without moving every button with it. */
+  --mark: var(--accent);
+
+  --success: #65c466;
+  --warning: #f2ca44;
+  --danger: #ec6765;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 0.1s;
+  --dur: 0.15s;
+  --dur-slow: 0.2s;
+
+  /* Landing-only. The drafting gutter the rule overlay is drawn on. */
+  --gutter: 56px;
+  --nav-h: 56px;
+}
+
+/* The gutter is the drafting rule the whole page is measured against, so it
+   steps rather than jumping 56 -> 24 at a single breakpoint. 860px is the
+   compact cutoff `isCompact()` uses. */
+@media (max-width: 1024px) {
+  :root { --gutter: 40px; }
+}
+
+@media (max-width: 860px) {
+  :root { --gutter: 24px; }
+}

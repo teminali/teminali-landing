@@ -1,0 +1,141 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+  /* Figures deliberately bleed past the gutter (spec rows 3 and 12). Clip, do
+     not hide: `overflow-x: clip` does not create a scroll container, so the
+     rail's `position: sticky` keeps working. `hidden` would break it. */
+  html { scroll-behavior: auto; overflow-x: clip; }
+  body { overflow-x: clip; }
+
+  body {
+    background: var(--ground);
+    color: var(--text);
+    font-family: theme('fontFamily.sans');
+    font-size: 15px;
+    line-height: 1.65;
+    overscroll-behavior-y: none;
+  }
+
+  /* Lenis owns the scroll; these are the classes it toggles on <html>. */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: hidden; }
+  .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+
+  ::selection { background: var(--accent); color: var(--ground); }
+
+  :focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  input, textarea, button { font: inherit; color: inherit; }
+  input::placeholder, textarea::placeholder { color: var(--text-ghost); }
+}
+
+@layer components {
+  /* The page shell. Content lives inside the drafting gutters; anything that
+     should break the frame opts out with `.bleed-*`. */
+  .shell {
+    width: 100%;
+    max-width: theme('maxWidth.shell');
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .kicker {
+    font-family: theme('fontFamily.mono');
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .hairline { height: 1px; background: var(--border); }
+
+  /* Reference's pill badge: rounded-full, 1px border, centred on a hairline. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 18px;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: var(--ground);
+    font-family: theme('fontFamily.mono');
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-sunken);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 42px;
+    padding-inline: 22px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background var(--dur) var(--ease), color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease);
+  }
+  .btn-primary { background: var(--accent); color: var(--ground); }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-ghost { border: 1px solid var(--border-strong); color: var(--text); }
+  .btn-ghost:hover { background: var(--surface-hover); border-color: var(--border-popover); }
+
+  /* Icon plate used in feature rows, cards and the hub. */
+  .plate {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--surface-raised);
+    color: var(--text-dim);
+  }
+}
+
+@layer utilities {
+  .balance { text-wrap: balance; }
+  .pretty { text-wrap: pretty; }
+
+  /* Dot matrix, used behind the CTA bands. Achromatic, very low alpha. */
+  .dotfield {
+    background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+    background-size: 14px 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes scrolldot {
+  0%   { transform: translate(-50%, 0);    opacity: 0; }
+  22%  { opacity: 1; }
+  70%  { transform: translate(-50%, 14px); opacity: 0; }
+  100% { transform: translate(-50%, 14px); opacity: 0; }
+}
