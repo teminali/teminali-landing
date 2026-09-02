@@ -40,15 +40,26 @@ export function initSmoothScroll(): () => void {
   // Exposed so the screenshot harness can drive the rail deterministically.
   ;(window as unknown as { __lenis?: Lenis }).__lenis = instance
 
-  ScrollTrigger.scrollerProxy(document.documentElement, {
-    scrollTop(value) {
-      if (value !== undefined) instance.scrollTo(value, { immediate: true })
-      return instance.scroll
-    },
-  })
+  // No `scrollerProxy` here, deliberately. Lenis is running on the window in
+  // its default mode, so it moves the *real* document scroll — window.scrollY,
+  // documentElement.scrollTop and lenis.scroll all read the same number. That
+  // makes a proxy redundant, and a redundant proxy is a trap: it pins
+  // ScrollTrigger's scroll source to one Lenis closure, and nothing unregisters
+  // it when that instance is destroyed. Under React StrictMode the effects run
+  // twice, so the second pass built its triggers against the *first*, already
+  // destroyed Lenis, whose `.scroll` is frozen at 0 — the rail's progress stuck
+  // at 0 for the whole page, the laptop parked below frame and no parallax, in
+  // dev only. The production build never double-invokes, which is why it looked
+  // fine on :4173 and was broken on :5173. `lenis.on('scroll', ...)` above is
+  // the whole integration ScrollTrigger needs.
+  //
+  // Triggers built before this ran are still reading a pre-Lenis scroll
+  // position, so rebind them now that the loop owns the frame.
+  ScrollTrigger.refresh()
 
   return () => {
     gsap.ticker.remove(tick)
+    instance.off('scroll', ScrollTrigger.update)
     instance.destroy()
     lenis = null
   }
