@@ -1,5 +1,6 @@
 import { Badge, SectionHead, Icon, EmailCapture } from '@/components/ui'
 import { StudioMock } from '@/components/StudioMock'
+import { linkProps } from '@/lib/route'
 import { platform, studio, demoCta, process as flow, site } from '@/content/site'
 
 /* --------------------------------------------------------------- platform ---
@@ -53,11 +54,10 @@ export function Platform() {
 
                   <a
                     className="btn btn-ghost mt-8"
-                    href={row.cta.href}
                     data-reveal
                     {...(row.cta.href.startsWith('http')
-                      ? { target: '_blank', rel: 'noreferrer' }
-                      : {})}
+                      ? { href: row.cta.href, target: '_blank', rel: 'noreferrer' }
+                      : linkProps(row.cta.href))}
                   >
                     {row.cta.label}
                     <Icon name="arrow" className="h-4 w-4" />

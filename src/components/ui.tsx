@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { scrollToSection } from '@/lib/motion'
 import { nav, site } from '@/content/site'
+import { linkProps, navigate, useRoute } from '@/lib/route'
 
 /* ---------------------------------------------------------------- icons ---
    Hand-rolled, 20px grid, 1.5 stroke. An icon library would be 40 KB to draw
@@ -64,9 +65,20 @@ export function GridOverlay() {
 /* -------------------------------------------------------------------- nav ---*/
 
 export function Nav() {
+  const route = useRoute()
+  const onHome = route === '/'
   const [active, setActive] = useState<string>('')
   const [solid, setSolid] = useState(false)
   const [open, setOpen] = useState(false)
+
+  /* The section targets only exist on the home page, so from any other route
+     we navigate home first and scroll once React has committed it. */
+  const goToSection = (id: string) => {
+    setOpen(false)
+    if (onHome) return scrollToSection(id)
+    navigate('/')
+    requestAnimationFrame(() => requestAnimationFrame(() => scrollToSection(id)))
+  }
 
   useEffect(() => {
     const ids = nav.map((n) => n.id)
@@ -115,7 +127,7 @@ export function Nav() {
           {nav.map((item) => (
             <button
               key={item.id}
-              onClick={() => scrollToSection(item.id)}
+              onClick={() => goToSection(item.id)}
               className={`text-[13.5px] transition-colors duration-150 ease-brand ${
                 active === item.id ? 'text-accent' : 'text-ink-soft hover:text-ink'
               }`}
@@ -123,6 +135,14 @@ export function Nav() {
               {item.label}
             </button>
           ))}
+          <a
+            {...linkProps('/downloads')}
+            className={`text-[13.5px] transition-colors duration-150 ease-brand ${
+              route === '/downloads' ? 'text-accent' : 'text-ink-soft hover:text-ink'
+            }`}
+          >
+            Downloads
+          </a>
         </nav>
 
         <div className="flex flex-1 items-center justify-end gap-0 pr-0">
@@ -151,9 +171,7 @@ export function Nav() {
             </svg>
           </button>
           <a
-            href={site.releaseUrl}
-            target="_blank"
-            rel="noreferrer"
+            {...linkProps('/downloads')}
             className="relative z-10 flex h-[calc(var(--nav-h)+14px)] items-center gap-2 self-start bg-accent px-4 text-[13px] font-medium text-ground transition-colors duration-150 ease-brand hover:bg-accent-hover sm:px-7 sm:text-[13.5px]"
           >
             <Icon name="download" className="h-4 w-4" />
@@ -173,10 +191,7 @@ export function Nav() {
           {nav.map((item) => (
             <button
               key={item.id}
-              onClick={() => {
-                setOpen(false)
-                scrollToSection(item.id)
-              }}
+              onClick={() => goToSection(item.id)}
               className={`block w-full border-b border-line-subtle px-5 py-3.5 text-left font-mono text-[12px] uppercase tracking-[0.14em] transition-colors duration-150 ease-brand last:border-b-0 ${
                 active === item.id ? 'text-accent' : 'text-ink-soft'
               }`}
@@ -184,6 +199,15 @@ export function Nav() {
               {item.label}
             </button>
           ))}
+          <a
+            {...linkProps('/downloads')}
+            onClickCapture={() => setOpen(false)}
+            className={`block w-full border-b border-line-subtle px-5 py-3.5 text-left font-mono text-[12px] uppercase tracking-[0.14em] transition-colors duration-150 ease-brand last:border-b-0 ${
+              route === '/downloads' ? 'text-accent' : 'text-ink-soft'
+            }`}
+          >
+            Downloads
+          </a>
         </nav>
       )}
     </header>

@@ -11,7 +11,7 @@ export const site = {
   name: 'Teminali Code',
   tagline: 'An autonomous AI code studio that runs on your machine.',
   releaseUrl: 'https://github.com/teminali/teminalicode/releases',
-  version: 'v1.1.1',
+  version: 'v1.1.6',
   email: 'hello@teminali.com',
 }
 
@@ -67,7 +67,7 @@ export const platform = {
         'Speech and screen understanding run on-device, so a voice instruction is not a network request.',
         'The gateway is yours. It runs beside the app, on a port you control.',
       ],
-      cta: { label: 'Download for macOS', href: 'https://github.com/teminali/teminalicode/releases' },
+      cta: { label: 'Download for macOS', href: '/downloads' },
       figure: 'studio',
     },
     {
@@ -286,4 +286,81 @@ export const contact = {
     { label: 'Terms', href: '#' },
     { label: 'Licence', href: '#' },
   ],
+}
+
+/**
+ * The Downloads page. Version, sizes and checksums are filled in at runtime
+ * from the GitHub releases API (see `useRelease`), so nothing here goes stale
+ * on a release; the values below are the fallback shown when that call cannot
+ * be made — an offline visitor, a rate limit, or the repo still being private.
+ */
+export const downloads = {
+  kicker: 'Downloads',
+  title: 'Download Teminali Code',
+  body: 'The full studio, the routing gateway and all five verification runtimes. One install, no cloud account, nothing to configure before it runs.',
+  secondary: { label: 'All releases on GitHub', href: site.releaseUrl },
+
+  /** `match` is tested against the platform we detect, `asset` against the
+   *  release asset filenames. Sizes are the fallback only. */
+  platforms: [
+    { id: 'mac-arm', name: 'macOS', arch: 'Apple Silicon', ext: '.dmg', size: '118 MB', match: 'mac-arm', asset: /(arm64|aarch64|apple.?silicon).*\.dmg$/i },
+    { id: 'mac-x64', name: 'macOS', arch: 'Intel', ext: '.dmg', size: '124 MB', match: 'mac-x64', asset: /(x64|x86_64|intel).*\.dmg$/i },
+    { id: 'win', name: 'Windows', arch: 'x64', ext: '.exe', size: '96 MB', match: 'win', asset: /\.exe$/i },
+    { id: 'linux', name: 'Linux', arch: 'x86_64', ext: '.AppImage', size: '132 MB', match: 'linux', asset: /\.AppImage$/i },
+  ],
+
+  /** The most important section on the page. Calm, not a warning. */
+  mac: {
+    kicker: 'First launch on macOS',
+    title: 'The first time you open it, macOS will ask',
+    body: 'Teminali Code is not notarized by Apple yet, so the first time you open it macOS shows a dialog saying it cannot verify the developer. The only buttons it offers are Done and Move to Bin. That is expected, the app is safe, and clearing it takes about ten seconds.',
+    once: 'This happens once, ever. Every launch after it is normal.',
+    steps: [
+      {
+        n: '01',
+        title: 'Open the app once, then click Done',
+        body: 'Double-click Teminali Code in Applications. When the dialog appears, click Done. Do not click Move to Bin — that deletes the app and you would have to download it again.',
+        figure: 'The macOS dialog, with Done and Move to Bin',
+      },
+      {
+        n: '02',
+        title: 'Open System Settings, then Privacy & Security',
+        body: 'Scroll down to the Security heading. You will see a line reading “Teminali Code was blocked to protect your Mac.” Click Open Anyway next to it.',
+        figure: 'Privacy & Security, showing Open Anyway',
+      },
+      {
+        n: '03',
+        title: 'Confirm with Touch ID or your password',
+        body: 'macOS asks you to confirm. The app opens straight away, and it will keep opening normally from then on.',
+        figure: 'The Touch ID confirmation prompt',
+      },
+    ],
+    note: 'Right-click → Open does not work on macOS 15 and later. Use the steps above.',
+    closing: 'This goes away in an upcoming release, once the app is signed with an Apple Developer ID.',
+  },
+
+  terminal: {
+    summary: 'Advanced: install from the terminal',
+    body: 'Installs to /Applications without the first-launch dialog.',
+    command: 'curl -fsSL https://<your-domain>/install.sh | sh',
+    pending: 'install.sh is not published yet — the domain above is a placeholder until it is.',
+  },
+
+  verify: {
+    kicker: 'Verify your download',
+    body: 'Every release publishes a sha256 for each asset. Compare it against the file you downloaded:',
+    command: 'shasum -a 256 <file>',
+    empty: 'Checksums are published with each release on GitHub.',
+  },
+
+  requirements: {
+    kicker: 'System requirements',
+    rows: [
+      { k: 'macOS', v: 'macOS 11 Big Sur or later. Apple Silicon and Intel.' },
+      { k: 'Windows', v: 'Windows 10 or later, 64-bit.' },
+      { k: 'Linux', v: 'A modern 64-bit distribution with FUSE for AppImage.' },
+      { k: 'Disk', v: 'About 1 GB for the app. Local models are downloaded separately and sized by you.' },
+      { k: 'Network', v: 'Only to download the app and any models. The studio itself runs offline.' },
+    ],
+  },
 }
