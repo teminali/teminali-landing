@@ -211,8 +211,9 @@
     justify-content: center;
     gap: 0.75rem;
     min-width: 11.25rem;
-    padding: 1rem 1.5rem;
-    border-radius: 0.75rem;
+    min-height: 3.25rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--r-md);
     background: var(--accent);
     color: var(--ground);
     text-align: center;
@@ -264,24 +265,38 @@
   .section-hero { padding-top: 10rem; }
 
   /* ---------------------------------------------------------------- form --- */
+  /* Controls share the button's 3.25rem height and the card surface system:
+     an opaque --solid fill under a 1px hairline, the accent only on focus. */
   .input {
     width: 100%;
-    min-height: 3.5rem;
-    padding: 1.125rem 1.5rem;
-    border-radius: 0.5rem;
-    border: 1px solid transparent;
-    background: var(--surface);
+    min-height: 3.25rem;
+    padding: 0.875rem 1.125rem;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line-12);
+    background: var(--solid-3);
     color: var(--white);
-    font-size: 1rem;
-    line-height: 1.2;
+    font-size: 0.9375rem;
+    line-height: 1.4;
     outline: none;
-    transition: border-color 0.25s;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  .input:focus { border-color: var(--white); }
+  .input:hover { border-color: var(--line-16); }
+  .input:focus { border-color: var(--accent); box-shadow: var(--focus-ring); }
   .input.is-email { border-top-right-radius: 0; border-bottom-right-radius: 0; min-width: 0; }
-  .input.is-area { min-height: 11.25rem; resize: vertical; }
-  .field-label { display: block; margin-bottom: 0.75rem; font-weight: 500; letter-spacing: 0.005em; }
-  .form-2col { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.5rem; row-gap: 2rem; }
+  .input.is-area { min-height: 9rem; resize: vertical; }
+  .field-label {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 0.625rem;
+    font-family: theme('fontFamily.mono');
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-60);
+  }
+  .field-req { color: var(--accent); }
+  .form-2col { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.5rem; row-gap: 1.25rem; }
   .email-form { display: flex; width: 100%; max-width: 28rem; }
   .email-form.is-center { margin-inline: auto; }
 
@@ -500,26 +515,35 @@
   .stat { display: flex; flex-direction: column; gap: 1rem; }
 
   /* ------------------------------------------------------------ contact --- */
-  .contact-grid { display: grid; grid-template-columns: 1fr 50%; column-gap: 7.5rem; }
-  .contact-details { display: flex; flex-direction: column; gap: 3.25rem; }
+  /* Two equal columns split on the centre rule. Each keeps clear of it with
+     its own padding, so no label, control or link ever sits on the line. */
+  .contact-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .contact-details { display: flex; flex-direction: column; gap: 3rem; padding-right: 4rem; }
   .contact-head { display: flex; flex-direction: column; gap: 1.5rem; }
+  .contact-head .pretty { max-width: 30rem; }
+  .contact-quick { display: flex; flex-direction: column; gap: 2rem; }
+  .contact-quick-list { display: flex; flex-direction: column; gap: 1.5rem; }
   .contact-col-heading { font-size: 1.25rem; font-weight: 500; }
-  .contact-link {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: opacity 0.25s, color 0.25s;
-  }
+  .contact-link { display: flex; align-items: center; gap: 0.625rem; transition: color 0.25s; }
   .contact-link:hover { color: var(--accent); }
   .contact-icon { display: flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; }
-  .contact-copyright { display: flex; align-items: center; gap: 1rem; margin-top: 3rem; }
-  .footer-legal {
+  .contact-form { display: flex; flex-direction: column; gap: 1.25rem; padding-left: 3rem; }
+  .contact-send { margin-top: 0.75rem; }
+  /* The footer bar runs under both columns: copyright and mark left, legal
+     links right, so nothing floats mid-column and nothing lands on the rule. */
+  .footer-bar {
     display: flex;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
     gap: 2rem;
     margin-top: 5rem;
-    color: var(--text-75);
+    padding: 1.5rem 0 2rem;
+    border-top: 1px solid var(--line-12);
+    font-size: 0.8125rem;
+    color: var(--text-60);
   }
+  .footer-copy { display: flex; align-items: center; gap: 0.75rem; }
+  .footer-legal { display: flex; gap: 2rem; }
   .footer-legal a { transition: color 0.2s; }
   .footer-legal a:hover { color: var(--white); }
 }
@@ -543,6 +567,10 @@
    BREAKPOINTS. The reference's own: 991 / 767 / 479.
    ============================================================================= */
 
+@media (min-width: 1280px) {
+  .contact-form { padding-left: 4rem; }
+}
+
 @media (max-width: 991px) {
   .h1 { font-size: 3.25rem; }
   .h2 { font-size: 2.75rem; }
@@ -557,6 +585,8 @@
   .compare-card, .compare-card.is-2 { padding: 2rem 1.5rem; }
   .mission { grid-template-columns: 1fr; }
   .contact-grid { grid-template-columns: 1fr; row-gap: 4rem; }
+  .contact-details { padding-right: 0; }
+  .contact-form { padding-left: 0; }
   .intro-split { grid-template-columns: 1fr; row-gap: 1.5rem; }
   .tour { padding: 5rem 2rem; }
   .roadmap { padding: 5rem 1.5rem; }
@@ -569,6 +599,7 @@
   .h5 { font-size: 1.25rem; }
   .intro-p.is-sub { font-size: 1.25rem; }
   .form-2col { grid-template-columns: 1fr; }
+  .footer-bar { flex-direction: column; align-items: flex-start; gap: 1rem; }
   .stats { grid-template-columns: 1fr; }
   .tour { padding: 4rem 1.5rem; }
   .ui-card.is-1, .ui-card.is-3 { top: -2rem; }

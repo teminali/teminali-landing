@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Badge, SectionHead, Icon, EmailCapture, WorldDots, Mark } from '@/components/ui'
 import { StudioMock, BreakoutCard, type ShotName } from '@/components/StudioMock'
 import { linkProps } from '@/lib/route'
@@ -345,6 +346,23 @@ export function Stats() {
 
 /* ------------------------------------------------------- contact + footer ---*/
 
+/** A label above one control. The star is decorative; the control carries `required`. */
+function Field({ label, required, children }: { label: string; required?: boolean; children: ReactNode }) {
+  return (
+    <label className="block" data-reveal>
+      <span className="field-label">
+        {label}
+        {required && (
+          <span className="field-req" aria-hidden="true">
+            *
+          </span>
+        )}
+      </span>
+      {children}
+    </label>
+  )
+}
+
 export function Contact() {
   return (
     <section id="contact" className="relative">
@@ -361,9 +379,9 @@ export function Contact() {
               </p>
             </div>
 
-            <div className="flex flex-col gap-8" data-reveal>
+            <div className="contact-quick" data-reveal>
               <p className="contact-col-heading">{contact.quickTitle}</p>
-              <div className="flex flex-col gap-6">
+              <div className="contact-quick-list">
                 {contact.quick.map((q) => (
                   <a
                     key={q.label}
@@ -379,34 +397,21 @@ export function Contact() {
                   </a>
                 ))}
               </div>
-              <div className="contact-copyright">
-                <span className="grid h-12 w-12 place-items-center text-mark">
-                  <Mark className="h-10 w-10" />
-                </span>
-                <p className="text-small ink-70">
-                  © {new Date().getFullYear()} {site.name}. All rights reserved. · {site.version}
-                </p>
-              </div>
             </div>
           </div>
 
-          <form className="flex flex-col gap-8" onSubmit={(e) => e.preventDefault()} data-reveal-stagger>
+          <form className="contact-form" onSubmit={(e) => e.preventDefault()} data-reveal-stagger>
             <div className="form-2col">
               {contact.fields.map((f) => (
-                <label key={f.name} className="block" data-reveal>
-                  <span className="field-label">
-                    {f.label}
-                    {f.required && ' *'}
-                  </span>
+                <Field key={f.name} label={f.label} required={f.required}>
                   <input name={f.name} type={f.type} required={f.required} placeholder="Type here" className="input" />
-                </label>
+                </Field>
               ))}
             </div>
-            <label className="block" data-reveal>
-              <span className="field-label">{contact.message} *</span>
-              <textarea name="message" required rows={6} placeholder="Type here" className="input is-area" />
-            </label>
-            <div data-reveal>
+            <Field label={contact.message} required>
+              <textarea name="message" required rows={5} placeholder="Type here" className="input is-area" />
+            </Field>
+            <div className="contact-send" data-reveal>
               <button type="submit" className="btn" data-magnetic>
                 <span>{contact.send}</span>
               </button>
@@ -414,12 +419,20 @@ export function Contact() {
           </form>
         </div>
 
-        <footer className="footer-legal pb-10">
-          {contact.legal.map((l) => (
-            <a key={l.label} href={l.href} className="text-small">
-              {l.label}
-            </a>
-          ))}
+        <footer className="footer-bar">
+          <div className="footer-copy">
+            <Mark className="h-6 w-6 text-mark" />
+            <p>
+              © {new Date().getFullYear()} {site.name}. All rights reserved. · {site.version}
+            </p>
+          </div>
+          <nav className="footer-legal" aria-label="Legal">
+            {contact.legal.map((l) => (
+              <a key={l.label} href={l.href}>
+                {l.label}
+              </a>
+            ))}
+          </nav>
         </footer>
       </div>
     </section>
