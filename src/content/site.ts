@@ -4,19 +4,19 @@
  *
  * The page tells one story, top to bottom:
  *
- *   1. Hero        — the promise: the whole loop, on your machine.
- *   2. Laptop rail — the loop shown: task → take → gateway → verified.
- *   3. Platform    — each stage, argued.
- *   4. Studio hub  — what is actually in the window.
- *   5. Demo CTA    — go and try it.
- *   6. Process     — four steps from install to release.
- *   7. Compare     — against the stack of subscriptions it replaces.
- *   8. Mid CTA     — tonight.
- *   9. About       — why it exists.
- *  10. Mission     — the one principle everything follows from.
- *  11. Roadmap CTA — the honest test.
- *  12. Stats       — what ships today, measured.
- *  13. Contact     — talk to us.
+ *   1. Hero         the promise: the whole loop, on your machine.
+ *   2. Laptop rail  the loop shown: task → take → gateway → verified.
+ *   3. Platform     each stage, argued.
+ *   4. Studio hub   what is actually in the window.
+ *   5. Demo CTA     go and try it.
+ *   6. Process      four steps from install to release.
+ *   7. Compare      against the stack of subscriptions it replaces.
+ *   8. Mid CTA      tonight.
+ *   9. About        why it exists.
+ *  10. Mission      the one principle everything follows from.
+ *  11. Roadmap CTA  the honest test.
+ *  12. Stats        what ships today, measured.
+ *  13. Contact      talk to us.
  *
  * Every figure quoted is read off the product's own README on the date noted
  * beside it. Nothing here is rounded up.
@@ -41,7 +41,7 @@ export const nav = [
 export const hero = {
   title: 'Write the code, prove it works and film the demo. All of it on your machine.',
   body: [
-    'Teminali Code is an autonomous code studio, a screen recorder and a video editor in one desktop app. It plans and edits across your repository, runs the real tests, and cuts the walkthrough — with local models, local speech and nothing leaving the machine unless you send it.',
+    'Teminali Code is an autonomous code studio, a screen recorder and a video editor in one desktop app. It plans and edits across your repository, runs the real tests, and cuts the walkthrough, with local models, local speech and nothing leaving the machine unless you send it.',
     'Hosted providers are one setting away when you want them. They are never required.',
   ],
 }
@@ -109,12 +109,12 @@ export const scenes = [
 export const platform = {
   badge: 'What it does',
   title: 'One app for the loop you already run: write, record, cut, verify.',
-  body: 'Most tools stop at the suggestion. Teminali Code keeps going — through the tests, the screen recording and the export — and shows its work at every step.',
+  body: 'Most tools stop at the suggestion. Teminali Code keeps going, through the tests, the screen recording and the export, and shows its work at every step.',
   rows: [
     {
       tagline: 'The autonomous agent',
       title: 'It edits the repository, not a chat window',
-      body: 'Point it at a project directory. The agent inspects, plans, edits across files, runs the terminal, and repairs what it broke — every step visible while it happens.',
+      body: 'Point it at a project directory. The agent inspects, plans, edits across files, runs the terminal, and repairs what it broke, every step visible while it happens.',
       points: [
         { icon: 'git', text: 'Edits only the paths it declared, and refuses to report success until real verification passes.' },
         { icon: 'term', text: 'A real PTY terminal you and the agent both drive: dev servers, package managers, test suites.' },
@@ -129,7 +129,7 @@ export const platform = {
       body: 'Press ⇧⌘8, record the screen, the camera and your voice. The take lands on a multi-track timeline with the zooms placed, the pointer drawn and the camera choreographed.',
       points: [
         { icon: 'scissors', text: 'Zoom moments detected from real clicks and keystrokes; the camera dodges the pointer and takes the frame while you explain.' },
-        { icon: 'wave', text: 'The Video Copilot detects beats, places captions and cuts on silence — and is served over MCP to the same agent that wrote the code.' },
+        { icon: 'wave', text: 'The Video Copilot detects beats, places captions and cuts on silence, and is served over MCP to the same agent that wrote the code.' },
         { icon: 'film', text: 'Export H.264, HEVC or ProRes with the GPU encoder, at the resolution the preset names, straight to a file.' },
       ],
       cta: { label: 'Explore the editor', href: '#studio' },
@@ -152,7 +152,7 @@ export const platform = {
       title: 'Done means the real tests passed',
       body: 'An agent that writes code you cannot trust has saved you nothing. Every run ends against five runtimes, not a self-assessment, and a red run comes back red.',
       points: [
-        { icon: 'check', text: 'Typecheck, unit, integration, build and browser checks — a missing runner is “unmeasured”, which cannot pass.' },
+        { icon: 'check', text: 'Typecheck, unit, integration, build and browser checks. A missing runner is “unmeasured”, which cannot pass.' },
         { icon: 'eye', text: 'Visual diffs are exact pixel counts and colour deltas. Measurements, not a score.' },
         { icon: 'chart', text: 'Benchmarks run from fresh isolated workspaces with preregistered oracles; the sandbox’s git diff is the ground truth.' },
       ],
@@ -201,7 +201,7 @@ export const studio = {
       icon: 'screen',
       group: 'left',
       title: 'Screen recorder',
-      sub: 'A dialog, not a panel — press ⇧⌘8',
+      sub: 'A dialog, not a panel. Press ⇧⌘8',
       desc: 'Screen, camera and microphone, written to disk in chunks so a twenty-minute take never lives in memory. Global stop, pause and mark shortcuts while it runs.',
       points: [
         'A 30Hz cursor track and keystroke timing, sealed with AES-GCM beside the take',
@@ -216,11 +216,11 @@ export const studio = {
       group: 'left',
       title: 'Routing gateway',
       sub: 'Bound to 127.0.0.1. Refuses any other host.',
-      desc: 'Roughly sixty routes behind one bearer token. Local models through Ollama, your agent CLIs, hosted providers with light and heavy lanes — and a budget that stops a loop from quietly costing you.',
+      desc: 'Roughly sixty routes behind one bearer token. Local models through Ollama, your agent CLIs, hosted providers with light and heavy lanes, and a budget that stops a loop from quietly costing you.',
       points: [
         'Flash, Auto and Max modes; the heavy lane ranks by parameter count and refuses anything under 10 tok/s',
         'Anthropic, OpenAI and Google available; no flagship is ever selected automatically',
-        'An audit log of metadata only — never prompts, never transcripts',
+        'An audit log of metadata only: never prompts, never transcripts',
       ],
     },
     {
@@ -230,7 +230,7 @@ export const studio = {
       group: 'left',
       title: 'Guardian',
       sub: 'What the machine is holding, right now',
-      desc: 'Resident models, real unified-memory footprint and pressure. Every number is measured or it is null — a metric that could not be read is never drawn as a plausible zero.',
+      desc: 'Resident models, real unified-memory footprint and pressure. Every number is measured or it is null. A metric that could not be read is never drawn as a plausible zero.',
       points: [
         'Auto-unload evicts an idle or superseded model. Reversible; destroys no work',
         'The governor quits applications gracefully only, never with a signal, never the one you are using',
@@ -289,7 +289,7 @@ export const studio = {
       desc: 'whisper.cpp for recognition, the system voice for synthesis, all local. Dictate into the composer, talk it through what is on screen, or let it click, type and open apps.',
       points: [
         'Every utterance passes a repair step you see before it sends',
-        'Three modes — dictate, talk, agent — and three autonomy rungs, one switch apart',
+        'Dictate, talk or agent: three modes and three autonomy rungs, one switch apart',
         'Actions are re-checked against the observation they name; a changed window is refused',
       ],
     },
@@ -300,7 +300,7 @@ export const studio = {
       group: 'left',
       title: 'Skills and MCP',
       sub: 'Teach it your stack',
-      desc: 'Mount specialist skills into the runner, and wire MCP servers into the tab that spawned the agent — including the studio’s own video editor.',
+      desc: 'Mount specialist skills into the runner, and wire MCP servers into the tab that spawned the agent, including the studio’s own video editor.',
       points: [
         'A skills sidebar view, with website-builder and the video copilot shipped',
         'A cut server that gives Claude Code and Codex six editing tools',
@@ -456,12 +456,12 @@ export const roadmapCta = {
   action: 'Get the build',
 }
 
-/** SNAPSHOT — read off the product READMEs on 2026-09-05. */
+/** SNAPSHOT: read off the product READMEs on 2026-09-05. */
 export const stats = {
   title: 'What ships today',
   figures: [
     { value: '1,006', label: 'tests green on every build: 863 in the studio, 143 in the gateway and runner. No skips.' },
-    { value: '12', label: 'workspace panel kinds — file, terminal, browser, canvas, guardian, video editor, agent CLIs and more.' },
+    { value: '12', label: 'workspace panel kinds: file, terminal, browser, canvas, guardian, video editor, agent CLIs and more.' },
     { value: '5', label: 'verification runtimes: agent, quality, visual, performance and MCP. Each one dependency-free.' },
     { value: '127.0.0.1', label: 'is the only host the gateway will bind to. It refuses every other one.' },
     { value: '$0.00', label: 'for local models, local voice, beat detection and on-device transcription. A cost it cannot read is null.' },
@@ -514,7 +514,7 @@ export const downloads = {
       {
         n: '01',
         title: 'Open the app once, then click Done',
-        body: 'Double-click Teminali Code in Applications. When the dialog appears, click Done. Do not click Move to Bin — that deletes the app and you would have to download it again.',
+        body: 'Double-click Teminali Code in Applications. When the dialog appears, click Done. Do not click Move to Bin. That deletes the app and you would have to download it again.',
         figure: 'The macOS dialog, with Done and Move to Bin',
       },
       {
@@ -538,7 +538,7 @@ export const downloads = {
     summary: 'Advanced: install from the terminal',
     body: 'Installs to /Applications without the first-launch dialog.',
     command: 'curl -fsSL https://<your-domain>/install.sh | sh',
-    pending: 'install.sh is not published yet — the domain above is a placeholder until it is.',
+    pending: 'install.sh is not published yet. The domain above is a placeholder until it is.',
   },
 
   verify: {

@@ -10,8 +10,8 @@ const mb = (n: number) => `${Math.round(n / 1e6)} MB`
 /**
  * The version, the file sizes and the checksums all come from the latest
  * GitHub release rather than from constants, so the page cannot go stale on a
- * release. When the call fails — offline, rate-limited, or the repo still
- * private — the page falls back to the copy in `site.ts` and simply omits the
+ * release. When the call fails, whether offline, rate-limited, or the repo still
+ * private, the page falls back to the copy in `site.ts` and simply omits the
  * things it cannot know. It never invents a checksum.
  */
 function useRelease(): Release | null {
@@ -60,7 +60,7 @@ function useRelease(): Release | null {
   return rel
 }
 
-/** Best-effort, and only ever used to promote a card — never to hide one. */
+/** Best-effort, and only ever used to promote a card, never to hide one. */
 function detectPlatform(): string | null {
   const nav = navigator as Navigator & {
     userAgentData?: { platform?: string; architecture?: string }
@@ -99,7 +99,7 @@ function Copy({ text, label }: { text: string; label: string }) {
   )
 }
 
-/** Monospace, scrolls inside itself — the page must never scroll sideways. */
+/** Monospace, scrolls inside itself. The page must never scroll sideways. */
 function CodeRow({ text, label }: { text: string; label: string }) {
   return (
     <div className="flex items-center gap-3 rounded-ctl border border-line bg-surface-sunken px-4 py-3">
@@ -179,7 +179,7 @@ export function Downloads() {
         </div>
       </section>
 
-      {/* First launch on macOS — directly beneath the macOS cards. */}
+      {/* First launch on macOS, directly beneath the macOS cards. */}
       <section id="first-launch" className="section-md border-y border-line bg-surface-sunken">
         <div className="shell">
           <p className="kicker" data-reveal>
@@ -221,7 +221,7 @@ export function Downloads() {
         </div>
       </section>
 
-      {/* Advanced, verify, requirements — all deliberately quiet. */}
+      {/* Advanced, verify, requirements: all deliberately quiet. */}
       <section className="section-md">
         <div className="shell grid gap-16 lg:grid-cols-2">
           <div className="flex flex-col gap-10">

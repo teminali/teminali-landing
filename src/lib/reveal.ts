@@ -7,7 +7,7 @@ import { gsap, ScrollTrigger, prefersReducedMotion } from './motion'
  *
  *   data-reveal              rises 24px and fades in once, at 88% of the viewport
  *   data-reveal="words"      the same, but word by word out of a clipping wrap
- *   data-reveal="scale"      settles from 0.96 to 1 — figures and cards
+ *   data-reveal="scale"      settles from 0.96 to 1, for figures and cards
  *   data-reveal-stagger      a parent that sequences its data-reveal children
  *   data-line                a hairline that draws from its origin
  *   data-badge               the section pill: lines draw outwards, pill fades
@@ -166,7 +166,7 @@ function parallax(root: HTMLElement | Document) {
 function counters(root: HTMLElement | Document) {
   root.querySelectorAll<HTMLElement>('[data-counter]').forEach((el) => {
     // The first pass zeroes the text, and a StrictMode re-mount runs this
-    // again against that zero — so the original is kept on the element.
+    // again against that zero, so the original is kept on the element.
     const text = el.dataset.counterText ?? (el.dataset.counterText = el.textContent?.trim() ?? '')
     // Only a leading number counts. "127.0.0.1" and "3 platforms" keep their
     // text but still get the reveal from their parent.

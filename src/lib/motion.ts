@@ -10,7 +10,7 @@ gsap.registerPlugin(ScrollTrigger)
  *
  * Lenis and GSAP both want to own the frame. If they each run their own rAF the
  * scrubbed timelines read Lenis's *previous* frame position and the laptop
- * judders — which is exactly what `scrub` is meant to smooth out. So Lenis is
+ * judders, which is exactly what `scrub` is meant to smooth out. So Lenis is
  * driven from gsap.ticker, ScrollTrigger's scroll source is pointed at Lenis,
  * and lag smoothing is off so a dropped frame doesn't get silently absorbed.
  */
@@ -41,13 +41,13 @@ export function initSmoothScroll(): () => void {
   ;(window as unknown as { __lenis?: Lenis }).__lenis = instance
 
   // No `scrollerProxy` here, deliberately. Lenis is running on the window in
-  // its default mode, so it moves the *real* document scroll — window.scrollY,
+  // its default mode, so it moves the *real* document scroll: window.scrollY,
   // documentElement.scrollTop and lenis.scroll all read the same number. That
   // makes a proxy redundant, and a redundant proxy is a trap: it pins
   // ScrollTrigger's scroll source to one Lenis closure, and nothing unregisters
   // it when that instance is destroyed. Under React StrictMode the effects run
   // twice, so the second pass built its triggers against the *first*, already
-  // destroyed Lenis, whose `.scroll` is frozen at 0 — the rail's progress stuck
+  // destroyed Lenis, whose `.scroll` is frozen at 0, so the rail's progress stuck
   // at 0 for the whole page, the laptop parked below frame and no parallax, in
   // dev only. The production build never double-invokes, which is why it looked
   // fine on :4173 and was broken on :5173. `lenis.on('scroll', ...)` above is
@@ -80,7 +80,7 @@ export function prefersReducedMotion(): boolean {
   )
 }
 
-/** Coarse pointer or narrow viewport — the WebGL rail is skipped entirely. */
+/** Coarse pointer or narrow viewport: the WebGL rail is skipped entirely. */
 export function isCompact(): boolean {
   if (typeof window === 'undefined') return false
   return window.matchMedia('(max-width: 860px)').matches

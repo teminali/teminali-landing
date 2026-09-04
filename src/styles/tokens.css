@@ -1,5 +1,5 @@
 /* =============================================================================
-   TEMINALI CODE — landing token sheet.
+   TEMINALI CODE. Landing token sheet.
 
    Copied from frontier/studio/src/styles/tokens.css. The governing rule from
    that file applies here unchanged: the interface is achromatic, depth comes
@@ -40,7 +40,7 @@
   --text-faint: #989898;
   --text-ghost: #6b6b6b;
 
-  /* Primary is a terminal green, on the user's call — buttons, the wordmark
+  /* Primary is a terminal green, on the user's call: buttons, the wordmark
      glyph, the scroll-spy link, selection and the focus ring. The rest of the
      page stays achromatic, so this is the one hue that carries brand. */
   --accent: #65c466;

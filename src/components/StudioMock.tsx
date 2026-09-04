@@ -1,5 +1,5 @@
 /**
- * The Teminali Code studio — real captures of the shipping app.
+ * The Teminali Code studio: real captures of the shipping app.
  *
  * These are screenshots of the product itself, taken at 3x device pixel ratio
  * (3840x2400) so they survive the dolly push-in onto the laptop screen without
@@ -59,7 +59,7 @@ export function StudioMock({ variant }: { variant: ShotName }) {
   )
 }
 
-/** The element that leaves the screen plane — the reference's signature move. */
+/** The element that leaves the screen plane, the reference's signature move. */
 export function BreakoutCard({
   title,
   rows,

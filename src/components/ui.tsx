@@ -78,8 +78,8 @@ export function Mark({ className = 'h-8 w-8' }: { className?: string }) {
 }
 
 /* ------------------------------------------------------------ grid rules ---
-   The drafting overlay: a hairline 4.5rem in from each edge — the width of
-   the logo cell, so the cell's right border runs straight down the page —
+   The drafting overlay: a hairline 4.5rem in from each edge, the width of
+   the logo cell, so the cell's right border runs straight down the page,
    and one on the centre line. Drawn over everything at very low alpha. */
 
 export function GridOverlay() {
@@ -303,7 +303,7 @@ export function EmailCapture({
 /* ------------------------------------------------------- dot-matrix world ---
    The reference puts a dotted world map behind both mid-page CTAs. Rather than
    ship a raster, the continents are coarse lon/lat polygons and the dots are a
-   regular grid in screen space tested against them — so the spacing stays even
+   regular grid in screen space tested against them, so the spacing stays even
    and the whole thing is one <path> node, not two thousand circles. */
 
 const LAND: [number, number][][] = [

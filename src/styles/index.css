@@ -540,7 +540,7 @@
 }
 
 /* =============================================================================
-   BREAKPOINTS — the reference's own: 991 / 767 / 479.
+   BREAKPOINTS. The reference's own: 991 / 767 / 479.
    ============================================================================= */
 
 @media (max-width: 991px) {
@@ -662,7 +662,7 @@
 .hero_item-wrap { overflow: hidden; }
 .hero_item-wrap.is-p { width: 100%; max-width: 48rem; }
 
-/* Scroll cue — a mouse outline with a falling dot, looped by GSAP. */
+/* Scroll cue: a mouse outline with a falling dot, looped by GSAP. */
 .scroll-ind {
   display: flex;
   flex-direction: column;
@@ -770,7 +770,7 @@
 }
 
 /* =============================================================================
-   STUDIO HUB — the radial module wheel.
+   STUDIO HUB. The radial module wheel.
    ============================================================================= */
 
 .software_component {

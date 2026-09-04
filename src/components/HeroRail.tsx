@@ -63,7 +63,7 @@ export function HeroRail() {
         .filter((el): el is HTMLElement => !!el)
       intro.fromTo(risers, { yPercent: 150, opacity: 0 }, { yPercent: 0, opacity: 1, ...s }, '<')
 
-      /* 2. The scroll cue loop — the reference's four Webflow keyframe groups,
+      /* 2. The scroll cue loop: the reference's four Webflow keyframe groups,
             2.3s per cycle: rest, fall, snap back, rise. */
       if (!reduced && dotRef.current && ringRef.current && scrollTextRef.current) {
         const dot = dotRef.current
