@@ -55,11 +55,12 @@ export const scenes = [
     caption: 'Give it the task. Watch every step land in your repository.',
     alt: 'The studio mid-task: a numbered plan in the conversation, each tool call landing as a card, and the editor open beside it.',
     float: {
-      live: true,
+      status: 'live',
       kicker: 'Agent running',
       title: 'Plan · edit · run · verify',
-      sub: 'Project analysis · 2 steps · Frontier Auto',
-      pos: 'top-[12%] right-[8%]',
+      sub: 'Project analysis',
+      chips: ['2 steps', 'Frontier Auto'],
+      slot: 'bottom-right',
     },
   },
   {
@@ -69,11 +70,11 @@ export const scenes = [
     caption: 'Stop recording and the take is already on a cut timeline.',
     alt: 'The recorder right after a take: the display and camera saved at 30 fps, the preview ready, and one click to open it on the timeline.',
     float: {
-      live: false,
+      status: 'ok',
       kicker: 'Take saved',
       title: 'Display + camera · 30 fps',
       sub: 'Its own sound · open on the timeline',
-      pos: 'top-[10%] left-[8%]',
+      slot: 'top-right',
     },
   },
   {
@@ -83,11 +84,11 @@ export const scenes = [
     caption: 'Every request goes through one gateway you can read.',
     alt: 'Settings: the local gateway running at http://127.0.0.1:4310 with Ollama connected, and model weights managed on disk.',
     float: {
-      live: false,
+      status: 'ok',
       kicker: 'Local gateway',
       title: '127.0.0.1:4310 · Ollama connected',
       sub: 'Local lane by default · hosted opt-in',
-      pos: 'top-[15%] right-[10%]',
+      slot: 'top-right',
     },
   },
   {
@@ -97,11 +98,12 @@ export const scenes = [
     caption: 'Nothing is done until the real runtimes say so.',
     alt: 'The studio after a verification run: typecheck, unit, core and build green, lint reporting three warnings.',
     float: {
-      live: false,
+      status: 'ok',
       kicker: 'Five runtimes',
       title: 'Types · unit · core · build green',
-      sub: 'Lint: 3 warnings, reported as 3',
-      pos: 'top-[12%] left-[10%]',
+      sub: 'A missing runner is unmeasured, not passed',
+      chips: ['4 green', '3 warnings', '0 failed'],
+      slot: 'bottom-right',
     },
   },
 ]

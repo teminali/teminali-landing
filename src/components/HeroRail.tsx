@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { createLaptopScene, type LaptopSceneInstance } from '../three/scene'
 import { isCompact, prefersReducedMotion } from '@/lib/motion'
-import { Icon } from './ui'
 import { StudioMock } from './StudioMock'
 import { hero, scenes } from '@/content/site'
 
@@ -189,35 +188,14 @@ export function HeroRail() {
                         className="home-intro_img-wrap"
                         style={{ zIndex: i + 1 }}
                       >
-                        <img src={`/shots/${scene.shot}.webp`} alt={scene.alt} className="home-intro_img" />
-
-                        {/* The element that leaves the screen plane. */}
-                        <div data-intro={`img-float-${i + 1}`} className={`float-card min-w-[230px] ${scene.float.pos}`}>
-                          <div className="flex items-center gap-2.5">
-                            {scene.float.live ? (
-                              <span className="h-2 w-2 animate-pulse rounded-full bg-accent" />
-                            ) : (
-                              <Icon name={scene.icon} className="h-3.5 w-3.5 text-accent" />
-                            )}
-                            <span className="font-mono text-[11px] uppercase tracking-wider text-accent">
-                              {scene.float.kicker}
-                            </span>
+                        <div className="home-intro_screen">
+                          <img src={`/shots/${scene.shot}.webp`} alt={scene.alt} className="home-intro_img" />
+                          <div data-intro={`overlay-${i + 1}`} className="home-intro_overlay" />
+                          <div data-intro={`text-wrap-${i + 1}`} className="hero_intro-text-wrap">
+                            <h2 className="hero-intro_h balance">{scene.caption}</h2>
                           </div>
-                          <p className="mt-1.5 text-xs font-medium text-white">{scene.float.title}</p>
-                          <p className="text-[11px] text-ink-faint">{scene.float.sub}</p>
                         </div>
-
-                        <div data-intro={`overlay-${i + 1}`} className="home-intro_overlay" />
-
-                        <div data-intro={`text-wrap-${i + 1}`} className="hero_intro-text-wrap">
-                          <div className="hero-intro_icon-wrap">
-                            <span className="hero-intro_icon">
-                              <Icon name={scene.icon} className="h-full w-full" />
-                            </span>
-                          </div>
-                          <h2 className="hero-intro_h balance">{scene.caption}</h2>
-                          <div className="hero-intro_h-spacer" />
-                        </div>
+                        <FloatCard intro={`img-float-${i + 1}`} float={scene.float} />
                       </div>
                     ))}
                   </div>
@@ -228,6 +206,37 @@ export function HeroRail() {
         </section>
       ) : (
         <CompactScenes />
+      )}
+    </div>
+  )
+}
+
+type SceneFloat = (typeof scenes)[number]['float']
+
+/** Status dot plus mono label. The dot pulses while the scene is live. */
+function Kicker({ float }: { float: SceneFloat }) {
+  return (
+    <p className="float-kicker">
+      <span className={`float-dot is-${float.status}`} aria-hidden="true" />
+      {float.kicker}
+    </p>
+  )
+}
+
+/** The status card that lifts off the screen plane. It anchors to the laptop
+    bezel, not to the screenshot, so it never covers the app's sidebar or copy. */
+function FloatCard({ float, intro }: { float: SceneFloat; intro: string }) {
+  return (
+    <div data-intro={intro} className={`float-card is-${float.slot}`}>
+      <Kicker float={float} />
+      <p className="float-title">{float.title}</p>
+      <p className="float-sub">{float.sub}</p>
+      {float.chips && (
+        <p className="float-chips">
+          {float.chips.map((c) => (
+            <span key={c}>{c}</span>
+          ))}
+        </p>
       )}
     </div>
   )
@@ -247,13 +256,9 @@ function CompactScenes() {
       </div>
       <div className="mt-12 flex flex-col gap-8">
         {scenes.map((scene) => (
-          <div key={scene.id} className="flex items-start gap-5" data-reveal>
-            <span className="hero-intro_icon-wrap !mb-0 !p-3">
-              <span className="flex h-5 w-5">
-                <Icon name={scene.icon} className="h-full w-full" />
-              </span>
-            </span>
-            <p className="h5 pretty">{scene.caption}</p>
+          <div key={scene.id} className="compact-scene" data-reveal>
+            <Kicker float={scene.float} />
+            <p className="hero-intro_h pretty">{scene.caption}</p>
           </div>
         ))}
       </div>

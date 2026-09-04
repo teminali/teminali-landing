@@ -167,11 +167,11 @@ export function createLaptopScene(config: LaptopSceneConfig): LaptopSceneInstanc
       // Set initial state
       gsap.set(config.scrollWrap, { autoAlpha: 1 })
       gsap.set('[data-intro="wrap"]', { rotateX: 0, opacity: 0 })
-      gsap.set('[data-intro="image-wrap-2"]', { yPercent: 5, opacity: 0, z: -5 })
-      gsap.set('[data-intro="image-wrap-3"]', { yPercent: 5, opacity: 0, z: -5 })
-      gsap.set('[data-intro="image-wrap-4"]', { yPercent: 5, opacity: 0, z: -5 })
+      gsap.set('[data-intro="image-wrap-2"]', { y: 12, opacity: 0 })
+      gsap.set('[data-intro="image-wrap-3"]', { y: 12, opacity: 0 })
+      gsap.set('[data-intro="image-wrap-4"]', { y: 12, opacity: 0 })
       gsap.set('[data-intro*="text-wrap"]', { opacity: 0 })
-      gsap.set('[data-intro*="img-float"]', { xPercent: 0, yPercent: 0 })
+      gsap.set('[data-intro*="img-float"]', { y: 12, opacity: 0 })
 
       timeline = gsap.timeline({
         scrollTrigger: {
@@ -198,28 +198,28 @@ export function createLaptopScene(config: LaptopSceneConfig): LaptopSceneInstanc
       // Scene 1: Autonomous Code Studio
       timeline.to('[data-intro="overlay-1"]', { opacity: 1, duration: 0.5 })
       timeline.to('[data-intro="text-wrap-1"]', { opacity: 1, duration: 1 }, '<')
-      timeline.to('[data-intro="img-float-1"]', { yPercent: -5, z: 10, duration: 1 }, '<')
+      timeline.to('[data-intro=\"img-float-1\"]', { y: 0, opacity: 1, z: 40, duration: 0.5 }, '<0.15')
 
       // Scene 2: Video Editor & Creative Suite
-      timeline.to('[data-intro="image-wrap-2"]', { yPercent: 0, opacity: 1, z: 0, duration: 1, delay: 1.5 })
+      timeline.to('[data-intro="image-wrap-2"]', { y: 0, opacity: 1, duration: 1, delay: 1.5 })
       timeline.to('[data-intro="image-wrap-1"]', { opacity: 0, duration: 0.5 }, '<')
       timeline.to('[data-intro="overlay-2"]', { opacity: 1, duration: 0.5 })
       timeline.to('[data-intro="text-wrap-2"]', { opacity: 1, duration: 1 }, '<')
-      timeline.to('[data-intro="img-float-2"]', { yPercent: -20, z: 50, duration: 1 }, '<')
+      timeline.to('[data-intro=\"img-float-2\"]', { y: 0, opacity: 1, z: 40, duration: 0.5 }, '<0.15')
 
       // Scene 3: Multi-Model Router & Cost Optimisation
-      timeline.to('[data-intro="image-wrap-3"]', { yPercent: 0, opacity: 1, z: 0, duration: 1, delay: 1.5 })
+      timeline.to('[data-intro="image-wrap-3"]', { y: 0, opacity: 1, duration: 1, delay: 1.5 })
       timeline.to('[data-intro="image-wrap-2"]', { opacity: 0, duration: 0.5 }, '<')
       timeline.to('[data-intro="overlay-3"]', { opacity: 1, duration: 0.5 })
       timeline.to('[data-intro="text-wrap-3"]', { opacity: 1, duration: 1 }, '<')
-      timeline.to('[data-intro="img-float-3"]', { yPercent: -30, xPercent: -10, z: 250, duration: 1 }, '<')
+      timeline.to('[data-intro=\"img-float-3\"]', { y: 0, opacity: 1, z: 40, duration: 0.5 }, '<0.15')
 
       // Scene 4: 5 Verification Runtimes
-      timeline.to('[data-intro="image-wrap-4"]', { yPercent: 0, opacity: 1, z: 0, duration: 1, delay: 1.5 })
+      timeline.to('[data-intro="image-wrap-4"]', { y: 0, opacity: 1, duration: 1, delay: 1.5 })
       timeline.to('[data-intro="image-wrap-3"]', { opacity: 0, duration: 0.5 }, '<')
       timeline.to('[data-intro="overlay-4"]', { opacity: 1, duration: 0.5 })
       timeline.to('[data-intro="text-wrap-4"]', { opacity: 1, duration: 1 }, '<')
-      timeline.to('[data-intro="img-float-4"]', { yPercent: -30, xPercent: 10, z: 250, duration: 1 }, '<')
+      timeline.to('[data-intro=\"img-float-4\"]', { y: 0, opacity: 1, z: 40, duration: 0.5 }, '<0.15')
 
       resize()
       ScrollTrigger.refresh()
