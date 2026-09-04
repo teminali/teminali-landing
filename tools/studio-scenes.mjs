@@ -1,15 +1,16 @@
 // Capture the REAL teminaliCode studio, seeded with representative session
 // content, at high DPR. Everything on screen is the product's own UI, CSS and
 // components — only the session content is authored, the way any product
-// screenshot is staged. Replaces the hand-drawn DOM mocks.
+// screenshot is staged.
 import { chromium } from 'playwright-core'
-import { mkdirSync } from 'node:fs'
+import { mkdirSync, existsSync } from 'node:fs'
+import { execSync } from 'node:child_process'
 
 const EXE = `${process.env.HOME}/Library/Caches/ms-playwright/chromium-1228/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing`
-const OUT = process.env.OUT ?? './shots-studio'
+const OUT = process.env.OUT ?? './public/shots'
 const DPR = Number(process.env.DPR ?? 3)
-const W = Number(process.env.W ?? 1280)
-const H = Number(process.env.H ?? 800)
+const W = Number(process.env.W ?? 1200)
+const H = Number(process.env.H ?? 750)
 mkdirSync(OUT, { recursive: true })
 
 const now = new Date().toISOString()
@@ -27,6 +28,7 @@ const DIFF = `@@ -18,7 +18,11 @@ export function route(task: Task) {
 const SCENES = {
   run: {
     title: 'Route every task through a lane',
+    panelState: null,
     messages: [
       { id: 'u1', role: 'user', content: 'The dispatcher always picks the first provider. Make it pick a lane, and refuse hosted work unless the task opted in.', timestamp: now },
       { id: 'a1', role: 'assistant', timestamp: now, engineUsed: 'Frontier Auto', mode: 'auto', costUsd: 0, costLabel: '$0.0000', durationSec: 41, tokensCount: 3184,
@@ -45,8 +47,46 @@ const SCENES = {
         ] },
     ],
   },
+  video: {
+    title: 'Video Copilot · Sync Commercial Beats',
+    panelState: {
+      panels: [
+        { id: 'p-video', kind: 'video', label: 'Video Editor', createdAt: Date.now() }
+      ],
+      activePanelId: 'p-video',
+      isOpen: true,
+      isExpanded: false,
+      width: 760,
+    },
+    messages: [
+      {
+        id: 'u-v1',
+        role: 'user',
+        content: 'Sync cuts to beat drops on Audio_TechHouse_Master, add whip-pan transitions, and generate kinetic subtitles for the commercial.',
+        timestamp: now,
+      },
+      {
+        id: 'a-v1',
+        role: 'assistant',
+        timestamp: now,
+        engineUsed: 'Teminali Cut Copilot',
+        mode: 'auto',
+        costUsd: 0,
+        costLabel: '$0.0000',
+        durationSec: 8,
+        tokensCount: 1420,
+        content: 'I analyzed the audio waveform at 130 BPM, detected beat drops, aligned video clips on track V1, applied optical whip-pan transitions, and reflowed kinetic subtitles on track C1.\n\nAll 5 tracks are synced and ready for 4K WebCodecs preview.',
+        toolCalls: [
+          tc('t-v1', 'detect_beats', { track: 'A1', sensitivity: 0.85 }, { result: '14 beats found · 3 drop markers set' }),
+          tc('t-v2', 'split_and_transition', { track: 'V1', transition: 'whip_pan', durationMs: 400 }, { result: 'Aligned cuts at 05.5s and 10.5s' }),
+          tc('t-v3', 'reflow_captions', { style: 'kinetic_stack', color: '#4c9dff' }, { result: 'Generated 2 animated caption cues' }),
+        ],
+      },
+    ],
+  },
   route: {
     title: 'Which model answered, and why',
+    panelState: null,
     messages: [
       { id: 'u2', role: 'user', content: 'Which engine handled that last change, and what did it cost?', timestamp: now },
       { id: 'a2', role: 'assistant', timestamp: now, engineUsed: 'Frontier Auto', mode: 'auto', costUsd: 0, costLabel: '$0.0000', durationSec: 3, tokensCount: 612,
@@ -62,6 +102,7 @@ const SCENES = {
   },
   verify: {
     title: 'Verify before it merges',
+    panelState: null,
     messages: [
       { id: 'u3', role: 'user', content: 'Run the full verification and show me anything that is not green.', timestamp: now },
       { id: 'a3', role: 'assistant', timestamp: now, engineUsed: 'Frontier Auto', mode: 'auto', costUsd: 0, costLabel: '$0.0000', durationSec: 12, tokensCount: 1120,
@@ -83,6 +124,7 @@ const SCENES = {
 
 const b = await chromium.launch({ executablePath: EXE, args: ['--use-gl=angle', '--enable-unsafe-swiftshader'] })
 const errs = []
+
 for (const [slug, scene] of Object.entries(SCENES)) {
   const p = await b.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: DPR })
   p.on('pageerror', (e) => errs.push(`${slug}: ${e}`))
@@ -101,13 +143,36 @@ for (const [slug, scene] of Object.entries(SCENES)) {
         tabs: [], activeTabId: null,
       },
     }))
+
+    if (sc.panelState) {
+      localStorage.setItem('teminali-panels-v1', JSON.stringify({
+        version: 2,
+        state: sc.panelState,
+      }))
+    } else {
+      localStorage.removeItem('teminali-panels-v1')
+    }
   }, ['teminali-studio-sessions-cache-v3', scene])
+
   await p.reload({ waitUntil: 'load' })
   await p.waitForTimeout(3500)
-  await p.screenshot({ path: `${OUT}/${slug}.png` })
+
+  const pngPath = `${OUT}/${slug}.png`
+  const webpPath = `${OUT}/${slug}.webp`
+  await p.screenshot({ path: pngPath })
+
+  // Convert to high-quality WebP
+  try {
+    execSync(`/opt/homebrew/bin/cwebp -q 90 "${pngPath}" -o "${webpPath}"`)
+    console.log(`Converted ${webpPath} (${W * DPR}x${H * DPR})`)
+  } catch (err) {
+    console.error(`Failed to convert ${pngPath} to webp:`, err)
+  }
+
   const seen = await p.evaluate(() => (document.body.innerText || '').length)
   console.log(`${slug} chars=${seen}`)
   await p.close()
 }
-console.log('errors', errs.slice(0, 5))
+
+console.log('errors:', errs.slice(0, 5))
 await b.close()

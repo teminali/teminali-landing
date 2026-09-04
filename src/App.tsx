@@ -14,12 +14,13 @@ export default function App() {
   // Re-runs on navigation: the new page's reveals have to be registered and
   // every trigger re-measured against a document of a different height.
   useEffect(() => {
-    const stop = initSmoothScroll()
-    initReveals()
+    const stopScroll = initSmoothScroll()
+    const stopReveals = initReveals()
     // Fonts land after first paint and change every measurement on the page.
     document.fonts?.ready.then(() => ScrollTrigger.refresh())
     return () => {
-      stop()
+      stopReveals()
+      stopScroll()
       ScrollTrigger.getAll().forEach((t) => t.kill())
     }
   }, [route])

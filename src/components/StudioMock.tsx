@@ -16,17 +16,37 @@
 /* Served straight out of `public/`, so these are URLs, not module imports. */
 const shots = {
   run: '/shots/run.webp',
+  video: '/shots/video.webp',
   route: '/shots/route.webp',
   verify: '/shots/verify.webp',
+  // Real captures of v1.2.8, supplied 2026-09-05.
+  copilot: '/shots/copilot.webp',
+  editor: '/shots/editor.webp',
+  'editor-wide': '/shots/editor-wide.webp',
+  record: '/shots/record.webp',
+  take: '/shots/take.webp',
+  export: '/shots/export.webp',
+  settings: '/shots/settings.webp',
+  home: '/shots/home.webp',
 }
+export type ShotName = keyof typeof shots
 
 const alts = {
   run: 'The Teminali Code studio running a task: a completed three-step plan, an edit to gateway/router.ts, and the run cost at $0.0000 on this Mac.',
+  video: 'The Teminali Code video editor: multi-track timeline, program monitor, inspector, and AI Video Copilot syncing cuts to 130 BPM beats.',
   route: 'The Teminali Code studio showing which engine answered a task, the reason it was routed locally, and its token counts.',
   verify: 'The Teminali Code studio after a verification run: typecheck, unit, core and build green, lint reporting three warnings.',
+  copilot: 'The agent adding captions to a recording through the video tools, with the program monitor showing the screen and camera take.',
+  editor: 'The video editor: media pool, program monitor, transform inspector and a timeline with grade, camera, cursor and screen tracks.',
+  'editor-wide': 'The video editor expanded to the full window width.',
+  record: 'The Record Screen dialog: display picker, camera, sound, frame rate and resolution, and Start recording.',
+  take: 'A saved take on the review screen: look and backdrop, pointer style, zoom motion, and Open on the timeline.',
+  export: 'The Export video dialog: YouTube, TikTok and Master presets, resolution, codec and GPU acceleration.',
+  settings: 'Settings: the local gateway connected on 127.0.0.1:4310 with Ollama, model management, startup and notifications.',
+  home: 'The empty chat screen: the composer, Frontier Auto, Record Screen and Open a Repository, and recent projects.',
 }
 
-export function StudioMock({ variant }: { variant: keyof typeof shots }) {
+export function StudioMock({ variant }: { variant: ShotName }) {
   return (
     <img
       src={shots[variant]}
@@ -48,7 +68,7 @@ export function BreakoutCard({
   rows: string[]
 }) {
   return (
-    <div className="w-[26em] overflow-hidden rounded-[0.7em] border border-[#3a3a3a] bg-[#212121] shadow-[0_1.5em_4em_rgba(0,0,0,0.6)]">
+    <div className="w-[26em] max-w-full overflow-hidden rounded-[0.7em] border border-[#3a3a3a] bg-[#212121] shadow-[0_1.5em_4em_rgba(0,0,0,0.6)]">
       <div className="border-b border-[#313131] px-[1.4em] py-[1em] text-[1.3em] text-[#f0f0f0]">
         {title}
       </div>

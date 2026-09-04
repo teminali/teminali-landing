@@ -5,7 +5,7 @@ import { linkProps, navigate, useRoute } from '@/lib/route'
 
 /* ---------------------------------------------------------------- icons ---
    Hand-rolled, 20px grid, 1.5 stroke. An icon library would be 40 KB to draw
-   fourteen shapes. */
+   twenty shapes. */
 
 const paths: Record<string, string> = {
   play: 'M8 5.5 15.5 10 8 14.5z',
@@ -24,6 +24,18 @@ const paths: Record<string, string> = {
   arrow: 'M4 10h12M11.5 5.5 16 10l-4.5 4.5',
   download: 'M10 3.5v9M6 9l4 4 4-4M4 16.5h12',
   spark: 'M10 3v4M10 13v4M3 10h4M13 10h4M5.8 5.8l2.4 2.4M11.8 11.8l2.4 2.4M14.2 5.8l-2.4 2.4M8.2 11.8l-2.4 2.4',
+  video: 'M3 5.5h10a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5H3a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 3 5.5zm11.5 3 4-2.5v8l-4-2.5V8.5z',
+  screen: 'M3 4.5h14a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 14v-8A1.5 1.5 0 0 1 3 4.5zm5 12h4m-2-1.5v1.5',
+  browser: 'M3 4.5h14a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 15v-9A1.5 1.5 0 0 1 3 4.5zm0 3.5h14M5 6.25h.01M7.5 6.25h.01M10 6.25h.01',
+  lock: 'M5.5 9V7a4.5 4.5 0 0 1 9 0v2M4 9h12v8H4z',
+  clock: 'M10 3.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM10 6.5V10l2.5 1.5',
+  cpu: 'M6 6h8v8H6zM8.5 8.5h3v3h-3zM10 2.5V6M10 14v3.5M2.5 10H6M14 10h3.5',
+  git: 'M6 3.5v13M6 3.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM14 6.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM14 6.5c0 4-8 3-8 7M6 16.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z',
+  coins: 'M10 3.5c3.6 0 6.5 1 6.5 2.2S13.6 8 10 8 3.5 7 3.5 5.7 6.4 3.5 10 3.5zM3.5 5.7v8.6c0 1.2 2.9 2.2 6.5 2.2s6.5-1 6.5-2.2V5.7M3.5 10c0 1.2 2.9 2.2 6.5 2.2s6.5-1 6.5-2.2',
+  film: 'M3.5 4.5h13v11h-13zM3.5 8h13M3.5 12h13M7 4.5v11M13 4.5v11',
+  scissors: 'M6 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM6 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7.6 8.8 16 3.5M7.6 11.2 16 16.5',
+  wave: 'M2.5 10h2l1.5-4 2 8 2-8 2 6 1.5-2h4',
+  linkedin: 'M5 8v7M5 5v.01M9 15V8m0 3.2c0-2 1-3.2 2.8-3.2 1.7 0 2.7 1.1 2.7 3.1V15',
 }
 
 export function Icon({ name, className = '' }: { name: string; className?: string }) {
@@ -45,30 +57,50 @@ export function Icon({ name, className = '' }: { name: string; className?: strin
   )
 }
 
+/** The wordmark glyph, `>_<`. Coordinates are `public/favicon.svg` over 32. */
+export function Mark({ className = 'h-8 w-8' }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.4}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M6.56 12.13 10.06 16 6.56 19.88" />
+      <path d="M12.25 19.88h7.5" />
+      <path d="M25.44 12.13 21.94 16 25.44 19.88" />
+    </svg>
+  )
+}
+
 /* ------------------------------------------------------------ grid rules ---
-   The drafting overlay. Two vertical hairlines on the gutters and one
-   horizontal band, drawn over everything at very low alpha. It is the single
-   device that makes the whole page feel like one drawing. */
+   The drafting overlay: a hairline 4.5rem in from each edge — the width of
+   the logo cell, so the cell's right border runs straight down the page —
+   and one on the centre line. Drawn over everything at very low alpha. */
 
 export function GridOverlay() {
   return (
     <div className="pointer-events-none fixed inset-0 z-30" aria-hidden="true">
-      <div className="mx-auto h-full w-full max-w-shell relative">
-        <span className="absolute inset-y-0 left-gutter w-px bg-line-strong/50" />
-        <span className="absolute inset-y-0 right-gutter w-px bg-line-strong/50" />
-        <span className="absolute inset-y-0 left-1/2 w-px bg-line/40 hidden lg:block" />
-      </div>
+      <span data-rule className="absolute top-0 h-full w-px bg-[var(--bg-lines)]" style={{ left: 'var(--rule)' }} />
+      <span data-rule className="absolute top-0 h-full w-px bg-[var(--bg-lines)]" style={{ right: 'var(--rule)' }} />
+      <span data-rule className="absolute left-1/2 top-0 hidden h-full w-px bg-[var(--bg-lines)] lg:block" />
     </div>
   )
 }
 
-/* -------------------------------------------------------------------- nav ---*/
+/* -------------------------------------------------------------------- nav ---
+   Reference chrome: a 4.5rem bar, the logo in a bordered 4.5rem cell flush to
+   the left edge, a light Sora wordmark, a centred link row, and a solid CTA
+   block welded into the corner at the full height of the bar. */
 
 export function Nav() {
   const route = useRoute()
   const onHome = route === '/'
   const [active, setActive] = useState<string>('')
-  const [solid, setSolid] = useState(false)
   const [open, setOpen] = useState(false)
 
   /* The section targets only exist on the home page, so from any other route
@@ -83,13 +115,11 @@ export function Nav() {
   useEffect(() => {
     const ids = nav.map((n) => n.id)
     const onScroll = () => {
-      setSolid(window.scrollY > 24)
       let current = ''
       for (const id of ids) {
         const el = document.getElementById(id)
         if (!el) continue
-        const top = el.getBoundingClientRect().top
-        if (top <= window.innerHeight * 0.4) current = id
+        if (el.getBoundingClientRect().top <= window.innerHeight * 0.4) current = id
       }
       setActive(current)
     }
@@ -98,102 +128,66 @@ export function Nav() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-200 ease-brand ${
-        solid ? 'bg-ground/80 backdrop-blur-md' : 'bg-transparent'
-      }`}
-    >
-      <div className="relative flex h-[var(--nav-h)] items-stretch border-b border-line-subtle">
-        <a
-          href="#top"
-          className="grid w-[var(--nav-h)] place-items-center border-r border-line-subtle text-mark"
-          aria-label={site.name}
-        >
-          <svg viewBox="0 0 32 32" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6.56 12.13 10.06 16 6.56 19.88" />
-            <path d="M12.25 19.88h7.5" />
-            <path d="M25.44 12.13 21.94 16 25.44 19.88" />
-          </svg>
-        </a>
+  const linkClass = (on: boolean) =>
+    `flex items-center justify-center p-4 font-medium tracking-[0.005em] transition-colors duration-200 ${
+      on ? 'text-accent' : 'text-white hover:text-accent'
+    }`
 
-        <div className="flex flex-1 items-center pl-5">
-          <span className="whitespace-nowrap text-[15px] font-medium tracking-tight text-ink-bright">
+  return (
+    <header className="fixed inset-x-0 top-0 z-50 overflow-hidden border-b border-[var(--bg-lines)] bg-ground/40 backdrop-blur-[16px]">
+      <div
+        id="nav-layout"
+        className="grid h-[var(--nav-h)] grid-cols-[auto_1fr_auto] items-center lg:grid-cols-[1fr_auto_1fr]"
+      >
+        <a href="#top" className="flex h-full items-center" aria-label={site.name}>
+          <span className="grid h-[var(--nav-h)] w-[var(--nav-h)] flex-none place-items-center border-r border-[var(--bg-lines)] px-3 text-mark lg:mr-6">
+            <Mark className="h-9 w-9" />
+          </span>
+          <span className="hidden whitespace-nowrap font-display text-[1.5rem] font-light leading-[1.3] text-white lg:block">
             {site.name}
           </span>
-        </div>
+        </a>
 
-        <nav className="hidden items-center gap-7 md:flex" aria-label="Sections">
+        <nav className="hidden items-center justify-center lg:flex" aria-label="Sections">
           {nav.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => goToSection(item.id)}
-              className={`text-[13.5px] transition-colors duration-150 ease-brand ${
-                active === item.id ? 'text-accent' : 'text-ink-soft hover:text-ink'
-              }`}
-            >
+            <button key={item.id} onClick={() => goToSection(item.id)} className={linkClass(active === item.id)}>
               {item.label}
             </button>
           ))}
-          <a
-            {...linkProps('/downloads')}
-            className={`text-[13.5px] transition-colors duration-150 ease-brand ${
-              route === '/downloads' ? 'text-accent' : 'text-ink-soft hover:text-ink'
-            }`}
-          >
+          <a {...linkProps('/downloads')} className={linkClass(route === '/downloads')}>
             Downloads
           </a>
         </nav>
 
-        <div className="flex flex-1 items-center justify-end gap-0 pr-0">
-          {/* Under md the centred link row does not fit. Rather than drop the
-              navigation entirely, it collapses into a bordered cell that
-              matches the logo cell and opens a sheet under the bar. */}
+        <div className="flex h-full items-center justify-end">
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label={open ? 'Close menu' : 'Open menu'}
-            className="grid h-[var(--nav-h)] w-[var(--nav-h)] place-items-center border-l border-line-subtle text-ink-soft transition-colors duration-150 ease-brand hover:text-ink md:hidden"
+            className="grid h-[var(--nav-h)] w-[var(--nav-h)] place-items-center text-white lg:hidden"
           >
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round">
-              {open ? (
-                <>
-                  <path d="M5 5l14 14" />
-                  <path d="M19 5L5 19" />
-                </>
-              ) : (
-                <>
-                  <path d="M3.5 8h17" />
-                  <path d="M3.5 16h17" />
-                </>
-              )}
-            </svg>
+            <span className="flex w-6 flex-col items-start gap-[5px]">
+              <span className={`h-0.5 bg-white transition-all duration-300 ${open ? 'w-6 translate-y-[7px] rotate-45' : 'w-6'}`} />
+              <span className={`h-0.5 bg-white transition-all duration-300 ${open ? 'w-0 opacity-0' : 'w-4'}`} />
+              <span className={`h-0.5 bg-white transition-all duration-300 ${open ? 'w-6 -translate-y-[7px] -rotate-45' : 'w-6'}`} />
+            </span>
           </button>
-          <a
-            {...linkProps('/downloads')}
-            className="relative z-10 flex h-[calc(var(--nav-h)+14px)] items-center gap-2 self-start bg-accent px-4 text-[13px] font-medium text-ground transition-colors duration-150 ease-brand hover:bg-accent-hover sm:px-7 sm:text-[13.5px]"
-          >
+          <a {...linkProps('/downloads')} className="btn btn-nav h-[var(--nav-h)]">
             <Icon name="download" className="h-4 w-4" />
-            {/* Under 360px the logo cell, wordmark, menu and a labelled CTA do
-                not all fit and the wordmark wraps to two lines. The icon alone
-                still reads in a corner CTA. */}
             <span className="hidden min-[360px]:inline">Download</span>
           </a>
         </div>
       </div>
 
       {open && (
-        <nav
-          className="border-b border-line-subtle bg-ground md:hidden"
-          aria-label="Sections"
-        >
+        <nav className="border-t border-[var(--bg-lines)] bg-ground py-6 lg:hidden" aria-label="Sections">
           {nav.map((item) => (
             <button
               key={item.id}
               onClick={() => goToSection(item.id)}
-              className={`block w-full border-b border-line-subtle px-5 py-3.5 text-left font-mono text-[12px] uppercase tracking-[0.14em] transition-colors duration-150 ease-brand last:border-b-0 ${
-                active === item.id ? 'text-accent' : 'text-ink-soft'
+              className={`block w-full px-6 py-4 text-left text-[1.5rem] font-medium ${
+                active === item.id ? 'text-accent' : 'text-white'
               }`}
             >
               {item.label}
@@ -202,8 +196,8 @@ export function Nav() {
           <a
             {...linkProps('/downloads')}
             onClickCapture={() => setOpen(false)}
-            className={`block w-full border-b border-line-subtle px-5 py-3.5 text-left font-mono text-[12px] uppercase tracking-[0.14em] transition-colors duration-150 ease-brand last:border-b-0 ${
-              route === '/downloads' ? 'text-accent' : 'text-ink-soft'
+            className={`block w-full px-6 py-4 text-left text-[1.5rem] font-medium ${
+              route === '/downloads' ? 'text-accent' : 'text-white'
             }`}
           >
             Downloads
@@ -216,12 +210,15 @@ export function Nav() {
 
 /* --------------------------------------------------------------- section ---*/
 
-/** Pill badge centred on a full-bleed hairline. */
+/** Pill badge centred between two hairlines that fade out towards the edges. */
 export function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative flex justify-center" data-reveal>
-      <span className="absolute inset-x-0 top-1/2 h-px bg-line" />
-      <span className="pill relative">{children}</span>
+    <div className="badge-wrap" data-badge>
+      <span className="badge-line is-left" data-badge-line />
+      <span className="pill" data-badge-pill>
+        {children}
+      </span>
+      <span className="badge-line is-right" data-badge-line />
     </div>
   )
 }
@@ -229,30 +226,34 @@ export function Badge({ children }: { children: React.ReactNode }) {
 export function SectionHead({
   badge,
   title,
+  sub,
   body,
   align = 'left',
+  wide = false,
 }: {
   badge: string
   title: string
+  sub?: string
   body?: string
   align?: 'left' | 'center'
+  /** Lets the heading run past the 64rem measure (the mission statement). */
+  wide?: boolean
 }) {
   const c = align === 'center'
   return (
     <>
       <Badge>{badge}</Badge>
-      <div
-        className={`mt-16 ${c ? 'mx-auto max-w-3xl text-center' : 'max-w-4xl'}`}
-        data-reveal-stagger
-      >
-        <h2 className="text-h2 text-ink-bright balance" data-reveal>
+      <div className={`intro ${c ? 'is-center' : ''}`}>
+        <h2 className={`h2 balance ${wide ? '' : 'max-xl'}`} data-reveal="words">
           {title}
         </h2>
+        {sub && (
+          <p className="intro-p is-sub max-lg" data-reveal>
+            {sub}
+          </p>
+        )}
         {body && (
-          <p
-            className={`mt-6 text-lead text-ink-soft pretty ${c ? '' : 'max-w-xl'}`}
-            data-reveal
-          >
+          <p className="intro-p max-md pretty" data-reveal>
             {body}
           </p>
         )}
@@ -266,16 +267,18 @@ export function SectionHead({
 export function EmailCapture({
   placeholder,
   action,
+  center = false,
 }: {
   placeholder: string
   action: string
+  center?: boolean
 }) {
   const [sent, setSent] = useState(false)
   const ref = useRef<HTMLInputElement>(null)
 
   return (
     <form
-      className="mx-auto flex w-full max-w-md overflow-hidden rounded-ctl border border-line-strong bg-surface"
+      className={`email-form ${center ? 'is-center' : ''}`}
       onSubmit={(e) => {
         e.preventDefault()
         if (!ref.current?.value) return
@@ -288,13 +291,10 @@ export function EmailCapture({
         required
         placeholder={placeholder}
         aria-label="Email address"
-        className="min-w-0 flex-1 bg-transparent px-3 py-3 text-[13px] outline-none sm:px-4 sm:text-[14px]"
+        className="input is-email"
       />
-      <button
-        type="submit"
-        className="shrink-0 bg-accent px-4 text-[13px] font-medium text-ground transition-colors duration-150 ease-brand hover:bg-accent-hover sm:px-5 sm:text-[14px]"
-      >
-        {sent ? 'Thanks' : action}
+      <button type="submit" className="btn btn-email">
+        <span>{sent ? 'Thanks' : action}</span>
       </button>
     </form>
   )
@@ -386,13 +386,7 @@ export function WorldDots({ className = '' }: { className?: string }) {
       className={className}
       aria-hidden="true"
     >
-      <path
-        d={WORLD_D}
-        stroke="currentColor"
-        strokeWidth={3.4}
-        strokeLinecap="round"
-        fill="none"
-      />
+      <path d={WORLD_D} stroke="currentColor" strokeWidth={3.4} strokeLinecap="round" fill="none" />
     </svg>
   )
 }

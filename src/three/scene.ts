@@ -1,245 +1,263 @@
 import * as THREE from 'three'
-import { buildLaptop, LID_CLOSED, LID_OPEN, screenSize, type Laptop } from './laptop'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 
-/**
- * The scroll-scrubbed laptop scene.
- *
- * `setProgress(0..1)` is the only input. It is called from a GSAP ScrollTrigger
- * with `scrub: 2`, so this function must be a pure mapping from progress to
- * transform — no easing, no state, no time. All the feel lives in the scrub.
- *
- * Phases, in progress space:
- *   0.00 – 0.16   the closed laptop rises into frame
- *   0.16 – 0.46   the lid opens on its hinge
- *   0.46 – 0.64   the camera dollies in until the screen fills the frame and
- *                 settles exactly head-on, so the DOM overlay can sit on it
- *   0.64 – 1.00   held. The overlay scenes cross-fade over this stretch.
- */
+gsap.registerPlugin(ScrollTrigger)
 
-// How much of the viewport height the open screen takes. The reference lands
-// near 0.62, which is what leaves the whole body visible beneath it — push this
-// past ~0.75 and the base crops off the bottom of the frame.
-const FILL = 0.88
-// The camera ends this far above the screen centre, with no pitch. Raising it
-// without pitching reveals the top of the body while leaving the lid exactly
-// parallel to the image plane — which is what keeps the DOM overlay a plain
-// rectangle instead of a trapezoid.
-const EYE_LIFT = 1.6
-const HOLD_START = 0.64
+export interface LaptopSceneConfig {
+  canvas: HTMLCanvasElement
+  overlay: HTMLElement
+  scrollWrap: HTMLElement
+  onReady?: () => void
+}
 
-export interface LaptopScene {
-  setProgress(p: number): void
-  /** Screen rectangle in CSS pixels, relative to the canvas. */
-  screenRect(): { x: number; y: number; w: number; h: number }
+export interface LaptopSceneInstance {
   resize(): void
   render(): void
   dispose(): void
+  timeline: gsap.core.Timeline | null
 }
 
-/** A neutral vertical-gradient environment. Achromatic on purpose — the token
- *  sheet forbids tinted surfaces, and a metal without an environment reads black. */
-function neutralEnv(renderer: THREE.WebGLRenderer): THREE.Texture {
-  const w = 4
-  const h = 128
-  const data = new Uint8Array(w * h * 4)
-  for (let y = 0; y < h; y++) {
-    const t = y / (h - 1)
-    // Bright above, dark below, with a soft horizon — a room, flattened.
-    const v = Math.round(255 * (0.06 + 0.72 * Math.pow(1 - t, 1.6)))
-    for (let x = 0; x < w; x++) {
-      const i = (y * w + x) * 4
-      data[i] = v
-      data[i + 1] = v
-      data[i + 2] = v
-      data[i + 3] = 255
-    }
-  }
-  const tex = new THREE.DataTexture(data, w, h)
-  tex.mapping = THREE.EquirectangularReflectionMapping
-  tex.colorSpace = THREE.SRGBColorSpace
-  tex.needsUpdate = true
+/**
+ * Authentic Reventador Global Three.js Laptop Animation & Screen Projection.
+ *
+ * Choreography:
+ *   - Camera: PerspectiveCamera(45, aspect, 0.01, 1000)
+ *   - Model: 14" MacBook Pro GLB with authentic PBR materials
+ *   - Lid Opening: screenGroup.rotation.z from 0.5*PI (closed) to 0.08*PI (open)
+ *   - Scene rotation & lift: s.position.y from -2, s.rotation.z from 0.6*PI
+ *   - Camera dolly: e.position from {y: 0.2, z: 3} to {y: 0.75, z: 2}
+ *   - Screen Projection: maps 3D corners (-1.103, 0.59) and (0.782, -0.5505) to DOM overlay
+ */
+export function createLaptopScene(config: LaptopSceneConfig): LaptopSceneInstance {
+  const scene = new THREE.Scene()
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000)
+  camera.position.set(0, 0, 0)
 
-  const pmrem = new THREE.PMREMGenerator(renderer)
-  const env = pmrem.fromEquirectangular(tex).texture
-  pmrem.dispose()
-  tex.dispose()
-  return env
-}
-
-export function createLaptopScene(canvas: HTMLCanvasElement): LaptopScene {
   const renderer = new THREE.WebGLRenderer({
-    canvas,
+    canvas: config.canvas,
     antialias: true,
     alpha: true,
     powerPreference: 'high-performance',
   })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.toneMapping = THREE.ACESFilmicToneMapping
-  renderer.toneMappingExposure = 1.05
+  renderer.setSize(window.innerWidth, window.innerHeight)
   renderer.outputColorSpace = THREE.SRGBColorSpace
 
-  const scene = new THREE.Scene()
-  scene.environment = neutralEnv(renderer)
+  const ambient = new THREE.AmbientLight(0xffffff, 0.55)
+  scene.add(ambient)
 
-  const camera = new THREE.PerspectiveCamera(32, 1, 0.5, 400)
+  const pointLight = new THREE.PointLight(0xffffff, 11, 40)
+  pointLight.position.set(0, 2.2, 2.2)
+  scene.add(pointLight)
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.35))
-  const key = new THREE.DirectionalLight(0xffffff, 1.9)
-  key.position.set(16, 34, 28)
-  scene.add(key)
-  const fill = new THREE.DirectionalLight(0xffffff, 0.55)
-  fill.position.set(-26, 10, 20)
-  scene.add(fill)
-  const rim = new THREE.DirectionalLight(0xffffff, 0.9)
-  rim.position.set(0, 14, -30)
-  scene.add(rim)
+  const rimLight = new THREE.DirectionalLight(0xffffff, 0.3)
+  rimLight.position.set(0, 3, -4)
+  scene.add(rimLight)
 
-  const laptop: Laptop = buildLaptop()
-  scene.add(laptop.group)
+  const screenGroup = new THREE.Group()
+  scene.add(screenGroup)
 
-  // Distance at which the open screen fills FILL of the viewport height, also
-  // respecting width on narrow viewports. Recomputed on resize.
-  let dollyEnd = 60
-  let dollyStart = 96
-  const screenCentre = new THREE.Vector3()
+  let contentMesh: THREE.Mesh | null = null
+  let timeline: gsap.core.Timeline | null = null
+  let isDisposed = false
 
-  function measure() {
-    const w = canvas.clientWidth
-    const h = canvas.clientHeight
-    camera.aspect = w / h
-    const vFov = (camera.fov * Math.PI) / 180
-    const neededH = screenSize.h / FILL
-    let d = neededH / 2 / Math.tan(vFov / 2)
-    // If the screen would overflow horizontally, back off until it fits.
-    const visibleW = 2 * d * Math.tan(vFov / 2) * camera.aspect
-    if (screenSize.w / visibleW > 0.94) {
-      d *= screenSize.w / (visibleW * 0.94)
-    }
-    dollyEnd = d
-    dollyStart = d * 1.85
-    camera.updateProjectionMatrix()
-    calibrate()
-  }
+  const manager = new THREE.LoadingManager()
+  const texLoader = new THREE.TextureLoader(manager)
 
-  /**
-   * The closed form above solves for a screen sitting at the origin, but the
-   * lid stands at the *back* of the laptop, so the real screen is always a
-   * little further away and lands short of FILL. Rather than fudge a constant,
-   * pose the end state and iterate the distance against what actually projects.
-   * Converges in three or four passes; six is free insurance.
-   */
-  function calibrate() {
-    const w = canvas.clientWidth
-    const h = canvas.clientHeight
-    if (!w || !h) return
-    for (let i = 0; i < 6; i++) {
-      setProgress(1)
-      const r = screenRect()
-      // Height is the target; width is a ceiling so the bezel never runs off.
-      const f = Math.max(r.h / h / FILL, r.w / w / 0.94)
-      if (Math.abs(f - 1) < 0.002) break
-      dollyEnd *= f
-    }
-    dollyStart = dollyEnd * 1.85
-  }
+  const kbTex = texLoader.load('/models/keyboard.webp')
+  kbTex.flipY = false
 
-  function resize() {
-    const w = canvas.clientWidth
-    const h = canvas.clientHeight
-    if (!w || !h) return
-    renderer.setSize(w, h, false)
-    measure()
-  }
+  const bodyTex = texLoader.load('/models/macbook_BaseColor.webp')
+  bodyTex.flipY = false
 
-  const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
-  const seg = (p: number, a: number, b: number) => clamp01((p - a) / (b - a))
-  const lerp = (a: number, b: number, t: number) => a + (b - a) * t
-  // Only used for the two purely presentational eases (rise, dolly). The scrub
-  // supplies the real easing; these just keep the ends from snapping.
-  const smooth = (t: number) => t * t * (3 - 2 * t)
+  const bodyMat = new THREE.MeshStandardMaterial({
+    map: bodyTex,
+    metalness: 0.8,
+    roughness: 0.5,
+    color: 0xcccccc,
+  })
 
-  function setProgress(p: number) {
-    const rise = smooth(seg(p, 0, 0.16))
-    const open = seg(p, 0.16, 0.46)
-    const dolly = smooth(seg(p, 0.46, HOLD_START))
+  const kbMat = new THREE.MeshStandardMaterial({
+    map: kbTex,
+    metalness: 0.8,
+    roughness: 0.9,
+  })
 
-    // Rise: comes up from below, tipped back so the closed lid faces us.
-    laptop.group.position.y = lerp(-49, 0, rise)
-    laptop.group.position.z = lerp(-6, 0, rise)
+  const contentMat = new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 0,
+    depthWrite: false,
+  })
 
-    // The lid unfolds, and the body levels out as it does.
-    laptop.lid.rotation.x = lerp(LID_CLOSED, LID_OPEN, easeOpen(open))
-
-    // Approach. By the end the lid is exactly vertical and parallel to the
-    // image plane, which is what lets the DOM overlay be a plain rectangle.
-    laptop.group.rotation.x = lerp(lerp(0.5, 0.12, rise), 0, dolly)
-    laptop.lid.rotation.x = lerp(laptop.lid.rotation.x, 0, dolly)
-
-    camera.position.z = lerp(dollyStart, dollyEnd, dolly)
-
-    // Track the screen's centre so the dolly ends framed on it, not on the body.
-    laptop.group.updateMatrixWorld(true)
-    laptop.screen.getWorldPosition(screenCentre)
-    const eyeY = lerp(lerp(2, 6, rise), screenCentre.y + EYE_LIFT, dolly)
-    camera.position.x = 0
-    camera.position.y = eyeY
-    camera.lookAt(0, eyeY, 0) // straight ahead: no pitch, no keystone
-    camera.updateMatrixWorld(true)
-  }
-
-  /** A hinge does not open linearly. Slow to break, quick through the middle,
-   *  slow to settle — this is the difference between "3D model" and "laptop". */
-  function easeOpen(t: number) {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
-  }
-
-  const corner = new THREE.Vector3()
-  function screenRect() {
-    const w = canvas.clientWidth
-    const h = canvas.clientHeight
-    let minX = Infinity
-    let minY = Infinity
-    let maxX = -Infinity
-    let maxY = -Infinity
-    const hw = screenSize.w / 2
-    const hh = screenSize.h / 2
-    for (const [sx, sy] of [
-      [-hw, -hh],
-      [hw, -hh],
-      [hw, hh],
-      [-hw, hh],
-    ] as const) {
-      corner.set(sx, sy, 0)
-      laptop.screen.localToWorld(corner)
-      corner.project(camera)
-      const px = ((corner.x + 1) / 2) * w
-      const py = ((1 - corner.y) / 2) * h
-      if (px < minX) minX = px
-      if (px > maxX) maxX = px
-      if (py < minY) minY = py
-      if (py > maxY) maxY = py
-    }
-    return { x: minX, y: minY, w: maxX - minX, h: maxY - minY }
+  function projectScreen() {
+    if (!contentMesh || isDisposed) return
+    const l = contentMesh.position.clone()
+    l.z += scene.position.z
+    const c = l.clone()
+    const h = l.clone()
+    c.x -= 1.103
+    c.y += 0.59
+    h.x += 0.782
+    h.y -= 0.5505
+    c.project(camera)
+    h.project(camera)
+    const left = (c.x + 1) * 0.5 * window.innerWidth
+    const top = (1 - c.y) * 0.5 * window.innerHeight
+    const width = (h.x + 1) * 0.5 * window.innerWidth - left
+    const height = (1 - h.y) * 0.5 * window.innerHeight - top
+    config.overlay.style.top = `${top}px`
+    config.overlay.style.left = `${left}px`
+    config.overlay.style.width = `${width}px`
+    config.overlay.style.height = `${height}px`
   }
 
   function render() {
+    if (isDisposed) return
     renderer.render(scene, camera)
   }
 
+  function resize() {
+    if (isDisposed) return
+    const w = window.innerWidth
+    const h = window.innerHeight
+    camera.aspect = w / h
+    camera.updateProjectionMatrix()
+    renderer.setSize(w, h)
+    if (camera.aspect > 1.1) {
+      scene.position.z = 0
+    } else {
+      scene.position.z = -4 * (1 - camera.aspect / 1.1)
+    }
+    render()
+    projectScreen()
+  }
+
+  const gltfLoader = new GLTFLoader(manager)
+  gltfLoader.load(
+    '/models/macbook.glb',
+    (gltf) => {
+      if (isDisposed) return
+      const children = [...gltf.scene.children]
+      children.forEach((m) => {
+        if (m.name === 'keyboard' && m instanceof THREE.Mesh) {
+          m.material = kbMat
+          m.castShadow = true
+          m.receiveShadow = true
+          scene.add(m)
+        } else if ((m.name === 'Cube.002' || m.name === 'Cube002') && m instanceof THREE.Mesh) {
+          m.material = bodyMat
+          m.castShadow = true
+          m.receiveShadow = true
+          scene.add(m)
+        } else if (m.name === 'screen' && m instanceof THREE.Mesh) {
+          m.material = bodyMat
+          m.castShadow = true
+          screenGroup.add(m)
+        } else if (m.name === 'content' && m instanceof THREE.Mesh) {
+          m.material = contentMat
+          screenGroup.add(m)
+          contentMesh = m
+        }
+      })
+
+      scene.rotation.y = 0.5 * Math.PI
+
+      // Set initial state
+      gsap.set(config.scrollWrap, { autoAlpha: 1 })
+      gsap.set('[data-intro="wrap"]', { rotateX: 0, opacity: 0 })
+      gsap.set('[data-intro="image-wrap-2"]', { yPercent: 5, opacity: 0, z: -5 })
+      gsap.set('[data-intro="image-wrap-3"]', { yPercent: 5, opacity: 0, z: -5 })
+      gsap.set('[data-intro="image-wrap-4"]', { yPercent: 5, opacity: 0, z: -5 })
+      gsap.set('[data-intro*="text-wrap"]', { opacity: 0 })
+      gsap.set('[data-intro*="img-float"]', { xPercent: 0, yPercent: 0 })
+
+      timeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: config.scrollWrap,
+          start: 'top top',
+          end: 'bottom 150%',
+          scrub: 2,
+        },
+        onUpdate: () => {
+          render()
+          projectScreen()
+        },
+      })
+
+      // Laptop arrival & choreography
+      timeline.from(scene.position, { duration: 0.9, y: -2 }, 0)
+      timeline.from(scene.rotation, { duration: 1, z: 0.6 * Math.PI }, 0.8)
+      timeline.fromTo(camera.position, { y: 0.2, z: 3 }, { duration: 2, y: 0.75, z: 2 }, 0.8)
+      timeline.fromTo(screenGroup.rotation, { z: 0.5 * Math.PI }, { duration: 1, z: 0.08 * Math.PI, ease: 'power1.inOut' }, 1)
+
+      // Screen overlay fade in
+      timeline.to('[data-intro="wrap"]', { duration: 0.2, opacity: 1 }, 1.9)
+
+      // Scene 1: Autonomous Code Studio
+      timeline.to('[data-intro="overlay-1"]', { opacity: 1, duration: 0.5 })
+      timeline.to('[data-intro="text-wrap-1"]', { opacity: 1, duration: 1 }, '<')
+      timeline.to('[data-intro="img-float-1"]', { yPercent: -5, z: 10, duration: 1 }, '<')
+
+      // Scene 2: Video Editor & Creative Suite
+      timeline.to('[data-intro="image-wrap-2"]', { yPercent: 0, opacity: 1, z: 0, duration: 1, delay: 1.5 })
+      timeline.to('[data-intro="image-wrap-1"]', { opacity: 0, duration: 0.5 }, '<')
+      timeline.to('[data-intro="overlay-2"]', { opacity: 1, duration: 0.5 })
+      timeline.to('[data-intro="text-wrap-2"]', { opacity: 1, duration: 1 }, '<')
+      timeline.to('[data-intro="img-float-2"]', { yPercent: -20, z: 50, duration: 1 }, '<')
+
+      // Scene 3: Multi-Model Router & Cost Optimisation
+      timeline.to('[data-intro="image-wrap-3"]', { yPercent: 0, opacity: 1, z: 0, duration: 1, delay: 1.5 })
+      timeline.to('[data-intro="image-wrap-2"]', { opacity: 0, duration: 0.5 }, '<')
+      timeline.to('[data-intro="overlay-3"]', { opacity: 1, duration: 0.5 })
+      timeline.to('[data-intro="text-wrap-3"]', { opacity: 1, duration: 1 }, '<')
+      timeline.to('[data-intro="img-float-3"]', { yPercent: -30, xPercent: -10, z: 250, duration: 1 }, '<')
+
+      // Scene 4: 5 Verification Runtimes
+      timeline.to('[data-intro="image-wrap-4"]', { yPercent: 0, opacity: 1, z: 0, duration: 1, delay: 1.5 })
+      timeline.to('[data-intro="image-wrap-3"]', { opacity: 0, duration: 0.5 }, '<')
+      timeline.to('[data-intro="overlay-4"]', { opacity: 1, duration: 0.5 })
+      timeline.to('[data-intro="text-wrap-4"]', { opacity: 1, duration: 1 }, '<')
+      timeline.to('[data-intro="img-float-4"]', { yPercent: -30, xPercent: 10, z: 250, duration: 1 }, '<')
+
+      resize()
+      ScrollTrigger.refresh()
+      config.onReady?.()
+    },
+    undefined,
+    (err) => {
+      console.error('Failed to load authentic /models/macbook.glb', err)
+    }
+  )
+
   resize()
-  setProgress(0)
 
   return {
-    setProgress,
-    screenRect,
     resize,
     render,
+    get timeline() {
+      return timeline
+    },
     dispose() {
-      laptop.dispose()
-      scene.environment?.dispose()
+      isDisposed = true
+      timeline?.kill()
+      ScrollTrigger.getAll().forEach((st) => {
+        if (st.vars.trigger === config.scrollWrap) st.kill()
+      })
+      scene.traverse((o) => {
+        if (o instanceof THREE.Mesh) {
+          o.geometry?.dispose()
+          if (Array.isArray(o.material)) {
+            o.material.forEach((m) => m.dispose())
+          } else {
+            o.material?.dispose()
+          }
+        }
+      })
+      kbTex.dispose()
+      bodyTex.dispose()
       renderer.dispose()
     },
   }
 }
-
-export { HOLD_START }

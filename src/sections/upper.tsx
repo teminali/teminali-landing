@@ -1,254 +1,289 @@
-import { Badge, SectionHead, Icon, EmailCapture } from '@/components/ui'
-import { StudioMock } from '@/components/StudioMock'
+import { Fragment, useRef, useState } from 'react'
+import gsap from 'gsap'
+import { Badge, SectionHead, Icon, EmailCapture, Mark } from '@/components/ui'
+import { StudioMock, type ShotName } from '@/components/StudioMock'
 import { linkProps } from '@/lib/route'
+import { scrollToSection } from '@/lib/motion'
 import { platform, studio, demoCta, process as flow, site } from '@/content/site'
 
-/* --------------------------------------------------------------- platform ---
-   Three alternating rows. The figure always bleeds off one edge — that break
-   out of the gutter is what stops the page reading as a stack of boxes. */
+type Shot = ShotName
 
-const FIGURES = { studio: 'run', gateway: 'route', verify: 'verify' } as const
+/** In-page anchors scroll through Lenis; everything else is a real link. */
+function ctaProps(href: string) {
+  if (href.startsWith('#')) {
+    return {
+      href,
+      onClick(e: React.MouseEvent<HTMLAnchorElement>) {
+        e.preventDefault()
+        scrollToSection(href.slice(1))
+      },
+    }
+  }
+  if (href.startsWith('http')) return { href, target: '_blank', rel: 'noreferrer' }
+  return linkProps(href)
+}
+
+/* --------------------------------------------------------------- platform ---
+   Four alternating split rows on the reference's medium container: text at
+   1fr, a 49% figure column whose 50vw shot bleeds off the outer edge. */
 
 export function Platform() {
   return (
-    <section id="platform" className="section-lg relative">
+    <section id="platform" className="relative rule-clip">
       <div className="shell">
+        <div className="pad-lg" />
         <SectionHead badge={platform.badge} title={platform.title} body={platform.body} />
+        <div className="pad-md" />
       </div>
 
-      <div className="mt-24 flex flex-col gap-28 md:gap-40">
+      <div className="shell is-medium">
         {platform.rows.map((row, i) => {
-          const right = i % 2 === 0
+          const rev = i % 2 === 1
           return (
-            <div key={row.kicker} className="shell">
-              <div
-                className={`grid items-center gap-14 lg:grid-cols-2 lg:gap-20 ${
-                  right ? '' : 'lg:[&>*:first-child]:order-2'
-                }`}
-              >
-                <div data-reveal-stagger>
-                  <p className="kicker" data-reveal>
-                    {row.kicker}
-                  </p>
-                  <h3 className="mt-5 text-h3 text-ink-bright balance" data-reveal>
-                    {row.title}
-                  </h3>
-                  <p className="mt-5 max-w-md text-body text-ink-soft pretty" data-reveal>
-                    {row.body}
-                  </p>
+            <Fragment key={row.tagline}>
+              {i > 0 && <div className="pad-lg" />}
+              <div className={`split ${rev ? 'is-rev' : ''}`}>
+                <div className="split-text" data-reveal-stagger>
+                  <div className="split-head">
+                    <p className="tagline" data-reveal>
+                      {row.tagline}
+                    </p>
+                    <h3 className="h4 balance" data-reveal>
+                      {row.title}
+                    </h3>
+                    <p className="ink-70 pretty" data-reveal>
+                      {row.body}
+                    </p>
+                  </div>
 
-                  <ul className="mt-10 max-w-md">
-                    {row.points.map((p, j) => (
-                      <li
-                        key={p}
-                        className={`flex gap-4 py-5 ${j ? 'border-t border-line' : ''}`}
-                        data-reveal
-                      >
-                        <span className="plate">
-                          <Icon name={['shield', 'route', 'check'][j]} />
-                        </span>
-                        <span className="text-body text-ink-body pretty">{p}</span>
-                      </li>
+                  <div className="split-list">
+                    {row.points.map((pt, j) => (
+                      <Fragment key={pt.text}>
+                        {j > 0 && <div className="split-line" data-line />}
+                        <div className="split-item" data-reveal>
+                          <span className="split-icon">
+                            <Icon name={pt.icon} className="h-6 w-6" />
+                          </span>
+                          <p className="pretty">{pt.text}</p>
+                        </div>
+                      </Fragment>
                     ))}
-                  </ul>
+                  </div>
 
-                  <a
-                    className="btn btn-ghost mt-8"
-                    data-reveal
-                    {...(row.cta.href.startsWith('http')
-                      ? { href: row.cta.href, target: '_blank', rel: 'noreferrer' }
-                      : linkProps(row.cta.href))}
-                  >
-                    {row.cta.label}
-                    <Icon name="arrow" className="h-4 w-4" />
-                  </a>
+                  <div data-reveal>
+                    <a className="btn" data-magnetic {...ctaProps(row.cta.href)}>
+                      <span>{row.cta.label}</span>
+                    </a>
+                  </div>
                 </div>
 
-                <Figure variant={FIGURES[row.figure as keyof typeof FIGURES]} side={right ? 'right' : 'left'} />
+                <div className={`split-figure ${rev ? 'is-rev' : ''}`}>
+                  <Figure variant={row.figure as Shot} rev={rev} />
+                </div>
               </div>
-            </div>
+            </Fragment>
           )
         })}
+        <div className="pad-lg" />
       </div>
     </section>
   )
 }
 
-function Figure({
-  variant,
-  side,
-}: {
-  variant: 'run' | 'route' | 'verify'
-  side: 'left' | 'right'
-}) {
+function Figure({ variant, rev }: { variant: Shot; rev: boolean }) {
   return (
-    <div
-      className={`relative ${
-        side === 'right'
-          ? 'lg:mr-[calc(var(--gutter)*-1-6rem)]'
-          : 'lg:ml-[calc(var(--gutter)*-1-6rem)]'
-      }`}
-      data-reveal
-    >
-      <div className="dotfield absolute -inset-6 -z-10 opacity-40" aria-hidden="true" />
-      {/* Every mock sizes itself in `em` against `1em = 1% of the frame width`.
-          Stepped `text-[Npx]` values only held that at the width they were
-          picked for — at 768 this frame ran 31% under. A container query solves
-          it once, at every width. */}
-      <div className="[container-type:inline-size]">
-        <div
-          className={`aspect-[16/10] overflow-hidden border border-line-strong bg-ground text-[1cqw] ${
-            side === 'right' ? 'rounded-l-card' : 'rounded-r-card'
-          }`}
-        >
+    <div className="relative" data-parallax="0.05">
+      <div className={`split-shot-bg dotfield ${rev ? 'is-rev' : ''}`} aria-hidden="true" />
+      <div className="split-shot [container-type:inline-size]" data-reveal="scale">
+        <div className="aspect-[16/10] text-[1cqw]">
           <StudioMock variant={variant} />
         </div>
+        <div className="img-overlay is-vert" aria-hidden="true" />
       </div>
     </div>
   )
 }
 
 /* ------------------------------------------------------------------- hub ---
-   The reference's radial module hub: filled concentric rings at the centre with
-   icon tiles orbiting it. Ours is achromatic — the rings are borders, not fills. */
+   The radial module wheel: ten icon tiles on a 3rem grid around a concentric
+   centre, tilting with the pointer; a click swings the wheel aside and slides
+   in the module's card from the near edge. */
+
+type Module = (typeof studio.modules)[number]
 
 export function Studio() {
-  const n = studio.modules.length
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const [activeCard, setActiveCard] = useState<string | null>(null)
+  const [hubState, setHubState] = useState<'normal' | 'left' | 'right'>('normal')
+
+  const left = studio.modules.filter((m) => m.group === 'left')
+  const right = studio.modules.filter((m) => m.group === 'right')
+
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (hubState !== 'normal' || !wrapRef.current) return
+    const r = wrapRef.current.getBoundingClientRect()
+    const rotX = -((((e.clientY - r.top) / r.height) * 100 - 50) / (50 / 15))
+    const rotY = (((e.clientX - r.left) / r.width) * 100 - 50) / (50 / 15)
+    gsap.to(wrapRef.current, { rotationX: rotX, rotationY: rotY, duration: 0.5, ease: 'power1.out' })
+  }
+  const onLeave = () => {
+    if (hubState !== 'normal' || !wrapRef.current) return
+    gsap.to(wrapRef.current, { rotationX: 0, rotationY: 0, duration: 0.5, ease: 'power1.out' })
+  }
+  const openCard = (m: Module) => {
+    if (!wrapRef.current) return
+    setHubState(m.group as 'left' | 'right')
+    setActiveCard(m.id)
+    const rotY = m.group === 'left' ? -30 : 30
+    const x = m.group === 'left' ? '14vw' : '-14vw'
+    gsap.to(wrapRef.current, { rotationX: 10, rotationY: rotY, x, duration: 1, ease: 'power3.out' })
+  }
+  const close = () => {
+    if (!wrapRef.current) return
+    setHubState('normal')
+    setActiveCard(null)
+    gsap.to(wrapRef.current, { rotationX: 0, rotationY: 0, x: 0, duration: 1, ease: 'power3.out' })
+  }
+
+  const card = (m: Module) => (
+    <div key={m.id} id={m.id} className={`software_card ${activeCard === m.id ? 'is-active' : ''}`}>
+      <div className="software_card-icon-wrap">
+        <span className="software_card-icon">
+          <Icon name={m.icon} className="h-6 w-6" />
+        </span>
+      </div>
+      <div className="software_card-text">
+        <h4 className="h4">{m.title}</h4>
+        <h5 className="h6 ink-70">{m.sub}</h5>
+        <p className="ink-70 pretty">{m.desc}</p>
+        <ul className="mt-2 flex flex-col gap-2">
+          {m.points.map((pt) => (
+            <li key={pt} className="flex items-start gap-3 text-small ink-70">
+              <span className="mt-[0.55rem] h-1.5 w-1.5 flex-none rounded-full bg-accent" />
+              <span>{pt}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="software_card-btn-wrap">
+        <a className="btn" {...linkProps('/downloads')}>
+          <Icon name="download" className="h-4 w-4" />
+          <span>Download</span>
+        </a>
+      </div>
+      <button type="button" className="software_card-close" onClick={close} aria-label="Close">
+        <Icon name="cross" className="h-5 w-5" />
+      </button>
+    </div>
+  )
+
   return (
-    <section id="studio" className="section-lg relative">
+    <section id="studio" className="relative overflow-hidden">
+      <div className="pad-lg" />
       <div className="shell">
         <SectionHead badge={studio.badge} title={studio.title} body={studio.body} />
-
-        <div className="relative mx-auto mt-24 hidden aspect-square w-full max-w-[620px] md:block">
-          {[1, 0.74, 0.48, 0.26].map((s, i) => (
-            <span
-              key={s}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-line"
-              style={{
-                width: `${s * 100}%`,
-                height: `${s * 100}%`,
-                background: i === 3 ? 'var(--surface-raised)' : 'transparent',
-              }}
-            />
-          ))}
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center font-mono text-[12px] uppercase tracking-[0.18em] text-ink-muted">
-            Studio
-          </span>
-
-          {studio.modules.map((m, i) => {
-            const a = (i / n) * Math.PI * 2 - Math.PI / 2
-            return (
-              <div
-                key={m.label}
-                className="absolute flex w-28 -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2"
-                style={{
-                  left: `${50 + Math.cos(a) * 43}%`,
-                  top: `${50 + Math.sin(a) * 43}%`,
-                }}
-                data-reveal
-              >
-                <span className="grid h-14 w-14 place-items-center rounded-card border border-line-strong bg-surface text-ink-dim transition-colors duration-200 ease-brand hover:border-line-popover hover:text-accent">
-                  <Icon name={m.icon} className="h-5 w-5" />
-                </span>
-                <span className="text-center text-micro text-ink-soft">{m.label}</span>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Under the hub breakpoint the ring becomes a plain grid — but the
-            concentric rings stay behind it, so the section still reads as the
-            radial hub spec row 4 asks for rather than a generic tile grid. */}
-        <div className="mt-16 md:hidden">
-          {/* Rings behind the tiles only showed through the gaps and read as
-              stray hairlines, so the motif sits above the grid instead: the
-              same concentric core the desktop ring is built around. */}
-          <div className="relative mx-auto aspect-square w-[186px]" data-reveal aria-hidden="true">
-            {[1, 0.74, 0.48, 0.26].map((s, i) => (
-              <span
-                key={s}
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-line"
-                style={{
-                  width: `${s * 100}%`,
-                  height: `${s * 100}%`,
-                  background: i === 3 ? 'var(--surface-raised)' : 'transparent',
-                }}
-              />
-            ))}
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-muted">
-              Studio
-            </span>
-          </div>
-          <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4" data-reveal-stagger>
-            {studio.modules.map((m) => (
-              <div key={m.label} className="card flex flex-col items-center gap-3 p-5" data-reveal>
-                <span className="plate">
-                  <Icon name={m.icon} />
-                </span>
-                <span className="text-center text-micro text-ink-soft">{m.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
-    </section>
-  )
-}
+      <div className="pad-md" />
 
-/* ---------------------------------------------------------------- demo CTA ---*/
+      <div className="software_component hide-tablet" data-reveal="scale">
+        <div className="software_card-wrap is-first">{left.map(card)}</div>
 
-export function DemoCta() {
-  return (
-    <section id="demo" className="shell pb-[8.5rem]">
-      <div className="card relative overflow-hidden px-8 py-20 md:px-16" data-reveal>
-        {/* Tilted screenshot collage, exactly the reference's device. */}
-        {/* Achromatic mocks on an achromatic card would vanish, so the collage
-            is brightened and then knocked back with opacity: the panel edges
-            and the type survive, the near-black fills do not. */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.5] [filter:brightness(2.6)_contrast(1.05)]"
-          aria-hidden="true"
-        >
-          {[
-            {
-              v: 'route',
-              pos: '-right-[14%] top-[1%] w-[62%] md:-right-[6%] md:-top-[26%] md:w-[56%]',
-            },
-            {
-              v: 'verify',
-              pos: '-left-[12%] bottom-[1%] w-[60%] md:-bottom-[34%] md:-left-[3%] md:w-[50%]',
-            },
-            {
-              v: 'run',
-              pos: 'left-[24%] -top-[13%] w-[54%] md:left-[27%] md:-top-[46%] md:w-[46%]',
-            },
-          ].map(({ v, pos }) => (
-            <div
-              key={v}
-              className={`absolute ${pos} rotate-[-15deg] overflow-hidden rounded-card border border-line-strong text-[3px] md:text-[4px]`}
-            >
-              <div className="aspect-[16/10]">
-                <StudioMock variant={v as 'run' | 'route' | 'verify'} />
+        <div ref={wrapRef} className="software_wrap" onMouseMove={onMove} onMouseLeave={onLeave}>
+          {studio.modules.map((m) => (
+            <div key={m.id} data-card={m.id} className="software_item" onClick={() => openCard(m)}>
+              <div className="software_icon-wrap">
+                <div className="software_icon">
+                  <Icon name={m.icon} className="h-7 w-7" />
+                </div>
+              </div>
+              <div>{m.label}</div>
+            </div>
+          ))}
+
+          <div className="software_smart0-wrap div-square" data-parallax="-0.04">
+            <div className="software_smart0-outer">
+              <div className="software_blur" />
+              <div className="software_smart0-middle">
+                <div className="software_smart0-inner">
+                  <Mark className="h-24 w-24" />
+                  <span className="mt-2 font-mono text-[12px] font-medium uppercase tracking-[0.24em]">Studio</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="software_card-wrap is-second">{right.map(card)}</div>
+      </div>
+
+      {/* Tablet and phone: the same modules as a plain list of cards. */}
+      <div className="shell lg:hidden">
+        <div className="grid gap-4 sm:grid-cols-2" data-reveal-stagger>
+          {studio.modules.map((m) => (
+            <div key={m.id} className="mission-card" data-reveal>
+              <span className="mission-icon">
+                <Icon name={m.icon} className="h-6 w-6" />
+              </span>
+              <div className="mission-text">
+                <h4 className="h5">{m.title}</h4>
+                <p className="ink-70">{m.desc}</p>
               </div>
             </div>
           ))}
         </div>
-        <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_78%_54%_at_50%_50%,rgba(21,21,21,0.94)_0%,rgba(21,21,21,0.5)_72%,rgba(21,21,21,0)_100%)] md:bg-[radial-gradient(ellipse_52%_88%_at_50%_50%,rgba(21,21,21,0.94)_0%,rgba(21,21,21,0.45)_70%,rgba(21,21,21,0)_100%)]"
-          aria-hidden="true"
-        />
+      </div>
+      <div className="pad-md" />
+    </section>
+  )
+}
 
-        <div className="relative mx-auto max-w-xl text-center">
-          <h2 className="text-h2 text-ink-bright balance">{demoCta.title}</h2>
-          <p className="mx-auto mt-5 max-w-md text-body text-ink-soft pretty">{demoCta.body}</p>
-          <div className="mt-9">
+/* ---------------------------------------------------------------- demo CTA ---
+   The reference's tour card: a bordered panel, copy on the left, a collage of
+   product screens rotated 24° bleeding off the right edge behind a veil. */
+
+export function DemoCta() {
+  const cols: Shot[][] = [
+    ['record', 'export'],
+    ['editor', 'home'],
+  ]
+  return (
+    <section id="demo" className="shell">
+      <div className="tour" data-reveal="scale">
+        <div className="tour-text" data-reveal-stagger>
+          <h2 className="h2 balance" data-reveal="words">
+            {demoCta.title}
+          </h2>
+          <div className="spacer-sm" />
+          <p className="max-md ink-70 pretty" data-reveal>
+            {demoCta.body}
+          </p>
+          <div className="spacer-lg" />
+          <div data-reveal>
             <EmailCapture placeholder={demoCta.placeholder} action={demoCta.action} />
           </div>
-          <p className="mt-4 font-mono text-[11px] text-ink-ghost">
-            {site.version} · macOS · runs offline
+          <p className="mt-4 font-mono text-[11px] text-ink-ghost" data-reveal>
+            {site.version} · macOS, Windows, Linux · runs offline
           </p>
         </div>
+
+        <div className="tour-bg" aria-hidden="true">
+          <div className="tour-bg-overlay" />
+          <div className="tour-collage" data-parallax="-0.08">
+            {cols.map((col, i) => (
+              <div key={i} className={`tour-col is-${i + 1}`}>
+                {col.map((v) => (
+                  <div key={v} className="tour-shot [container-type:inline-size]">
+                    <div className="h-full w-full text-[1cqw]">
+                      <StudioMock variant={v} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+      <div className="pad-lg" />
     </section>
   )
 }
@@ -257,40 +292,36 @@ export function DemoCta() {
 
 export function Process() {
   return (
-    <section id="process" className="section-lg relative">
+    <section id="process" className="relative">
       <div className="shell">
-        <Badge>{flow.badge}</Badge>
-        <div className="mx-auto mt-16 max-w-2xl text-center" data-reveal-stagger>
-          <h2 className="text-h2 text-ink-bright balance" data-reveal>
-            {flow.title}
-          </h2>
-          <p className="mt-5 text-lead text-ink-soft pretty" data-reveal>
-            {flow.body}
-          </p>
-        </div>
+        <div className="pad-lg" />
+        <SectionHead badge={flow.badge} title={flow.title} body={flow.body} align="center" />
+        <div className="spacer-xl" />
 
-        <div className="mt-24 grid gap-14 md:grid-cols-2 lg:grid-cols-4 lg:gap-10" data-reveal-stagger>
+        <div className="process" data-reveal-stagger>
           {flow.steps.map((s) => (
-            <div key={s.n} data-reveal>
-              <div className="flex items-center gap-5">
-                <span className="font-mono text-[34px] font-light leading-none text-ink-ghost">
-                  {s.n}
-                  <span className="text-ink-dim">.</span>
-                </span>
-                <span className="h-px flex-1 bg-line" />
+            <div key={s.n} className="process-item" data-reveal>
+              <div className="process-top">
+                <span className="process-num">{s.n}.</span>
+                <span className="process-line" data-line />
               </div>
-              <h3 className="mt-7 text-h4 text-ink-bright balance">
-                {s.title}
-              </h3>
-              {s.body.map((p) => (
-                <p key={p} className="mt-4 text-body text-ink-soft pretty">
-                  {p}
-                </p>
-              ))}
+              <div className="process-bottom">
+                <p className="process-heading balance">{s.title}</p>
+                <div className="flex flex-col gap-4 ink-70">
+                  {s.body.map((p) => (
+                    <p key={p} className="pretty">
+                      {p}
+                    </p>
+                  ))}
+                </div>
+              </div>
             </div>
           ))}
         </div>
+        <div className="pad-lg" />
       </div>
     </section>
   )
 }
+
+export { Badge }

@@ -10,6 +10,13 @@
    ============================================================================= */
 
 :root {
+  --dark-navy: #131419;
+  --bg-lines: rgba(255, 255, 255, 0.06);
+  --container-max: 90rem;
+  --section-pad-lg: 8.5rem;
+  --section-pad-md: 5.5rem;
+  --section-pad-sm: 4rem;
+  --spacer-lg: 2rem;
   --ground: #151515;
   --rail: #181818;
 
@@ -57,10 +64,39 @@
      reference holds a flat 48px side padding from desktop down to tablet; only
      the phone range gets relief, or 96px of a 320px viewport goes to margin. */
   --gutter: 48px;
-  --nav-h: 56px;
+
+  /* The reference bar is 4.5rem; the logo cell is a 4.5rem square and the
+     drafting rule continues its right border straight down the page. */
+  --nav-h: 4.5rem;
+  --rule: 4.5rem;
+
+  /* White-alpha steps, lifted from the reference sheet. They are how it draws
+     hairlines and fills on a dark ground without ever naming a second hue. */
+  --line-16: rgba(255, 255, 255, 0.16);
+  --line-12: rgba(255, 255, 255, 0.12);
+  --fill-22: rgba(255, 255, 255, 0.22);
+  --fill-16: rgba(255, 255, 255, 0.16);
+  --fill-12: rgba(255, 255, 255, 0.12);
+  --fill-8: rgba(255, 255, 255, 0.08);
+  --fill-4: rgba(255, 255, 255, 0.04);
+  --fill-3: rgba(255, 255, 255, 0.03);
+  --text-75: rgba(255, 255, 255, 0.75);
+  --text-72: rgba(255, 255, 255, 0.72);
+  --text-70: rgba(255, 255, 255, 0.7);
+  --text-64: rgba(255, 255, 255, 0.64);
+  --text-60: rgba(255, 255, 255, 0.6);
+  --scroll-ring: #4a4a4a;
+  --white: #ffffff;
 }
 
 /* Flat down to the compact cutoff `isCompact()` uses, then one step. */
 @media (max-width: 860px) {
-  :root { --gutter: 24px; }
+  :root {
+  --dark-navy: #131419;
+  --bg-lines: rgba(255, 255, 255, 0.06);
+  --container-max: 90rem;
+  --section-pad-lg: 8.5rem;
+  --section-pad-md: 5.5rem;
+  --section-pad-sm: 4rem;
+  --spacer-lg: 2rem; --gutter: 24px; --rule: 1.5rem; --nav-h: 4rem; }
 }
