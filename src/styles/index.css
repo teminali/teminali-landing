@@ -398,7 +398,7 @@
     gap: 2rem;
     padding: 2rem 4rem 2rem 2.5rem;
     border-radius: 0.75rem;
-    background: var(--fill-3);
+    background: var(--solid-3);
   }
   .compare-card.is-2 { padding-left: 4rem; padding-right: 2rem; }
   .compare-heading { display: flex; align-items: center; gap: 1.5rem; height: 3.5rem; margin-bottom: 2rem; }
@@ -423,10 +423,10 @@
     gap: 3.25rem;
     padding: 2rem 2rem 2.5rem;
     border-radius: 0.75rem;
-    background: var(--fill-4);
+    background: var(--solid-4);
     transition: background 0.3s, transform 0.3s var(--ease);
   }
-  .mission-card:hover { background: var(--fill-8); transform: translateY(-3px); }
+  .mission-card:hover { background: var(--solid-8); transform: translateY(-3px); }
   .mission-icon {
     display: flex;
     flex: none;
@@ -865,6 +865,16 @@
   justify-content: center;
   transform-style: preserve-3d;
   transform: translate3d(0, 0, -50px) perspective(1000px);
+}
+/* Opaque ground-coloured disc behind the whole hub (glow included) so the
+   fixed drafting rules cannot ghost through its translucent rings. */
+.software_smart0-wrap.div-square::before {
+  content: '';
+  position: absolute;
+  inset: -22.5%;
+  z-index: -1;
+  border-radius: 50vw;
+  background: var(--ground);
 }
 .software_smart0-outer {
   position: absolute;

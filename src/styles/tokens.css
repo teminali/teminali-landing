@@ -80,6 +80,11 @@
   --fill-8: rgba(255, 255, 255, 0.08);
   --fill-4: rgba(255, 255, 255, 0.04);
   --fill-3: rgba(255, 255, 255, 0.03);
+  /* Opaque twins of the fills for card surfaces: the same colour over the
+     ground, but the fixed drafting rules can no longer ghost through them. */
+  --solid-8: color-mix(in srgb, var(--ground), white 8%);
+  --solid-4: color-mix(in srgb, var(--ground), white 4%);
+  --solid-3: color-mix(in srgb, var(--ground), white 3%);
   --text-75: rgba(255, 255, 255, 0.75);
   --text-72: rgba(255, 255, 255, 0.72);
   --text-70: rgba(255, 255, 255, 0.7);

@@ -157,6 +157,13 @@ the text above:
   deviation was the Send button at 16rem; it is now the plain 11.25rem `.btn`.
 - **Drafting rules sit behind content.** `GridOverlay` moved from `z-30` to
   `-z-10`, so cards, inputs, badges and shots cover the rules and they only show
-  in the gaps. Surfaces on white-alpha fills (`--fill-8` cards) still let the
-  rule ghost through faintly; an opaque `color-mix(in srgb, var(--ground), white 8%)`
-  would hide it fully if that bothers anyone.
+  in the gaps. Card surfaces (`.compare-card`, `.mission-card` and its hover)
+  moved from the white-alpha `--fill-3/4/8` to the opaque `--solid-3/4/8`
+  twins in `tokens.css` (`color-mix(in srgb, var(--ground), white N%)`, the
+  same colour over the ground) so the rule cannot ghost through them. Icon
+  plates and the rail float card keep their alpha fills.
+  The studio hub keeps its translucent green rings (the glow is a child of
+  the outer ring and paints above its fill, so opaque twins would cover it);
+  instead `.software_smart0-wrap.div-square::before` is a ground-coloured disc
+  at `inset: -22.5%` (145%, past the glow's 50px blur tail) behind the hub,
+  which hides the rule and changes no other pixel (verified by image diff).
