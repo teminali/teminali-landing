@@ -82,9 +82,21 @@
   --fill-3: rgba(255, 255, 255, 0.03);
   /* Opaque twins of the fills for card surfaces: the same colour over the
      ground, but the fixed drafting rules can no longer ghost through them. */
+  --solid-12: color-mix(in srgb, var(--ground), white 12%);
   --solid-8: color-mix(in srgb, var(--ground), white 8%);
   --solid-4: color-mix(in srgb, var(--ground), white 4%);
   --solid-3: color-mix(in srgb, var(--ground), white 3%);
+  /* Accent tints for glows and the focus ring; the only non-white alphas. */
+  --accent-12: color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-32: color-mix(in srgb, var(--accent) 32%, transparent);
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  /* One radius scale and one shadow. The shadow is for layers that float
+     over other content (cards on the rail, hub detail cards), nothing else. */
+  --r-sm: 0.5rem;
+  --r-md: 0.75rem;
+  --r-lg: 1rem;
+  --r-xl: 1.25rem;
+  --shadow-float: 0 24px 48px -24px rgba(0, 0, 0, 0.6);
   --text-75: rgba(255, 255, 255, 0.75);
   --text-72: rgba(255, 255, 255, 0.72);
   --text-70: rgba(255, 255, 255, 0.7);
@@ -96,12 +108,5 @@
 
 /* Flat down to the compact cutoff `isCompact()` uses, then one step. */
 @media (max-width: 860px) {
-  :root {
-  --dark-navy: #131419;
-  --bg-lines: rgba(255, 255, 255, 0.06);
-  --container-max: 90rem;
-  --section-pad-lg: 8.5rem;
-  --section-pad-md: 5.5rem;
-  --section-pad-sm: 4rem;
-  --spacer-lg: 2rem; --gutter: 24px; --rule: 1.5rem; --nav-h: 4rem; }
+  :root { --gutter: 24px; --rule: 1.5rem; --nav-h: 4rem; }
 }

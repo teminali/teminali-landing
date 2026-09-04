@@ -762,8 +762,8 @@
   padding: 0.85rem 1.15rem;
   border: 1px solid var(--border-popover);
   border-radius: 0.75rem;
-  background: rgba(21, 21, 21, 0.9);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+  background: var(--solid-8);
+  box-shadow: var(--shadow-float);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   transform: perspective(1000px);
@@ -843,7 +843,7 @@
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
   transition: background-color 0.3s;
 }
-.software_item:hover .software_icon-wrap { background: rgba(255, 255, 255, 0.3); }
+.software_item:hover .software_icon-wrap { background: var(--fill-22); }
 .software_icon { display: flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; color: var(--white); }
 
 .software_item[data-card="agent-runner"] { grid-area: agent-runner; }
@@ -886,7 +886,7 @@
   height: 100%;
   padding: 3rem;
   border-radius: 50vw;
-  background: rgba(101, 196, 102, 0.12);
+  background: var(--accent-12);
   transform-style: preserve-3d;
   transform: translate3d(0, 0, 30px);
 }
@@ -898,7 +898,7 @@
   height: 90%;
   padding: 3rem;
   border-radius: 50vw;
-  background: rgba(101, 196, 102, 0.32);
+  background: var(--accent-32);
   box-shadow: 0 32px 72px rgba(0, 0, 0, 0.24);
   transform-style: preserve-3d;
   transform: translate3d(0, 0, 30px) perspective(1000px);
@@ -924,7 +924,7 @@
   width: 115%;
   height: 115%;
   border-radius: 50vw;
-  background: rgba(101, 196, 102, 0.12);
+  background: var(--accent-12);
   filter: blur(50px);
 }
 
@@ -965,7 +965,7 @@
   display: inline-flex;
   margin-bottom: 2.5rem;
   padding: 0.6rem 0.5rem 0.4rem;
-  border: 1px solid rgba(255, 255, 255, 0.32);
+  border: 1px solid var(--line-16);
   border-radius: 1rem;
   background: var(--fill-22);
   color: var(--white);
@@ -977,7 +977,7 @@
   position: absolute;
   inset: 2rem 2rem auto auto;
   padding: 0.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.32);
+  border: 1px solid var(--line-16);
   border-radius: 0.5rem;
   background: var(--fill-22);
   color: var(--white);
