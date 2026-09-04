@@ -24,7 +24,7 @@ motion half. Structure and rhythm are taken; palette, copy and imagery are ours.
 | 1 | Hero | Centred H1 (2 lines, light weight) over a concentric-circle radar; two subcopy paragraphs; mouse-outline scroll indicator with a falling dot and a letterspaced "Scroll". |
 | 2 | Laptop rail | The pinned Three.js sequence. Laptop rises closed from below, lid opens, camera dollies until the screen fills the frame, then three scene groups cross-fade on it. |
 | 3 | Solutions | Centred pill badge on a full-width hairline → large left-aligned 2-line H2 → left subcopy → three alternating feature rows. |
-| 4 | Hub | Pill → H2 → subcopy → radial module hub: filled concentric circles at centre, ~8 icon tiles in a ring around it, each a rounded square icon over a label. |
+| 4 | Hub | Pill → two-column head (H2 left; paragraph + mono stat row right, 2rem clear of the centre rule) → module wheel: ten 6rem `--solid-4` tiles at 36° steps on one ellipse (rx `min(34vw, 30rem)`, ry .62·rx, hairline `--line-12` orbit), mono 11px labels .75rem under, a 16×8rem accent pill with two rings (22×13.64rem at `--accent-18`, 30×18.6rem at `--accent-8`) and a 40px glow. Tilt ≤3deg/6px; a click steps the wheel to .9 and slides it just clear of a 22rem `--solid-8` detail card. |
 | 5 | Demo CTA | Large bordered card; a collage of product screenshots rotated ~15° as its background; H2, subcopy, and a joined email-input + button pill. |
 | 6 | Process | Pill → centred H2 → centred subcopy → 4 columns, each a large `01.` numeral with a hairline running right from it, a title, and 2–3 short paragraphs. |
 | 7 | Why us | Pill → centred H2 → sub-headline → paragraph → two cards: ours (✓ rows) and the alternative (✕ rows). Each row is a small rounded-square icon plus a paragraph. |
@@ -162,8 +162,7 @@ the text above:
   twins in `tokens.css` (`color-mix(in srgb, var(--ground), white N%)`, the
   same colour over the ground) so the rule cannot ghost through them. Icon
   plates and the rail float card keep their alpha fills.
-  The studio hub keeps its translucent green rings (the glow is a child of
-  the outer ring and paints above its fill, so opaque twins would cover it);
-  instead `.software_smart0-wrap.div-square::before` is a ground-coloured disc
-  at `inset: -22.5%` (145%, past the glow's 50px blur tail) behind the hub,
-  which hides the rule and changes no other pixel (verified by image diff).
+  The studio hub keeps its translucent green rings and glow; instead
+  `.software_core::before` is a ground-coloured ellipse at `inset: -4rem`
+  around the 30×18.6rem core (past the glow's 40px blur tail), which hides
+  the rule under the core. The tiles are opaque `--solid-4` and cover it.

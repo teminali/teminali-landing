@@ -168,6 +168,7 @@ export const studio = {
   badge: 'Inside the studio',
   title: 'Twelve panel kinds, one window, one loopback gateway.',
   body: 'Click a module. Everything below ships in the same desktop app and talks to the same local gateway on 127.0.0.1.',
+  stats: ['12 panel kinds', '1 gateway', '127.0.0.1'],
   modules: [
     {
       id: 'agent-runner',

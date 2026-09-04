@@ -87,7 +87,9 @@ function reveals(root: HTMLElement | Document) {
       (k) => k.closest('[data-reveal-stagger]') === group,
     )
     if (!kids.length) return
-    const tweens = kids.map((k, i) => revealTween(k, i * 0.08).pause())
+    // `data-reveal-stagger="0.04"` overrides the default 80ms step.
+    const step = parseFloat(group.dataset.revealStagger || '') || 0.08
+    const tweens = kids.map((k, i) => revealTween(k, i * step).pause())
     ScrollTrigger.create({
       trigger: group,
       start: 'top 88%',

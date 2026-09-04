@@ -87,8 +87,9 @@
   --solid-4: color-mix(in srgb, var(--ground), white 4%);
   --solid-3: color-mix(in srgb, var(--ground), white 3%);
   /* Accent tints for glows and the focus ring; the only non-white alphas. */
+  --accent-8: color-mix(in srgb, var(--accent) 8%, transparent);
   --accent-12: color-mix(in srgb, var(--accent) 12%, transparent);
-  --accent-32: color-mix(in srgb, var(--accent) 32%, transparent);
+  --accent-18: color-mix(in srgb, var(--accent) 18%, transparent);
   --focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
   /* One radius scale and one shadow. The shadow is for layers that float
      over other content (cards on the rail, hub detail cards), nothing else. */

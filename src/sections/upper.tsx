@@ -105,63 +105,111 @@ function Figure({ variant, rev }: { variant: Shot; rev: boolean }) {
 }
 
 /* ------------------------------------------------------------------- hub ---
-   The radial module wheel: ten icon tiles on a 3rem grid around a concentric
-   centre, tilting with the pointer; a click swings the wheel aside and slides
-   in the module's card from the near edge. */
+   The module wheel: ten icon tiles on one ellipse around a concentric core,
+   tilting a few degrees with the pointer; a click swings the wheel aside and
+   slides the module's detail card in from the near edge. */
 
 type Module = (typeof studio.modules)[number]
+
+/** Tile order around the ellipse, clockwise from the upper right. The left
+ *  half of the ring is the `left` group so a card never opens over its tile. */
+const RING = [
+  'verification',
+  'browser-devtools',
+  'terminal',
+  'voice-speech',
+  'video-editor',
+  'routing-gateway',
+  'screen-studio',
+  'guardian-security',
+  'skills-mcp',
+  'agent-runner',
+] as const
+
+const TILT_DEG = 3
+const TILT_PX = 6
+/** Must match `.software_card` width and the open-state step back. */
+const CARD_W_REM = 22
+const OPEN_SCALE = 0.9
 
 export function Studio() {
   const wrapRef = useRef<HTMLDivElement>(null)
   const [activeCard, setActiveCard] = useState<string | null>(null)
   const [hubState, setHubState] = useState<'normal' | 'left' | 'right'>('normal')
 
+  const byId = new Map(studio.modules.map((m) => [m.id, m]))
+  const ring = RING.map((id) => byId.get(id)).filter((m): m is Module => Boolean(m))
   const left = studio.modules.filter((m) => m.group === 'left')
   const right = studio.modules.filter((m) => m.group === 'right')
 
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (hubState !== 'normal' || !wrapRef.current) return
     const r = wrapRef.current.getBoundingClientRect()
-    const rotX = -((((e.clientY - r.top) / r.height) * 100 - 50) / (50 / 15))
-    const rotY = (((e.clientX - r.left) / r.width) * 100 - 50) / (50 / 15)
-    gsap.to(wrapRef.current, { rotationX: rotX, rotationY: rotY, duration: 0.5, ease: 'power1.out' })
+    const px = ((e.clientX - r.left) / r.width) * 2 - 1
+    const py = ((e.clientY - r.top) / r.height) * 2 - 1
+    gsap.to(wrapRef.current, {
+      rotationX: -py * TILT_DEG,
+      rotationY: px * TILT_DEG,
+      x: px * TILT_PX,
+      y: py * TILT_PX,
+      duration: 0.6,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    })
   }
   const onLeave = () => {
     if (hubState !== 'normal' || !wrapRef.current) return
-    gsap.to(wrapRef.current, { rotationX: 0, rotationY: 0, duration: 0.5, ease: 'power1.out' })
+    gsap.to(wrapRef.current, { rotationX: 0, rotationY: 0, x: 0, y: 0, duration: 0.6, ease: 'power2.out', overwrite: 'auto' })
   }
+  /* Step the wheel back and slide it just far enough that the near tile
+     clears the card by 1.5rem. The orbit's rendered width is `2 * --rx`, so
+     the geometry is measured, not recomputed. */
   const openCard = (m: Module) => {
-    if (!wrapRef.current) return
+    const wrap = wrapRef.current
+    if (!wrap) return
     setHubState(m.group as 'left' | 'right')
     setActiveCard(m.id)
-    const rotY = m.group === 'left' ? -30 : 30
-    const x = m.group === 'left' ? '14vw' : '-14vw'
-    gsap.to(wrapRef.current, { rotationX: 10, rotationY: rotY, x, duration: 1, ease: 'power3.out' })
+    const dir = m.group === 'left' ? 1 : -1
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize)
+    const rx = (wrap.querySelector<HTMLElement>('.software_orbit')?.offsetWidth ?? 0) / 2
+    const w = wrap.offsetWidth
+    const clear = (CARD_W_REM + 1.5) * rem
+    // Half-width of the wheel at the side tiles' outer edge, unscaled.
+    const half = rx * Math.cos(Math.PI / 10) + 3 * rem
+    // Shrink further on narrow viewports so the far tile, grown ~15% by the
+    // perspective swing, still lands inside the wrap.
+    const scale = Math.max(0.6, Math.min(OPEN_SCALE, (w - clear - 1.5 * rem) / (half * 2.15)))
+    const shift = Math.max(0, clear - (w / 2 - scale * half))
+    gsap.to(wrap, {
+      rotationX: 4,
+      rotationY: -dir * 8,
+      x: dir * shift,
+      y: 0,
+      scale,
+      duration: 0.9,
+      ease: 'power3.out',
+      overwrite: 'auto',
+    })
   }
   const close = () => {
     if (!wrapRef.current) return
     setHubState('normal')
     setActiveCard(null)
-    gsap.to(wrapRef.current, { rotationX: 0, rotationY: 0, x: 0, duration: 1, ease: 'power3.out' })
+    gsap.to(wrapRef.current, { rotationX: 0, rotationY: 0, x: 0, y: 0, scale: 1, duration: 0.9, ease: 'power3.out', overwrite: 'auto' })
   }
 
   const card = (m: Module) => (
     <div key={m.id} id={m.id} className={`software_card ${activeCard === m.id ? 'is-active' : ''}`}>
-      <div className="software_card-icon-wrap">
-        <span className="software_card-icon">
-          <Icon name={m.icon} className="h-6 w-6" />
-        </span>
-      </div>
+      <span className="software_card-icon">
+        <Icon name={m.icon} className="h-5 w-5" />
+      </span>
       <div className="software_card-text">
-        <h4 className="h4">{m.title}</h4>
-        <h5 className="h6 ink-70">{m.sub}</h5>
-        <p className="ink-70 pretty">{m.desc}</p>
-        <ul className="mt-2 flex flex-col gap-2">
+        <h4 className="software_card-title">{m.title}</h4>
+        <p className="software_card-sub">{m.sub}</p>
+        <p className="software_card-desc pretty">{m.desc}</p>
+        <ul className="software_card-points">
           {m.points.map((pt) => (
-            <li key={pt} className="flex items-start gap-3 text-small ink-70">
-              <span className="mt-[0.55rem] h-1.5 w-1.5 flex-none rounded-full bg-accent" />
-              <span>{pt}</span>
-            </li>
+            <li key={pt}>{pt}</li>
           ))}
         </ul>
       </div>
@@ -172,7 +220,7 @@ export function Studio() {
         </a>
       </div>
       <button type="button" className="software_card-close" onClick={close} aria-label="Close">
-        <Icon name="cross" className="h-5 w-5" />
+        <Icon name="cross" className="h-4 w-4" />
       </button>
     </div>
   )
@@ -181,36 +229,69 @@ export function Studio() {
     <section id="studio" className="relative overflow-hidden">
       <div className="pad-lg" />
       <div className="shell">
-        <SectionHead badge={studio.badge} title={studio.title} body={studio.body} />
+        <Badge>{studio.badge}</Badge>
+        <div className="studio-head" data-reveal-stagger>
+          <h2 className="h2 balance" data-reveal="words">
+            {studio.title}
+          </h2>
+          <div className="studio-head_aside">
+            <p className="intro-p pretty" data-reveal>
+              {studio.body}
+            </p>
+            <p className="studio-stats" data-reveal>
+              {studio.stats.map((s, i) => (
+                <Fragment key={s}>
+                  {i > 0 && <span className="studio-stats_dot" aria-hidden="true" />}
+                  <span>{s}</span>
+                </Fragment>
+              ))}
+            </p>
+          </div>
+        </div>
       </div>
       <div className="pad-md" />
 
-      <div className="software_component hide-tablet" data-reveal="scale">
+      <div className="software_component hide-tablet">
         <div className="software_card-wrap is-first">{left.map(card)}</div>
 
-        <div ref={wrapRef} className="software_wrap" onMouseMove={onMove} onMouseLeave={onLeave}>
-          {studio.modules.map((m) => (
-            <div key={m.id} data-card={m.id} className="software_item" onClick={() => openCard(m)}>
-              <div className="software_icon-wrap">
-                <div className="software_icon">
-                  <Icon name={m.icon} className="h-7 w-7" />
-                </div>
-              </div>
-              <div>{m.label}</div>
-            </div>
-          ))}
+        <div
+          ref={wrapRef}
+          className="software_wrap"
+          onMouseMove={onMove}
+          onMouseLeave={onLeave}
+          data-reveal-stagger="0.04"
+        >
+          <div className="software_orbit" aria-hidden="true" data-reveal />
 
-          <div className="software_smart0-wrap div-square" data-parallax="-0.04">
-            <div className="software_smart0-outer">
-              <div className="software_blur" />
-              <div className="software_smart0-middle">
-                <div className="software_smart0-inner">
-                  <Mark className="h-24 w-24" />
-                  <span className="mt-2 font-mono text-[12px] font-medium uppercase tracking-[0.24em]">Studio</span>
-                </div>
+          <div className="software_core" aria-hidden="true" data-reveal>
+            <div className="software_core-drift" data-parallax="-0.04">
+              <div className="software_glow" />
+              <div className="software_ring is-outer" />
+              <div className="software_ring is-middle" />
+              <div className="software_pill">
+                <Mark className="h-14 w-14" />
+                <span className="software_pill-label">Studio</span>
               </div>
             </div>
           </div>
+
+          {ring.map((m, i) => (
+            <button
+              key={m.id}
+              type="button"
+              data-card={m.id}
+              className={`software_item ${activeCard === m.id ? 'is-active' : ''}`}
+              style={{ '--i': i } as React.CSSProperties}
+              onClick={() => openCard(m)}
+              aria-pressed={activeCard === m.id}
+              data-reveal
+            >
+              <span className="software_tile">
+                <Icon name={m.icon} className="h-6 w-6" />
+              </span>
+              <span className="software_label">{m.label}</span>
+            </button>
+          ))}
         </div>
 
         <div className="software_card-wrap is-second">{right.map(card)}</div>

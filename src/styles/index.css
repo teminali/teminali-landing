@@ -822,8 +822,33 @@
 }
 
 /* =============================================================================
-   STUDIO HUB. The radial module wheel.
+   STUDIO HUB. Ten module tiles on one ellipse around a concentric core.
+
+   Geometry lives in custom properties on `.software_wrap`: `--rx`, `--ry` and,
+   per tile, `--i`. Each tile sits at a `left/top` computed with CSS trig and
+   is pulled back onto its own centre with the `translate` property, so the
+   `transform` GSAP writes (reveal y, pointer tilt) never fights the layout.
    ============================================================================= */
+
+.studio-head { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 1.5rem; }
+.studio-head_aside { display: flex; flex-direction: column; gap: 1.5rem; max-width: 30rem; }
+.studio-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: theme('fontFamily.mono');
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-60);
+}
+.studio-stats_dot { width: 3px; height: 3px; border-radius: 50%; background: var(--text-60); }
+@media (min-width: 1024px) {
+  /* Two columns either side of the centre rule, each 2rem clear of it. */
+  .studio-head { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 4rem; align-items: end; }
+}
 
 .software_component {
   position: relative;
@@ -831,160 +856,155 @@
   width: 100%;
   max-width: 120rem;
   margin-inline: auto;
-  perspective: 1000px;
+  perspective: 1200px;
 }
-@media (max-width: 991px) {
+/* Same cutoff as the `lg:hidden` list below it, so exactly one of them shows. */
+@media (max-width: 1023px) {
   .software_component.hide-tablet { display: none !important; }
 }
 
 .software_wrap {
-  display: grid;
-  gap: 0;
-  transform-style: preserve-3d;
-  grid-template:
-    ". . . . . . agent-runner agent-runner . . verification verification . . . . . ." 3rem
-    ". . . . . . agent-runner agent-runner . . verification verification . . . . . ."
-    ". . skills-mcp skills-mcp . . agent-runner agent-runner . . verification verification . . browser-devtools browser-devtools . ."
-    ". . skills-mcp skills-mcp smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 browser-devtools browser-devtools . ."
-    ". . skills-mcp skills-mcp smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 browser-devtools browser-devtools . ."
-    ". . skills-mcp skills-mcp smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 browser-devtools browser-devtools . ."
-    "guardian-security guardian-security guardian-security . smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 . terminal terminal terminal"
-    "guardian-security guardian-security guardian-security . smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 . terminal terminal terminal"
-    "guardian-security guardian-security guardian-security . smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 . terminal terminal terminal"
-    "guardian-security guardian-security guardian-security . smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 . terminal terminal terminal"
-    "guardian-security guardian-security guardian-security . smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 . terminal terminal terminal"
-    ". . screen-studio screen-studio smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 voice-speech voice-speech . ."
-    ". . screen-studio screen-studio smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 voice-speech voice-speech . ."
-    ". . screen-studio screen-studio smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 smart0 voice-speech voice-speech . ."
-    ". . screen-studio screen-studio . . routing-gateway routing-gateway . . video-editor video-editor . . voice-speech voice-speech . ."
-    ". . . . . . routing-gateway routing-gateway . . video-editor video-editor . . . . . ."
-    ". . . . . . routing-gateway routing-gateway . . video-editor video-editor . . . . . ."
-    / 3rem;
-  grid-auto-rows: 3rem;
-  grid-auto-columns: 3rem;
-  place-content: center;
-  place-items: center;
-  width: 100%;
-  max-width: 60rem;
-  margin-inline: auto;
-  transform: translate3d(0, 0, -50px);
+  --rx: min(34vw, 30rem);
+  --ry: calc(var(--rx) * 0.62);
+  position: relative;
+  flex: 1 1 auto;
+  height: calc(2 * var(--ry) + 9rem);
   user-select: none;
 }
 
+/* The hairline the tiles sit on. A box with a 50% radius is an exact ellipse. */
+.software_orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(2 * var(--rx));
+  height: calc(2 * var(--ry));
+  translate: -50% -50%;
+  border: 1px solid var(--line-12);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Tiles. `--i` counts clockwise from the upper right, 36deg per step, so the
+   pairs flank the top and bottom and one tile sits at each side extreme. */
 .software_item {
+  --a: calc(var(--i) * 36deg - 72deg);
+  position: absolute;
+  left: calc(50% + cos(var(--a)) * var(--rx));
+  top: calc(50% + sin(var(--a)) * var(--ry));
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 0.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  translate: -50% -3rem;
+  color: var(--text-60);
+  font: inherit;
   text-align: center;
   cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
+  transition: color 0.3s;
+}
+.software_tile {
+  display: grid;
+  place-items: center;
+  width: 6rem;
+  height: 6rem;
+  border: 1px solid var(--line-12);
+  border-radius: var(--r-xl);
+  background: var(--solid-4);
   color: var(--white);
-  transition: transform 0.3s var(--ease);
+  transition: background-color 0.3s, border-color 0.3s, transform 0.3s var(--ease), box-shadow 0.2s;
 }
-.software_item:hover { transform: translateY(-3px); }
-.software_icon-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  border-radius: 2rem;
-  background: var(--fill-16);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
-  transition: background-color 0.3s;
+.software_label {
+  font-family: theme('fontFamily.mono');
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
-.software_item:hover .software_icon-wrap { background: var(--fill-22); }
-.software_icon { display: flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; color: var(--white); }
+.software_item:hover,
+.software_item.is-active { color: var(--white); }
+.software_item:hover .software_tile,
+.software_item.is-active .software_tile {
+  background: var(--solid-8);
+  border-color: var(--line-16);
+  transform: translateY(-2px);
+}
+.software_item:focus-visible { outline: none; }
+.software_item:focus-visible .software_tile { box-shadow: var(--focus-ring); }
 
-.software_item[data-card="agent-runner"] { grid-area: agent-runner; }
-.software_item[data-card="verification"] { grid-area: verification; }
-.software_item[data-card="browser-devtools"] { grid-area: browser-devtools; }
-.software_item[data-card="terminal"] { grid-area: terminal; }
-.software_item[data-card="voice-speech"] { grid-area: voice-speech; }
-.software_item[data-card="video-editor"] { grid-area: video-editor; }
-.software_item[data-card="routing-gateway"] { grid-area: routing-gateway; }
-.software_item[data-card="screen-studio"] { grid-area: screen-studio; }
-.software_item[data-card="guardian-security"] { grid-area: guardian-security; }
-.software_item[data-card="skills-mcp"] { grid-area: skills-mcp; }
-
-.software_smart0-wrap { grid-area: smart0; width: 100%; height: 100%; }
-.software_smart0-wrap.div-square {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform-style: preserve-3d;
-  transform: translate3d(0, 0, -50px) perspective(1000px);
+/* Core. A glow, two rings and a solid pill, stacked in one grid cell. The
+   opaque ground disc behind the stack keeps the fixed drafting rules from
+   ghosting through the tints; it reaches past the glow's blur tail. */
+.software_core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 5;
+  width: 30rem;
+  height: 18.6rem;
+  translate: -50% -50%;
+  isolation: isolate;
+  pointer-events: none;
 }
-/* Opaque ground-coloured disc behind the whole hub (glow included) so the
-   fixed drafting rules cannot ghost through its translucent rings. */
-.software_smart0-wrap.div-square::before {
+.software_core::before {
   content: '';
   position: absolute;
-  inset: -22.5%;
+  inset: -4rem;
   z-index: -1;
-  border-radius: 50vw;
+  border-radius: 50%;
   background: var(--ground);
 }
-.software_smart0-outer {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.software_core-drift {
+  position: relative;
+  display: grid;
+  place-items: center;
   width: 100%;
   height: 100%;
-  padding: 3rem;
-  border-radius: 50vw;
-  background: var(--accent-12);
-  transform-style: preserve-3d;
-  transform: translate3d(0, 0, 30px);
 }
-.software_smart0-middle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 90%;
-  height: 90%;
-  padding: 3rem;
-  border-radius: 50vw;
-  background: var(--accent-32);
-  box-shadow: 0 32px 72px rgba(0, 0, 0, 0.24);
-  transform-style: preserve-3d;
-  transform: translate3d(0, 0, 30px) perspective(1000px);
+.software_core-drift > * { grid-area: 1 / 1; }
+.software_glow {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--accent-8);
+  filter: blur(40px);
 }
-.software_smart0-inner {
-  position: relative;
+.software_ring { border-radius: 50%; }
+.software_ring.is-outer { width: 100%; height: 100%; background: var(--accent-8); }
+.software_ring.is-middle { width: 22rem; height: 13.64rem; background: var(--accent-18); }
+.software_pill {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 90%;
-  height: 90%;
+  gap: 0.5rem;
+  width: 16rem;
+  height: 8rem;
   border-radius: 50vw;
   background: var(--accent);
   color: var(--ground);
-  box-shadow: 0 48px 96px rgba(0, 0, 0, 0.32);
-  transform-style: preserve-3d;
-  transform: translate3d(0, 0, 30px) perspective(1000px);
 }
-.software_blur {
-  position: absolute;
-  z-index: -1;
-  width: 115%;
-  height: 115%;
-  border-radius: 50vw;
-  background: var(--accent-12);
-  filter: blur(50px);
+.software_pill-label {
+  font-family: theme('fontFamily.mono');
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-weight: 500;
 }
 
+/* Detail cards. One per module, parked at the near edge; the active one
+   slides 16px in from its side. */
 .software_card-wrap {
   position: relative;
   z-index: 30;
   display: flex;
-  flex: 0 auto;
+  flex: 0 0 auto;
   flex-direction: column;
   justify-content: center;
   pointer-events: none;
@@ -998,42 +1018,67 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 33vw;
-  max-width: 40rem;
+  width: 22rem;
   padding: 2rem;
-  border-radius: 1rem;
-  background: var(--fill-8);
   border: 1px solid var(--line-12);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--r-lg);
+  background: var(--solid-8);
+  box-shadow: var(--shadow-float);
   opacity: 0;
   pointer-events: none;
-  transform: translateY(12px);
   transition: opacity 0.4s, transform 0.4s var(--ease);
 }
-.software_card.is-active { opacity: 1; pointer-events: auto; transform: translateY(0); }
-.software_card-icon-wrap {
-  display: inline-flex;
-  margin-bottom: 2.5rem;
-  padding: 0.6rem 0.5rem 0.4rem;
-  border: 1px solid var(--line-16);
-  border-radius: 1rem;
-  background: var(--fill-22);
+.is-first .software_card { transform: translateX(-16px); }
+.is-second .software_card { transform: translateX(16px); }
+.software_card.is-active { opacity: 1; pointer-events: auto; transform: translateX(0); }
+.software_card-icon {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--line-12);
+  border-radius: var(--r-md);
+  background: var(--solid-12);
   color: var(--white);
 }
-.software_card-icon { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; }
-.software_card-text { display: flex; flex-direction: column; gap: 1rem; }
-.software_card-btn-wrap { margin-top: 3rem; }
+.software_card-text { display: flex; flex-direction: column; gap: 0.75rem; }
+.software_card-title { font-size: 1.25rem; line-height: 1.3; font-weight: 500; color: var(--white); }
+.software_card-sub { font-size: 0.8125rem; line-height: 1.45; color: var(--text-60); }
+.software_card-desc { font-size: 0.9375rem; line-height: 1.55; color: var(--text-70); }
+.software_card-points { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem; }
+.software_card-points li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--text-70);
+}
+.software_card-points li::before {
+  content: '';
+  flex: none;
+  width: 5px;
+  height: 5px;
+  margin-top: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.software_card-btn-wrap { margin-top: 2rem; }
 .software_card-close {
   position: absolute;
-  inset: 2rem 2rem auto auto;
-  padding: 0.25rem;
-  border: 1px solid var(--line-16);
-  border-radius: 0.5rem;
-  background: var(--fill-22);
-  color: var(--white);
+  top: 1.25rem;
+  right: 1.25rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--line-12);
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--text-60);
   cursor: pointer;
-  transition: background-color 0.25s;
+  transition: color 0.2s, border-color 0.2s, background-color 0.2s;
 }
-.software_card-close:hover { background: var(--text-60); }
+.software_card-close:hover { color: var(--white); border-color: var(--line-16); background: var(--solid-12); }
