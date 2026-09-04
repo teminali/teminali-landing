@@ -155,3 +155,8 @@ the text above:
   `.form-field-2-col` 1.5rem/2rem, `.form-input` 3.5rem min / 1.125rem 1.5rem,
   textarea 11.25rem, `.footer_legal` 5rem — all already matched. The one
   deviation was the Send button at 16rem; it is now the plain 11.25rem `.btn`.
+- **Drafting rules sit behind content.** `GridOverlay` moved from `z-30` to
+  `-z-10`, so cards, inputs, badges and shots cover the rules and they only show
+  in the gaps. Surfaces on white-alpha fills (`--fill-8` cards) still let the
+  rule ghost through faintly; an opaque `color-mix(in srgb, var(--ground), white 8%)`
+  would hide it fully if that bothers anyone.

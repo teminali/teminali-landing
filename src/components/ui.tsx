@@ -84,7 +84,7 @@ export function Mark({ className = 'h-8 w-8' }: { className?: string }) {
 
 export function GridOverlay() {
   return (
-    <div className="pointer-events-none fixed inset-0 z-30" aria-hidden="true">
+    <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
       <span data-rule className="absolute top-0 h-full w-px bg-[var(--bg-lines)]" style={{ left: 'var(--rule)' }} />
       <span data-rule className="absolute top-0 h-full w-px bg-[var(--bg-lines)]" style={{ right: 'var(--rule)' }} />
       <span data-rule className="absolute left-1/2 top-0 hidden h-full w-px bg-[var(--bg-lines)] lg:block" />
