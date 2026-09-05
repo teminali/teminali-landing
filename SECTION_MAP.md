@@ -169,6 +169,35 @@ the text above:
 
 ### Follow-up, 2026-09-05 (night)
 
+- **Contact, measured (step 2).** `.contact-grid` is two `minmax(0, 1fr)`
+  columns split on the centre rule; `.contact-details` gap 3rem with
+  `padding-right: 4rem`, `.contact-form` gap 1.25rem with `padding-left: 3rem`
+  (4rem from 1280px), so nothing sits on the line. Head gap 1.5rem, body
+  `max-width: 30rem`; quick-contact gap 2rem, list gap 1.5rem, column heading
+  1.25rem medium, links `gap: .625rem` with a 1.5rem icon box. Controls:
+  `.input` min-height 3.25rem, padding .875rem 1.125rem, `--r-sm`, `--line-12`
+  on `--solid-3`, 15px/1.4, hover `--line-16`, focus accent plus
+  `--focus-ring`; textarea 9rem; `.field-label` mono 11px .16em `--text-60`
+  at `margin-bottom: .625rem`, required mark in the accent; `.form-2col`
+  column gap 1.5rem, row gap 1.25rem; Send at `margin-top: .75rem`, the
+  3.25rem `.btn` (padding .75rem 1.5rem, `--r-md`). `.footer-bar` runs under
+  both columns: `padding: 1.5rem 0 2rem`, `--line-12` top hairline, 13px
+  `--text-60`, copy gap .75rem, legal links gap 2rem. Below 991px one column,
+  `row-gap: 4rem`, paddings 0, footer stacked at 1rem.
+- **Hero rail, measured (step 3).** `.float-card` 19rem wide, padding 1rem
+  1.125rem, `--line-12` on `--solid-8`, `--r-md`, `--shadow-float`, tabular
+  numerals, two slots hung off the bezel: `is-top-right` at `top: -1.5rem;
+  right: -2.5rem`, `is-bottom-right` at `bottom: 3rem; right: -2.5rem`.
+  Kicker mono 11px .16em `--text-60` behind a 6px dot (1.6s pulse when live);
+  title 15px/1.35 medium white at .625rem; sub 12px/1.4 `--text-60` at .25rem;
+  chips at .75rem, `.25rem .5rem`, `--solid-12` on `--line-12`, `--r-sm`, mono
+  11px `--text-75`. The caption is a lower third: `.hero_intro-text-wrap`
+  `padding: 0 3rem 2.5rem` at the screen's bottom, `.hero-intro_h` 1.75rem/1.2
+  at -.01em medium white, `max-width: 36rem`; the veil `.home-intro_overlay`
+  is 16rem tall, ground to 60% at half to transparent. `.home-intro_screen`
+  clips (`overflow: hidden`, radius .5rem) while `#laptop-overlay` stays
+  visible so the card can overlap the bezel. On the timeline each card
+  arrives `y: 12 -> 0` with `z: 40` at `'<0.15'` after its caption.
 - **The video scene is a player.** `scenes[].video` (`site.ts`) names the
   YouTube id and title; `ScreenPlayer` in `HeroRail.tsx` renders inside that
   scene's `.home-intro_screen`. Poster state: a 3.25rem play circle and a
