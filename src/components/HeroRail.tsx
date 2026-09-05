@@ -257,7 +257,12 @@ export function HeroRail() {
       )}
 
       {videoScene?.video && (
-        <VideoDialog video={videoScene.video} open={video === 'theatre'} onClose={() => setVideo('poster')} />
+        <VideoDialog
+          video={videoScene.video}
+          poster={`/shots/${videoScene.shot}.webp`}
+          open={video === 'theatre'}
+          onClose={() => setVideo('poster')}
+        />
       )}
     </div>
   )
@@ -307,7 +312,17 @@ function ScreenPlayer({
 /** The video without the laptop: a modal dialog with the embed at 16:9.
     Escape, the close control and the backdrop all close it; the embed is
     unmounted on close so the audio stops with it. */
-function VideoDialog({ video, open, onClose }: { video: SceneVideo; open: boolean; onClose: () => void }) {
+function VideoDialog({
+  video,
+  poster,
+  open,
+  onClose,
+}: {
+  video: SceneVideo
+  poster?: string
+  open: boolean
+  onClose: () => void
+}) {
   const ref = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
@@ -338,7 +353,7 @@ function VideoDialog({ video, open, onClose }: { video: SceneVideo; open: boolea
           </button>
           <div className="video-dialog_body">
             <div className="video-dialog_frame">
-              <VideoPlayer video={video} variant="theatre" onClose={() => ref.current?.close()} />
+              <VideoPlayer video={video} variant="theatre" poster={poster} onClose={() => ref.current?.close()} />
             </div>
             <p className="video-dialog_meta">
               <span>{video.title}</span>

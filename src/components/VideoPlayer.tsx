@@ -101,6 +101,22 @@ export function VideoPlayer({
   const [muted, setMuted] = useState(false)
   const [volume, setVolume] = useState(100)
   const [full, setFull] = useState(false)
+  // YouTube paints its own title, channel, logo and a centre button over the
+  // video for about four seconds after every play and every seek, whatever
+  // `controls` says. We know exactly when that is, so the same moments arm a
+  // guard: two bands over the strips it titles and a disc over the button,
+  // which doubles as the buffering state a seek really is. The token restarts
+  // the fade each time it is armed.
+  const [guard, setGuard] = useState(0)
+  const guardTimer = useRef<number | undefined>(undefined)
+
+  const arm = useCallback(() => {
+    window.clearTimeout(guardTimer.current)
+    setGuard((n) => n + 1)
+    guardTimer.current = window.setTimeout(() => setGuard(0), 5000)
+  }, [])
+
+  useEffect(() => () => window.clearTimeout(guardTimer.current), [])
 
   /** Paint the scrubber and the clock straight into the DOM. Playback would
       otherwise re-render this tree sixty times a second for a moving bar. */
@@ -148,6 +164,11 @@ export function VideoPlayer({
             setDuration(e.target.getDuration() || 0)
             setVolume(Math.round(e.target.getVolume?.() ?? 100))
             e.target.playVideo()
+            // The API hands focus to the iframe, and a focused YouTube player
+            // draws its title and centre button over the video. Take it back.
+            const active = document.activeElement
+            if (active instanceof HTMLIFrameElement) active.blur()
+            rootRef.current?.focus({ preventScroll: true })
             // Safari and iOS refuse to start with sound even after a click.
             // Muted playback is always allowed, so fall back to it once and
             // let the volume control say so.
@@ -169,6 +190,7 @@ export function VideoPlayer({
             if (e.data === S.PLAYING) {
               setStatus('playing')
               setDuration(e.target.getDuration() || 0)
+              arm()
             } else if (e.data === S.PAUSED) {
               setStatus('paused')
             } else if (e.data === S.ENDED) {
@@ -195,7 +217,7 @@ export function VideoPlayer({
       }
       mount.remove()
     }
-  }, [video.id, paint])
+  }, [video.id, paint, arm])
 
   /** One animation frame loop, alive only while the video is. */
   useEffect(() => {
@@ -225,8 +247,9 @@ export function VideoPlayer({
       const time = Math.max(0, Math.min(total, fraction * total))
       p.seekTo(time, commit)
       paint(time, total, p.getVideoLoadedFraction())
+      arm()
     },
-    [duration, paint],
+    [duration, paint, arm],
   )
 
   const nudgeBy = useCallback(
@@ -319,7 +342,7 @@ export function VideoPlayer({
   const playing = status === 'playing'
 
   return (
-    <div ref={rootRef} className={`player is-${variant}${full ? ' is-full' : ''}`}>
+    <div ref={rootRef} tabIndex={-1} className={`player is-${variant}${full ? ' is-full' : ''}`}>
       <div className="player_stage">
         <div ref={hostRef} className="player_frame" />
         {/* Nothing reaches YouTube. A click here is ours: play or pause. */}
@@ -330,8 +353,27 @@ export function VideoPlayer({
           onDoubleClick={variant === 'theatre' ? toggleFull : onExpand}
           aria-label={playing ? `Pause ${video.title}` : `Play ${video.title}`}
         />
-        {poster && status === 'loading' && <img className="player_poster" src={poster} alt="" aria-hidden="true" />}
-        {buffering && <span className="player_spinner" aria-hidden="true" />}
+        {/* The frame is covered until the video is running, then the two
+            bands hold over the strip YouTube titles until it fades. */}
+        {(status === 'loading' || (playing && guard > 0)) && (
+          <span
+            className={`player_veil${playing ? ' is-fading' : ''}`}
+            style={poster ? { backgroundImage: `url(${poster})` } : undefined}
+            aria-hidden="true"
+          />
+        )}
+        {guard > 0 && (
+          <span key={guard} className="player_guard" aria-hidden="true">
+            <span className="player_band is-top" />
+            <span className="player_band is-bottom" />
+            <span className="player_wait" />
+          </span>
+        )}
+        {buffering && guard === 0 && (
+          <span className="player_guard is-still" aria-hidden="true">
+            <span className="player_wait" />
+          </span>
+        )}
         {!playing && !buffering && status !== 'loading' && (
           <span className="player_resume" aria-hidden="true">
             <Icon name={status === 'ended' ? 'replay' : 'play'} className="h-6 w-6" />

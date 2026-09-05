@@ -932,7 +932,6 @@
 /* Above the frame, under the overlays: swallows hover and clicks so YouTube's
    title bar, share sheet and end screen never appear. */
 .player_shield { position: absolute; inset: 0; z-index: 2; background: transparent; cursor: pointer; }
-.player_poster { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; object-fit: cover; }
 .player_resume {
   position: absolute;
   top: 50%;
@@ -950,22 +949,54 @@
   pointer-events: none;
   backdrop-filter: blur(6px);
 }
-.player_spinner {
+/* YouTube paints its title, channel, logo and a centre button over the video
+   for about four seconds after every play and every seek. The veil holds the
+   frame until the picture is up; the guard then covers exactly those places,
+   and its disc is the buffering state a seek really is. */
+.player_veil {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: var(--ground) center / cover no-repeat;
+  pointer-events: none;
+}
+.player_veil.is-fading { animation: player-fade 0.5s var(--ease) 1.4s both; }
+.player_guard {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  animation: player-fade 0.6s var(--ease) 4.4s both;
+}
+.player_guard.is-still { animation: none; }
+.player_band { position: absolute; left: 0; right: 0; }
+.player_band.is-top { top: 0; height: 15%; background: linear-gradient(var(--ground) 68%, transparent); }
+.player_band.is-bottom { bottom: 0; height: 13%; background: linear-gradient(transparent, var(--ground) 32%); }
+.player_wait {
   position: absolute;
   top: 50%;
   left: 50%;
-  z-index: 4;
-  width: 2rem;
-  height: 2rem;
-  margin: -1rem 0 0 -1rem;
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  translate: -50% -50%;
+  border: 1px solid var(--line-12);
+  border-radius: 50%;
+  background: var(--ground);
+}
+.player_wait::before {
+  content: '';
+  width: 1.5rem;
+  height: 1.5rem;
   border: 2px solid var(--line-12);
   border-top-color: var(--accent);
   border-radius: 50%;
-  pointer-events: none;
   animation: player-spin 0.9s linear infinite;
 }
+@keyframes player-fade { from { opacity: 1; } to { opacity: 0; } }
 @keyframes player-spin { to { rotate: 360deg; } }
-@media (prefers-reduced-motion: reduce) { .player_spinner { animation-duration: 2.4s; } }
+@media (prefers-reduced-motion: reduce) { .player_wait::before { animation-duration: 2.4s; } }
 
 .player_bar {
   position: relative;
