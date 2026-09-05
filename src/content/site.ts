@@ -96,10 +96,10 @@ export const scenes = [
     shot: 'demo',
     icon: 'play',
     /** The last scene is a player: the demo plays on the laptop screen and in
-        the full-screen dialog. The shot is a still from the video. */
+        the full-screen dialog. The shot is the studio's home screen. */
     video: { id: 'WNAK7KHBLIs', title: 'Teminali Code demo' },
     caption: 'Watch it run, start to finish.',
-    alt: 'A still from the demo video: the studio mid-run, with the presenter in a corner window.',
+    alt: 'The studio at rest: the mark, the composer and the recent repositories, ready for the demo to start.',
     float: {
       status: 'ok',
       kicker: 'Demo video',

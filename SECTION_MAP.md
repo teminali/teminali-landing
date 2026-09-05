@@ -217,10 +217,11 @@ the text above:
   `autoAlpha`, not `opacity`, so a hidden scene's controls cannot be hit.
   Without the rail the compact list gets a "Watch the video" pill that opens
   the same dialog.
-- **The last scene is the demo.** Its `shot` is `demo.webp`, a 1664x1080 still
-  of the video taken from the embed at 55s (the zoom on the app's home) with
-  the pillarbox bars cropped off; YouTube's own thumbnail is a bright webcam
-  frame and was rejected. Caption "Watch it run, start to finish.", float
+- **The last scene is the demo.** Its `shot` is `demo.webp`, a 2312x1364
+  retina capture of the studio's home screen supplied by the user (YouTube's
+  own thumbnail is a bright webcam frame and a still from the video carried
+  the recording's cursor; both were rejected). Caption "Watch it run, start
+  to finish.", float
   card "Demo video", "Teminali Code demo · 4:17", bottom-right. The play
   control is the page's one accent control: a 4rem `--accent` disc with the
   ground-coloured glyph on the screen's exact centre (`top/left: 50%`,
