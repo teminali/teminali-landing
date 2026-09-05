@@ -511,8 +511,9 @@
   }
 
   /* -------------------------------------------------------------- stats --- */
-  .stats { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.5rem; row-gap: 3.5rem; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.5rem; row-gap: 3rem; align-items: start; }
   .stat { display: flex; flex-direction: column; gap: 1rem; }
+  .stat .h3 { font-variant-numeric: tabular-nums; }
 
   /* ------------------------------------------------------------ contact --- */
   /* Two equal columns split on the centre rule. Each keeps clear of it with
