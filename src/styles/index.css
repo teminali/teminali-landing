@@ -1163,6 +1163,11 @@
   text-transform: uppercase;
   color: var(--text-60);
 }
+/* The key hints are noise on a touch screen, where they would also collide
+   with the title. */
+@media (max-width: 767px) {
+  .video-dialog_meta span:last-child { display: none; }
+}
 .video-dialog_close {
   position: absolute;
   top: 1.5rem;
