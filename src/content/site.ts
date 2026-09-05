@@ -67,6 +67,8 @@ export const scenes = [
     id: 'video',
     shot: 'take',
     icon: 'video',
+    /** Plays on the laptop screen and in the full-screen dialog. */
+    video: { id: 'WNAK7KHBLIs', title: 'Teminali Code demo' },
     caption: 'Stop recording and the take is already on a cut timeline.',
     alt: 'The recorder right after a take: the display and camera saved at 30 fps, the preview ready, and one click to open it on the timeline.',
     float: {

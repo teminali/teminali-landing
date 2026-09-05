@@ -65,6 +65,14 @@ export function initSmoothScroll(): () => void {
   }
 }
 
+/** Freeze the page behind a modal layer. Lenis swallows wheel and touch while
+    stopped, so nothing under the dialog moves; `start` hands control back. */
+export function lockScroll(locked: boolean) {
+  if (!lenis) return
+  if (locked) lenis.stop()
+  else lenis.start()
+}
+
 export function scrollToSection(id: string) {
   const el = document.getElementById(id)
   if (!el) return

@@ -821,6 +821,165 @@
   color: var(--text-75);
 }
 
+/* The video scene's player. Poster state: a play control and a full-screen
+   control centred on the screen; only the controls take the pointer, since the
+   rail is pointer-events: none so the page keeps scrolling over the laptop.
+   Playing: the embed fills the screen above a bar with the title, full screen
+   and stop. The float card hides while playing; it hangs over the embed's
+   top-right corner, which is YouTube's own chrome. */
+.screen-player_controls {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+.screen-player_controls > * { pointer-events: auto; }
+.screen-player_play {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border: 1px solid var(--line-12);
+  border-radius: 50%;
+  background: var(--solid-8);
+  color: var(--white);
+  box-shadow: var(--shadow-float);
+  transition: background 0.2s;
+}
+.screen-player_play:hover { background: var(--solid-12); }
+.screen-player_play svg { margin-left: 0.125rem; }
+.screen-player_btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--line-12);
+  border-radius: var(--r-sm);
+  background: var(--solid-8);
+  font-family: theme('fontFamily.mono');
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text-75);
+  transition: color 0.2s, background 0.2s;
+}
+.screen-player_btn:hover { color: var(--white); background: var(--solid-12); }
+.screen-player {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  background: var(--ground);
+  pointer-events: auto;
+}
+.screen-player_frame { flex: 1; width: 100%; min-height: 0; border: 0; background: #000; }
+.screen-player_bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 2.75rem;
+  padding: 0 0.5rem 0 1rem;
+  border-top: 1px solid var(--line-12);
+  background: var(--solid-4);
+}
+.screen-player_title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--text-75);
+}
+.screen-player_icon {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--r-sm);
+  color: var(--text-60);
+  transition: color 0.2s, background 0.2s;
+}
+.screen-player_icon:hover { color: var(--white); background: var(--solid-12); }
+.home-intro_img-wrap.is-playing .float-card { visibility: hidden; }
+
+/* The video without the laptop. The dialog is its own backdrop: it covers the
+   viewport, so a click anywhere outside the frame lands on it and closes it.
+   It renders in the top layer but still inherits the rail's pointer-events,
+   hence the explicit auto. */
+.video-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: color-mix(in srgb, var(--ground) 94%, transparent);
+  color: var(--white);
+  pointer-events: auto;
+  transition: opacity 0.3s;
+}
+.video-dialog::backdrop { background: transparent; }
+.video-dialog_body {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(90vw, calc((100vh - 12rem) * 16 / 9));
+  translate: -50% -50%;
+  transition: translate 0.4s, opacity 0.4s;
+}
+.video-dialog_frame {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--line-12);
+  border-radius: var(--r-lg);
+  background: #000;
+  box-shadow: var(--shadow-float);
+}
+.video-dialog_frame iframe { display: block; width: 100%; height: 100%; border: 0; }
+.video-dialog_meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-family: theme('fontFamily.mono');
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-60);
+}
+.video-dialog_close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border: 1px solid var(--line-12);
+  border-radius: 50%;
+  background: var(--solid-8);
+  color: var(--white);
+  transition: background 0.2s;
+}
+.video-dialog_close:hover { background: var(--solid-12); }
+@starting-style {
+  .video-dialog[open] { opacity: 0; }
+  .video-dialog[open] .video-dialog_body { opacity: 0; translate: -50% calc(-50% + 12px); }
+}
+
 /* =============================================================================
    STUDIO HUB. Ten module tiles on one ellipse around a concentric core.
 

@@ -166,3 +166,25 @@ the text above:
   `.software_core::before` is a ground-coloured ellipse at `inset: -4rem`
   around the 30×18.6rem core (past the glow's 40px blur tail), which hides
   the rule under the core. The tiles are opaque `--solid-4` and cover it.
+
+### Follow-up, 2026-09-05 (night)
+
+- **The video scene is a player.** `scenes[].video` (`site.ts`) names the
+  YouTube id and title; `ScreenPlayer` in `HeroRail.tsx` renders inside that
+  scene's `.home-intro_screen`. Poster state: a 3.25rem play circle and a
+  2.25rem "Full screen" pill centred on the screen, both `--solid-8` on
+  `--line-12`; only they take the pointer (the rail stays
+  `pointer-events: none`). Play mounts a `youtube-nocookie` embed (`fs=0`)
+  filling the screen above a 2.75rem `--solid-4` bar: live dot, "Now playing",
+  the title, "Full screen" and stop. `.is-playing` on the wrap hides the float
+  card, which otherwise sits on the embed's top-right chrome. "Full screen"
+  opens `VideoDialog`, a modal `<dialog>` that is its own 94% ground backdrop
+  with the embed at 16:9, `min(90vw, (100vh - 12rem) * 16/9)` wide, a 3.25rem
+  close circle at 1.5rem and a mono meta line (title, "Esc to close"). Lenis
+  is stopped while it is open (`lockScroll` in `motion.ts`). One state
+  (`poster | inline | theatre`) drives both, so only one embed exists at a
+  time, and a `MutationObserver` on the wrap's inline style unmounts the
+  inline embed once the scrub fades it under 0.5. The image wraps now tween
+  `autoAlpha`, not `opacity`, so a hidden scene's controls cannot be hit.
+  Without the rail the compact list gets a "Watch the video" pill that opens
+  the same dialog.

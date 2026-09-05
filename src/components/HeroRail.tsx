@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { createLaptopScene, type LaptopSceneInstance } from '../three/scene'
-import { isCompact, prefersReducedMotion } from '@/lib/motion'
+import { isCompact, lockScroll, prefersReducedMotion } from '@/lib/motion'
+import { Icon } from './ui'
 import { StudioMock } from './StudioMock'
 import { hero, scenes } from '@/content/site'
 
@@ -16,7 +17,17 @@ import { hero, scenes } from '@/content/site'
  *
  * Below 860px and under `prefers-reduced-motion` there is no rail. The hero
  * is followed by a framed still and the four captions as a plain list.
+ *
+ * The video scene is a player. On the laptop it starts as the screenshot with
+ * a play and a full-screen control; play mounts the YouTube embed on the
+ * screen, full screen opens it in a dialog without the laptop. One state
+ * drives both so only one embed exists at a time.
  */
+type VideoState = 'poster' | 'inline' | 'theatre'
+type SceneVideo = NonNullable<(typeof scenes)[number]['video']>
+
+const videoScene = scenes.find((scene) => scene.video)
+
 export function HeroRail() {
   const rootRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -26,6 +37,21 @@ export function HeroRail() {
   const ringRef = useRef<HTMLDivElement>(null)
   const scrollTextRef = useRef<HTMLDivElement>(null)
   const [rail] = useState(() => !(isCompact() || prefersReducedMotion()))
+  const [video, setVideo] = useState<VideoState>('poster')
+  const videoWrapRef = useRef<HTMLDivElement>(null)
+
+  // The scrub fades the video scene out when the next one arrives. Stop the
+  // embed with it so audio never keeps going under an invisible screen.
+  useEffect(() => {
+    const wrap = videoWrapRef.current
+    if (video !== 'inline' || !wrap) return
+    const check = () => {
+      if (parseFloat(getComputedStyle(wrap).opacity) < 0.5) setVideo('poster')
+    }
+    const observer = new MutationObserver(check)
+    observer.observe(wrap, { attributes: true, attributeFilter: ['style'] })
+    return () => observer.disconnect()
+  }, [video])
 
   useEffect(() => {
     let laptopInstance: LaptopSceneInstance | null = null
@@ -184,8 +210,9 @@ export function HeroRail() {
                     {scenes.map((scene, i) => (
                       <div
                         key={scene.id}
+                        ref={scene.video ? videoWrapRef : undefined}
                         data-intro={`image-wrap-${i + 1}`}
-                        className="home-intro_img-wrap"
+                        className={`home-intro_img-wrap${scene.video && video === 'inline' ? ' is-playing' : ''}`}
                         style={{ zIndex: i + 1 }}
                       >
                         <div className="home-intro_screen">
@@ -194,6 +221,15 @@ export function HeroRail() {
                           <div data-intro={`text-wrap-${i + 1}`} className="hero_intro-text-wrap">
                             <h2 className="hero-intro_h balance">{scene.caption}</h2>
                           </div>
+                          {scene.video && (
+                            <ScreenPlayer
+                              video={scene.video}
+                              playing={video === 'inline'}
+                              onPlay={() => setVideo('inline')}
+                              onStop={() => setVideo('poster')}
+                              onExpand={() => setVideo('theatre')}
+                            />
+                          )}
                         </div>
                         <FloatCard intro={`img-float-${i + 1}`} float={scene.float} />
                       </div>
@@ -205,9 +241,124 @@ export function HeroRail() {
           </div>
         </section>
       ) : (
-        <CompactScenes />
+        <CompactScenes onWatch={() => setVideo('theatre')} />
+      )}
+
+      {videoScene?.video && (
+        <VideoDialog video={videoScene.video} open={video === 'theatre'} onClose={() => setVideo('poster')} />
       )}
     </div>
+  )
+}
+
+const EMBED = 'https://www.youtube-nocookie.com/embed/'
+
+/** The player on the laptop screen. Poster: two controls centred over the
+    screenshot. Playing: the embed above a bar that carries the title, the
+    full-screen control and stop, so nothing sits on YouTube's own chrome. */
+function ScreenPlayer({
+  video,
+  playing,
+  onPlay,
+  onStop,
+  onExpand,
+}: {
+  video: SceneVideo
+  playing: boolean
+  onPlay: () => void
+  onStop: () => void
+  onExpand: () => void
+}) {
+  if (!playing) {
+    return (
+      <div className="screen-player_controls">
+        <button type="button" className="screen-player_play" onClick={onPlay} aria-label={`Play ${video.title}`}>
+          <Icon name="play" className="h-5 w-5" />
+        </button>
+        <button type="button" className="screen-player_btn" onClick={onExpand}>
+          <Icon name="expand" className="h-3.5 w-3.5" />
+          Full screen
+        </button>
+      </div>
+    )
+  }
+  return (
+    <div className="screen-player">
+      <iframe
+        className="screen-player_frame"
+        src={`${EMBED}${video.id}?autoplay=1&rel=0&playsinline=1&fs=0&iv_load_policy=3`}
+        title={video.title}
+        allow="autoplay; encrypted-media; picture-in-picture"
+        referrerPolicy="strict-origin-when-cross-origin"
+      />
+      <div className="screen-player_bar">
+        <p className="float-kicker">
+          <span className="float-dot is-live" aria-hidden="true" />
+          Now playing
+        </p>
+        <p className="screen-player_title">{video.title}</p>
+        <button type="button" className="screen-player_btn" onClick={onExpand}>
+          <Icon name="expand" className="h-3.5 w-3.5" />
+          Full screen
+        </button>
+        <button type="button" className="screen-player_icon" onClick={onStop} aria-label="Stop the video">
+          <Icon name="cross" className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+/** The video without the laptop: a modal dialog with the embed at 16:9.
+    Escape, the close control and the backdrop all close it; the embed is
+    unmounted on close so the audio stops with it. */
+function VideoDialog({ video, open, onClose }: { video: SceneVideo; open: boolean; onClose: () => void }) {
+  const ref = useRef<HTMLDialogElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!open || !el) return
+    if (!el.open) el.showModal()
+    lockScroll(true)
+    return () => {
+      lockScroll(false)
+      if (el.open) el.close()
+    }
+  }, [open])
+
+  return (
+    <dialog
+      ref={ref}
+      className="video-dialog"
+      aria-label={video.title}
+      onClose={onClose}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) e.currentTarget.close()
+      }}
+    >
+      {open && (
+        <>
+          <button type="button" className="video-dialog_close" onClick={() => ref.current?.close()} aria-label="Close the video">
+            <Icon name="cross" className="h-5 w-5" />
+          </button>
+          <div className="video-dialog_body">
+            <div className="video-dialog_frame">
+              <iframe
+                src={`${EMBED}${video.id}?autoplay=1&rel=0&playsinline=1&iv_load_policy=3`}
+                title={video.title}
+                allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                allowFullScreen
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
+            </div>
+            <p className="video-dialog_meta">
+              <span>{video.title}</span>
+              <span>Esc to close</span>
+            </p>
+          </div>
+        </>
+      )}
+    </dialog>
   )
 }
 
@@ -242,8 +393,9 @@ function FloatCard({ float, intro }: { float: SceneFloat; intro: string }) {
   )
 }
 
-/** No rail: the end state as a framed still, then the four captions as a list. */
-function CompactScenes() {
+/** No rail: the end state as a framed still, then the four captions as a list.
+    The video scene keeps its player as a button that opens the dialog. */
+function CompactScenes({ onWatch }: { onWatch: () => void }) {
   return (
     <section className="shell relative z-[2] pad-lg pt-10">
       <div className="relative">
@@ -259,6 +411,12 @@ function CompactScenes() {
           <div key={scene.id} className="compact-scene" data-reveal>
             <Kicker float={scene.float} />
             <p className="hero-intro_h pretty">{scene.caption}</p>
+            {scene.video && (
+              <button type="button" className="screen-player_btn self-start" onClick={onWatch}>
+                <Icon name="play" className="h-3.5 w-3.5" />
+                Watch the video
+              </button>
+            )}
           </div>
         ))}
       </div>
