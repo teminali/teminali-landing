@@ -18,10 +18,10 @@ import { hero, scenes } from '@/content/site'
  * Below 860px and under `prefers-reduced-motion` there is no rail. The hero
  * is followed by a framed still and the four captions as a plain list.
  *
- * The video scene is a player. On the laptop it starts as the screenshot with
- * a play and a full-screen control; play mounts the YouTube embed on the
- * screen, full screen opens it in a dialog without the laptop. One state
- * drives both so only one embed exists at a time.
+ * The scene that names a video (the last one) is a player. On the laptop it
+ * starts as the screenshot with a play and a full-screen control; play mounts
+ * the YouTube embed on the screen, full screen opens it in a dialog without
+ * the laptop. One state drives both so only one embed exists at a time.
  */
 type VideoState = 'poster' | 'inline' | 'theatre'
 type SceneVideo = NonNullable<(typeof scenes)[number]['video']>
@@ -40,17 +40,26 @@ export function HeroRail() {
   const [video, setVideo] = useState<VideoState>('poster')
   const videoWrapRef = useRef<HTMLDivElement>(null)
 
-  // The scrub fades the video scene out when the next one arrives. Stop the
-  // embed with it so audio never keeps going under an invisible screen.
+  // Stop the embed when its scene is no longer in view: the scrub fades the
+  // wrap out when the user scrubs back to the previous scene, and the whole
+  // rail leaves the viewport once they scroll on past it. Audio must never
+  // keep going under an invisible screen.
   useEffect(() => {
     const wrap = videoWrapRef.current
     if (video !== 'inline' || !wrap) return
-    const check = () => {
-      if (parseFloat(getComputedStyle(wrap).opacity) < 0.5) setVideo('poster')
+    const stop = () => setVideo('poster')
+    const faded = new MutationObserver(() => {
+      if (parseFloat(getComputedStyle(wrap).opacity) < 0.5) stop()
+    })
+    faded.observe(wrap, { attributes: true, attributeFilter: ['style'] })
+    const gone = new IntersectionObserver(([entry]) => {
+      if (entry && !entry.isIntersecting) stop()
+    }, { threshold: 0.5 })
+    gone.observe(wrap)
+    return () => {
+      faded.disconnect()
+      gone.disconnect()
     }
-    const observer = new MutationObserver(check)
-    observer.observe(wrap, { attributes: true, attributeFilter: ['style'] })
-    return () => observer.disconnect()
   }, [video])
 
   useEffect(() => {
