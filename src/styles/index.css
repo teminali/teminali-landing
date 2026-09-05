@@ -435,22 +435,22 @@
   .mission-card {
     display: flex;
     flex-direction: column;
-    gap: 3.25rem;
-    padding: 2rem 2rem 2.5rem;
-    border-radius: 0.75rem;
+    gap: 2rem;
+    padding: 2rem;
+    border-radius: var(--r-md);
     background: var(--solid-4);
     transition: background 0.3s, transform 0.3s var(--ease);
   }
-  .mission-card:hover { background: var(--solid-8); transform: translateY(-3px); }
+  .mission-card:hover { background: var(--solid-8); transform: translateY(-2px); }
   .mission-icon {
     display: flex;
     flex: none;
     align-items: center;
     justify-content: center;
-    width: 3.25rem;
-    height: 3.25rem;
-    border-radius: 0.5rem;
-    background: var(--fill-12);
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--r-sm);
+    background: var(--solid-12);
   }
   .mission-text { display: flex; flex-direction: column; gap: 1.5rem; }
 
