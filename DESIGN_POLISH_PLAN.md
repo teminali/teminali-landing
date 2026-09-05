@@ -154,6 +154,15 @@ rewrite each sentence with a full stop, a comma or a colon; never a hyphen or a
 spaced en dash. Code comments count too. Same rule for new copy written during
 this pass and for these docs.
 
+## Status
+
+All six steps are done and committed on `main`, each with `tsc`, a build,
+Playwright captures at 1512x865 and 1280x800 and a pixel diff against the
+frames taken before the change. The measured values live in `SECTION_MAP.md`.
+Step 5's two "no change" calls are recorded there as well: the nav keeps its
+welded accent Download block because that is the reference's own chrome, and
+the platform shots and about figures already met the surface rules.
+
 ## Order of work
 
 0. Copy pass: remove every em dash (section 0). One commit.
