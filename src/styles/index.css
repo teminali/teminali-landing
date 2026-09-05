@@ -873,7 +873,8 @@
   50% { transform: scale(1.14); opacity: 0.3; }
 }
 @media (prefers-reduced-motion: reduce) { .screen-player_play::before { animation: none; } }
-.screen-player_btn {
+.screen-player_btn,
+.player_btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -891,37 +892,141 @@
   color: var(--text-75);
   transition: color 0.2s, background 0.2s;
 }
-.screen-player_btn:hover { color: var(--white); background: var(--solid-12); }
-.screen-player {
+.screen-player_btn:hover,
+.player_btn:hover { color: var(--white); background: var(--solid-12); }
+/* ---------------------------------------------------------------- player ---
+   Our chrome, not YouTube's. The frame is covered by a shield that takes
+   every pointer event, so the only controls on screen are the ones below.
+   The scrubber reads two custom properties the player writes each frame:
+   `--played` and `--loaded`, both 0 to 1. */
+.player {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--ground);
+}
+.player.is-inline {
   position: absolute;
   inset: 0;
   z-index: 6;
-  display: flex;
-  flex-direction: column;
-  background: var(--ground);
   pointer-events: auto;
 }
-.screen-player_frame { flex: 1; width: 100%; min-height: 0; border: 0; background: #000; }
-.screen-player_bar {
+.player.is-theatre {
+  overflow: hidden;
+  border: 1px solid var(--line-12);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-float);
+}
+.player_stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #000;
+}
+.player.is-theatre .player_stage { aspect-ratio: 16 / 9; }
+.player.is-full { height: 100vh; border: 0; border-radius: 0; }
+.player.is-full .player_stage { aspect-ratio: auto; }
+.player_frame { position: absolute; inset: 0; }
+.player_frame iframe { display: block; width: 100%; height: 100%; border: 0; }
+/* Above the frame, under the overlays: swallows hover and clicks so YouTube's
+   title bar, share sheet and end screen never appear. */
+.player_shield { position: absolute; inset: 0; z-index: 2; background: transparent; cursor: pointer; }
+.player_poster { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; object-fit: cover; }
+.player_resume {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  translate: -50% -50%;
+  border: 1px solid var(--line-12);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ground) 72%, transparent);
+  color: var(--white);
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+}
+.player_spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 4;
+  width: 2rem;
+  height: 2rem;
+  margin: -1rem 0 0 -1rem;
+  border: 2px solid var(--line-12);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: player-spin 0.9s linear infinite;
+}
+@keyframes player-spin { to { rotate: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .player_spinner { animation-duration: 2.4s; } }
+
+.player_bar {
+  position: relative;
+  z-index: 5;
+  border-top: 1px solid var(--line-12);
+  background: var(--solid-4);
+}
+.player_track {
+  position: relative;
+  height: 0.875rem;
+  cursor: pointer;
+  touch-action: none;
+}
+.player_track::before,
+.player_loaded,
+.player_played {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 2px;
+  translate: 0 -50%;
+  border-radius: 1px;
+  transition: height 0.15s var(--ease);
+}
+.player_track::before { right: 0; background: var(--line-12); }
+.player_loaded { width: calc(var(--loaded, 0) * 100%); background: var(--fill-16); }
+.player_played { width: calc(var(--played, 0) * 100%); background: var(--accent); }
+.player_knob {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--played, 0) * 100%);
+  width: 0.625rem;
+  height: 0.625rem;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--accent);
+  scale: 0;
+  transition: scale 0.15s var(--ease);
+}
+.player_track:hover::before,
+.player_track:focus-visible::before,
+.player_track:hover .player_loaded,
+.player_track:hover .player_played,
+.player_track:focus-visible .player_played { height: 4px; }
+.player_track:hover .player_knob,
+.player_track:focus-visible .player_knob { scale: 1; }
+.player_track:focus-visible { outline: none; }
+.player_track:focus-visible .player_knob { box-shadow: var(--focus-ring); }
+
+.player_row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   height: 2.75rem;
-  padding: 0 0.5rem 0 1rem;
-  border-top: 1px solid var(--line-12);
-  background: var(--solid-4);
+  padding: 0 0.5rem 0 0.5rem;
 }
-.screen-player_title {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  font-size: 0.75rem;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: var(--text-75);
-}
-.screen-player_icon {
+.player_key,
+.player_icon {
   display: grid;
+  flex: none;
   place-items: center;
   width: 2.25rem;
   height: 2.25rem;
@@ -929,7 +1034,59 @@
   color: var(--text-60);
   transition: color 0.2s, background 0.2s;
 }
-.screen-player_icon:hover { color: var(--white); background: var(--solid-12); }
+.player_key { color: var(--white); }
+.player_key:hover,
+.player_icon:hover { color: var(--white); background: var(--solid-12); }
+.player_time {
+  flex: none;
+  font-family: theme('fontFamily.mono');
+  font-size: 0.6875rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--text-75);
+}
+.player_time-total { color: var(--text-60); }
+.player_title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--text-60);
+}
+.player_volume { display: flex; flex: none; align-items: center; gap: 0.375rem; }
+.player_range {
+  width: 4.5rem;
+  height: 0.875rem;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+.player_range::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 1px;
+  background: linear-gradient(var(--accent), var(--accent)) 0 / var(--fill, 100%) 100% no-repeat var(--line-12);
+}
+.player_range::-moz-range-track { height: 2px; border-radius: 1px; background: var(--line-12); }
+.player_range::-moz-range-progress { height: 2px; border-radius: 1px; background: var(--accent); }
+.player_range::-webkit-slider-thumb {
+  appearance: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  margin-top: -0.25rem;
+  border-radius: 50%;
+  background: var(--white);
+}
+.player_range::-moz-range-thumb { width: 0.625rem; height: 0.625rem; border: 0; border-radius: 50%; background: var(--white); }
+.player_range:focus-visible { outline: none; }
+.player_range:focus-visible::-webkit-slider-thumb { box-shadow: var(--focus-ring); }
+
+/* Narrow screens lose the parts that are nice to have, never the transport. */
+@media (max-width: 767px) {
+  .player_title, .player_range { display: none; }
+}
 .home-intro_img-wrap.is-playing .float-card { visibility: hidden; }
 
 /* The video without the laptop. The dialog is its own backdrop: it covers the
@@ -960,15 +1117,7 @@
   translate: -50% -50%;
   transition: translate 0.4s, opacity 0.4s;
 }
-.video-dialog_frame {
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border: 1px solid var(--line-12);
-  border-radius: var(--r-lg);
-  background: #000;
-  box-shadow: var(--shadow-float);
-}
-.video-dialog_frame iframe { display: block; width: 100%; height: 100%; border: 0; }
+.video-dialog_frame { display: flex; flex-direction: column; }
 .video-dialog_meta {
   display: flex;
   justify-content: space-between;

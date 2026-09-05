@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { createLaptopScene, type LaptopSceneInstance } from '../three/scene'
 import { isCompact, lockScroll, prefersReducedMotion } from '@/lib/motion'
+import { VideoPlayer } from '@/components/VideoPlayer'
 import { Icon } from './ui'
 import { StudioMock } from './StudioMock'
 import { hero, scenes } from '@/content/site'
@@ -234,6 +235,7 @@ export function HeroRail() {
                             <ScreenPlayer
                               intro={`player-${i + 1}`}
                               video={scene.video}
+                              poster={`/shots/${scene.shot}.webp`}
                               playing={video === 'inline'}
                               onPlay={() => setVideo('inline')}
                               onStop={() => setVideo('poster')}
@@ -261,17 +263,16 @@ export function HeroRail() {
   )
 }
 
-const EMBED = 'https://www.youtube-nocookie.com/embed/'
-
 /** The player on the laptop screen. Poster: the play control on the screen's
     centre with the full-screen pill under it; the scrub timeline reveals them
     as the scene's last beat (`data-intro="player-n"`), so the controls stay
     mounted while playing and only hide, keeping that tween target alive.
-    Playing: the embed above a bar that carries the title, the full-screen
-    control and stop, so nothing sits on YouTube's own chrome. */
+    Playing: `VideoPlayer`, which fills the screen with its own transport,
+    scrubber, clock and volume. YouTube's chrome is off. */
 function ScreenPlayer({
   intro,
   video,
+  poster,
   playing,
   onPlay,
   onStop,
@@ -279,6 +280,7 @@ function ScreenPlayer({
 }: {
   intro: string
   video: SceneVideo
+  poster: string
   playing: boolean
   onPlay: () => void
   onStop: () => void
@@ -295,36 +297,10 @@ function ScreenPlayer({
           Full screen
         </button>
       </div>
-      {playing && <ScreenEmbed video={video} onStop={onStop} onExpand={onExpand} />}
+      {playing && (
+        <VideoPlayer video={video} variant="inline" poster={poster} onClose={onStop} onExpand={onExpand} />
+      )}
     </>
-  )
-}
-
-function ScreenEmbed({ video, onStop, onExpand }: { video: SceneVideo; onStop: () => void; onExpand: () => void }) {
-  return (
-    <div className="screen-player">
-      <iframe
-        className="screen-player_frame"
-        src={`${EMBED}${video.id}?autoplay=1&rel=0&playsinline=1&fs=0&iv_load_policy=3`}
-        title={video.title}
-        allow="autoplay; encrypted-media; picture-in-picture"
-        referrerPolicy="strict-origin-when-cross-origin"
-      />
-      <div className="screen-player_bar">
-        <p className="float-kicker">
-          <span className="float-dot is-live" aria-hidden="true" />
-          Now playing
-        </p>
-        <p className="screen-player_title">{video.title}</p>
-        <button type="button" className="screen-player_btn" onClick={onExpand}>
-          <Icon name="expand" className="h-3.5 w-3.5" />
-          Full screen
-        </button>
-        <button type="button" className="screen-player_icon" onClick={onStop} aria-label="Stop the video">
-          <Icon name="cross" className="h-4 w-4" />
-        </button>
-      </div>
-    </div>
   )
 }
 
@@ -362,17 +338,11 @@ function VideoDialog({ video, open, onClose }: { video: SceneVideo; open: boolea
           </button>
           <div className="video-dialog_body">
             <div className="video-dialog_frame">
-              <iframe
-                src={`${EMBED}${video.id}?autoplay=1&rel=0&playsinline=1&iv_load_policy=3`}
-                title={video.title}
-                allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-                allowFullScreen
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
+              <VideoPlayer video={video} variant="theatre" onClose={() => ref.current?.close()} />
             </div>
             <p className="video-dialog_meta">
               <span>{video.title}</span>
-              <span>Esc to close</span>
+              <span>Space to play, F for full screen, Esc to close</span>
             </p>
           </div>
         </>

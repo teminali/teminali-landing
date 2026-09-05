@@ -37,11 +37,16 @@ const paths: Record<string, string> = {
   scissors: 'M6 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM6 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7.6 8.8 16 3.5M7.6 11.2 16 16.5',
   wave: 'M2.5 10h2l1.5-4 2 8 2-8 2 6 1.5-2h4',
   linkedin: 'M5 8v7M5 5v.01M9 15V8m0 3.2c0-2 1-3.2 2.8-3.2 1.7 0 2.7 1.1 2.7 3.1V15',
+  pause: 'M6.5 4.5h2.5v11H6.5zM11 4.5h2.5v11H11z',
+  replay: 'M10 5.5a4.5 4.5 0 1 0 4.4 5.4M10 5.5H13M10 5.5 12 3.5',
+  volume: 'M4 8h2.4L9.5 5.2v9.6L6.4 12H4zM12.4 8.3a2.5 2.5 0 0 1 0 3.4M14.5 6.4a5.2 5.2 0 0 1 0 7.2',
+  mute: 'M4 8h2.4L9.5 5.2v9.6L6.4 12H4zM12.5 8.5l4 3M16.5 8.5l-4 3',
+  collapse: 'M7.5 3.5v4h-4M12.5 3.5v4h4M7.5 16.5v-4h-4M12.5 16.5v-4h4',
 }
 
 export function Icon({ name, className = '' }: { name: string; className?: string }) {
   const d = paths[name] ?? paths.spark
-  const filled = name === 'play' || name === 'github'
+  const filled = name === 'play' || name === 'pause' || name === 'github'
   return (
     <svg
       viewBox="0 0 20 20"

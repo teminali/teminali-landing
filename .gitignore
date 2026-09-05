@@ -7,3 +7,4 @@ _ref
 # Claude Code session state and handover notes — working files, not the site.
 .claude
 .agent
+.vercel
