@@ -93,7 +93,7 @@ export const scenes = [
   },
   {
     id: 'demo',
-    shot: 'demo',
+    shot: 'demo-poster',
     icon: 'play',
     /** The last scene is a player: the demo plays on the laptop screen and in
         the full-screen dialog. The shot is the studio's home screen. */
