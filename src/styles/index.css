@@ -412,12 +412,12 @@
     flex-direction: column;
     gap: 2rem;
     padding: 2rem 4rem 2rem 2.5rem;
-    border-radius: 0.75rem;
+    border-radius: var(--r-md);
     background: var(--solid-3);
   }
   .compare-card.is-2 { padding-left: 4rem; padding-right: 2rem; }
   .compare-heading { display: flex; align-items: center; gap: 1.5rem; height: 3.5rem; margin-bottom: 2rem; }
-  .compare-list { display: grid; grid-auto-rows: minmax(0, 1fr); gap: 1.5rem; flex: 1; }
+  .compare-list { display: grid; grid-auto-rows: minmax(2.5rem, 1fr); gap: 1.5rem; flex: 1; }
   .compare-item { display: flex; align-items: flex-start; gap: 1.5rem; }
   .compare-icon {
     display: flex;
@@ -426,8 +426,8 @@
     justify-content: center;
     width: 2rem;
     height: 2rem;
-    border-radius: 0.5rem;
-    background: var(--fill-8);
+    border-radius: var(--r-sm);
+    background: var(--solid-8);
   }
 
   /* ------------------------------------------------------------ mission --- */
