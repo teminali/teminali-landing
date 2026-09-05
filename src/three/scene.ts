@@ -172,6 +172,7 @@ export function createLaptopScene(config: LaptopSceneConfig): LaptopSceneInstanc
       gsap.set('[data-intro="image-wrap-4"]', { y: 12, autoAlpha: 0 })
       gsap.set('[data-intro*="text-wrap"]', { opacity: 0 })
       gsap.set('[data-intro*="img-float"]', { y: 12, opacity: 0 })
+      gsap.set('[data-intro*="player"]', { autoAlpha: 0 })
 
       timeline = gsap.timeline({
         scrollTrigger: {
@@ -220,6 +221,8 @@ export function createLaptopScene(config: LaptopSceneConfig): LaptopSceneInstanc
       timeline.to('[data-intro="overlay-4"]', { opacity: 1, duration: 0.5 })
       timeline.to('[data-intro="text-wrap-4"]', { opacity: 1, duration: 1 }, '<')
       timeline.to('[data-intro=\"img-float-4\"]', { y: 0, opacity: 1, z: 40, duration: 0.5 }, '<0.15')
+      // The player's controls are the last beat: only once the scene has landed.
+      timeline.to('[data-intro*="player"]', { autoAlpha: 1, duration: 0.5 }, '<0.3')
 
       resize()
       ScrollTrigger.refresh()

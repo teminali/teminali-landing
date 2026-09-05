@@ -92,19 +92,19 @@ export const scenes = [
     },
   },
   {
-    id: 'verify',
-    shot: 'verify',
-    icon: 'check',
-    /** The last scene is a player: the demo plays on the laptop screen and in the full-screen dialog. */
+    id: 'demo',
+    shot: 'demo',
+    icon: 'play',
+    /** The last scene is a player: the demo plays on the laptop screen and in
+        the full-screen dialog. The shot is a still from the video. */
     video: { id: 'WNAK7KHBLIs', title: 'Teminali Code demo' },
-    caption: 'Nothing is done until the real runtimes say so.',
-    alt: 'The studio after a verification run: typecheck, unit, core and build green, lint reporting three warnings.',
+    caption: 'Watch it run, start to finish.',
+    alt: 'A still from the demo video: the studio mid-run, with the presenter in a corner window.',
     float: {
       status: 'ok',
-      kicker: 'Five runtimes',
-      title: 'Types · unit · core · build green',
-      sub: 'A missing runner is unmeasured, not passed',
-      chips: ['4 green', '3 warnings', '0 failed'],
+      kicker: 'Demo video',
+      title: 'Teminali Code demo · 4:17',
+      sub: 'Plays on this screen or full screen',
       slot: 'bottom-right',
     },
   },

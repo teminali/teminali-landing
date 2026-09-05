@@ -217,3 +217,18 @@ the text above:
   `autoAlpha`, not `opacity`, so a hidden scene's controls cannot be hit.
   Without the rail the compact list gets a "Watch the video" pill that opens
   the same dialog.
+- **The last scene is the demo.** Its `shot` is `demo.webp`, a 1664x1080 still
+  of the video taken from the embed at 55s (the zoom on the app's home) with
+  the pillarbox bars cropped off; YouTube's own thumbnail is a bright webcam
+  frame and was rejected. Caption "Watch it run, start to finish.", float
+  card "Demo video", "Teminali Code demo · 4:17", bottom-right. The play
+  control is the page's one accent control: a 4rem `--accent` disc with the
+  ground-coloured glyph on the screen's exact centre (`top/left: 50%`,
+  translated back by half), a 1px `--accent-18` ring at -.5rem breathing
+  (2.8s, scale 1.14, opacity .3; off under reduced motion), a 1px
+  `--accent-8` ring at -1.25rem and a 40px `--accent-18` glow, the hub core's
+  language. The Full screen pill hangs at `calc(50% + 3.75rem)`. Both are
+  `data-intro="player-4"` and arrive as the scene's last beat on the scrub
+  timeline (`autoAlpha`, 0.5, at `'<0.3'` after the float card), so they never
+  show during the crossfade; they stay mounted and `hidden` while playing so
+  that tween target survives.

@@ -232,6 +232,7 @@ export function HeroRail() {
                           </div>
                           {scene.video && (
                             <ScreenPlayer
+                              intro={`player-${i + 1}`}
                               video={scene.video}
                               playing={video === 'inline'}
                               onPlay={() => setVideo('inline')}
@@ -262,35 +263,44 @@ export function HeroRail() {
 
 const EMBED = 'https://www.youtube-nocookie.com/embed/'
 
-/** The player on the laptop screen. Poster: two controls centred over the
-    screenshot. Playing: the embed above a bar that carries the title, the
-    full-screen control and stop, so nothing sits on YouTube's own chrome. */
+/** The player on the laptop screen. Poster: the play control on the screen's
+    centre with the full-screen pill under it; the scrub timeline reveals them
+    as the scene's last beat (`data-intro="player-n"`), so the controls stay
+    mounted while playing and only hide, keeping that tween target alive.
+    Playing: the embed above a bar that carries the title, the full-screen
+    control and stop, so nothing sits on YouTube's own chrome. */
 function ScreenPlayer({
+  intro,
   video,
   playing,
   onPlay,
   onStop,
   onExpand,
 }: {
+  intro: string
   video: SceneVideo
   playing: boolean
   onPlay: () => void
   onStop: () => void
   onExpand: () => void
 }) {
-  if (!playing) {
-    return (
-      <div className="screen-player_controls">
+  return (
+    <>
+      <div data-intro={intro} className="screen-player_controls" hidden={playing}>
         <button type="button" className="screen-player_play" onClick={onPlay} aria-label={`Play ${video.title}`}>
-          <Icon name="play" className="h-5 w-5" />
+          <Icon name="play" className="h-6 w-6" />
         </button>
         <button type="button" className="screen-player_btn" onClick={onExpand}>
           <Icon name="expand" className="h-3.5 w-3.5" />
           Full screen
         </button>
       </div>
-    )
-  }
+      {playing && <ScreenEmbed video={video} onStop={onStop} onExpand={onExpand} />}
+    </>
+  )
+}
+
+function ScreenEmbed({ video, onStop, onExpand }: { video: SceneVideo; onStop: () => void; onExpand: () => void }) {
   return (
     <div className="screen-player">
       <iframe

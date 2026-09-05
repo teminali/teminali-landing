@@ -831,27 +831,47 @@
   position: absolute;
   inset: 0;
   z-index: 6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
   pointer-events: none;
 }
-.screen-player_controls > * { pointer-events: auto; }
+.screen-player_controls > * { position: absolute; left: 50%; pointer-events: auto; }
+/* The play sits on the screen's exact centre; the full-screen pill hangs
+   under it, clear of the halo. */
+.screen-player_controls > .screen-player_play { top: 50%; translate: -50% -50%; }
+.screen-player_controls > .screen-player_btn { top: calc(50% + 3.75rem); translate: -50% 0; }
+/* The one accent control on the page: a solid disc with the ground-coloured
+   glyph, the hub core's two rings and glow around it, and a slow breathing
+   halo. Hover deepens the glow; nothing scales. */
 .screen-player_play {
   display: grid;
   place-items: center;
-  width: 3.25rem;
-  height: 3.25rem;
-  border: 1px solid var(--line-12);
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
-  background: var(--solid-8);
-  color: var(--white);
-  box-shadow: var(--shadow-float);
-  transition: background 0.2s;
+  background: var(--accent);
+  color: var(--ground);
+  box-shadow: 0 0 0 1px var(--accent-18), 0 0 40px var(--accent-18), var(--shadow-float);
+  transition: box-shadow 0.3s, filter 0.3s;
 }
-.screen-player_play:hover { background: var(--solid-12); }
-.screen-player_play svg { margin-left: 0.125rem; }
+.screen-player_play::before,
+.screen-player_play::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.screen-player_play::before {
+  inset: -0.5rem;
+  border: 1px solid var(--accent-18);
+  animation: play-breathe 2.8s ease-in-out infinite;
+}
+.screen-player_play::after { inset: -1.25rem; border: 1px solid var(--accent-8); }
+.screen-player_play:hover { filter: brightness(1.08); box-shadow: 0 0 0 1px var(--accent-18), 0 0 56px var(--accent-18), var(--shadow-float); }
+.screen-player_play svg { margin-left: 0.1875rem; }
+@keyframes play-breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.14); opacity: 0.3; }
+}
+@media (prefers-reduced-motion: reduce) { .screen-player_play::before { animation: none; } }
 .screen-player_btn {
   display: inline-flex;
   align-items: center;
