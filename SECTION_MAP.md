@@ -247,3 +247,34 @@ the text above:
   WebGL renderer string, defaulting to Apple Silicon. The match is promoted
   into a "Recommended for this computer" block above the cards with a direct
   link to that asset.
+
+### Follow-up, 2026-09-05 (section sweep, step 5)
+
+- **Mission cards.** Gap 2rem (was 3.25rem, which left the card hollow),
+  padding a flat 2rem, radius `--r-md`, fill `--solid-4` going to `--solid-8`
+  on hover with a 2px lift. The icon plate is 2.75rem, `--r-sm`, on
+  `--solid-12` rather than the translucent `--fill-12`.
+- **Compare cards.** Rows sit on a 2.5rem grid
+  (`grid-auto-rows: minmax(2.5rem, 1fr)`), so the check and cross plates line
+  up across the two columns whatever the row wraps to. The 2rem plates moved
+  from `--fill-8` to `--solid-8`; the card radius is `--r-md`.
+- **Stats.** The numbers carry `font-variant-numeric: tabular-nums`, so the
+  four figures in each column align on their digits. Row step 3rem (was
+  3.5rem) with `align-items: start`, which baseline-aligns the labels of any
+  two stats in a row.
+- **Process, tour and roadmap.** The step rule and the two framed panels use
+  the card hairline `--line-12` (they were the heavier `--line-16`) and the
+  `--r-lg` radius token.
+- **Downloads, first launch.** The band was `bg-surface-sunken`, the exact
+  ground colour, so its only effect was to stop the drafting rules. It is now
+  a plain `--line-12` band and the rules run through it like every other
+  section.
+- **Nav, no change and why.** There is no longer a lone status dot to label.
+  The full-bleed accent Download block is what the reference does (a solid CTA
+  welded into the top-right corner, taller than the bar, square outer
+  corners), so it stays; it is deliberate weight, not an oversight.
+- **Platform split rows and about figures, already compliant.** `.split-shot`
+  carries the 1px `--line-12` frame, `--r-lg` and an opaque `--ground` fill;
+  the about figure wrapper is opaque `bg-ground` too, so neither lets a
+  drafting rule ghost through, and the 10rem `.split` gap keeps the text
+  column well clear of the centre rule.
