@@ -257,7 +257,7 @@ export function Downloads() {
       </section>
 
       {/* First launch on macOS, directly beneath the macOS cards. */}
-      <section id="first-launch" className="section-md border-y border-line bg-surface-sunken">
+      <section id="first-launch" className="section-md border-y border-[var(--line-12)]">
         <div className="shell">
           <p className="kicker" data-reveal>
             {downloads.mac.kicker}
