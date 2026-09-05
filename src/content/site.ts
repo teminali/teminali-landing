@@ -26,7 +26,7 @@ export const site = {
   name: 'Teminali Code',
   tagline: 'An autonomous code studio, screen recorder and video editor that runs on your machine.',
   releaseUrl: 'https://github.com/teminali/releases/releases',
-  version: 'v1.2.8',
+  version: 'v1.2.9',
   email: 'hello@teminali.com',
 }
 
@@ -503,12 +503,18 @@ export const downloads = {
   body: 'The full studio, video editor, routing gateway, and all five verification runtimes. One install, no cloud account, nothing to configure before it runs.',
   secondary: { label: 'All releases on GitHub', href: site.releaseUrl },
 
+  /* Fallback sizes are v1.2.9's assets; the live release overrides them. */
   platforms: [
-    { id: 'mac-arm', name: 'macOS', arch: 'Apple Silicon', ext: '.dmg', size: '118 MB', match: 'mac-arm', asset: /(arm64|aarch64|apple.?silicon).*\.dmg$/i },
-    { id: 'mac-x64', name: 'macOS', arch: 'Intel', ext: '.dmg', size: '124 MB', match: 'mac-x64', asset: /(x64|x86_64|intel).*\.dmg$/i },
-    { id: 'win', name: 'Windows', arch: 'x64', ext: '.exe', size: '96 MB', match: 'win', asset: /\.exe$/i },
-    { id: 'linux', name: 'Linux', arch: 'x86_64', ext: '.AppImage', size: '132 MB', match: 'linux', asset: /\.AppImage$/i },
+    { id: 'mac-arm', name: 'macOS', arch: 'Apple Silicon', ext: '.dmg', size: '148 MB', asset: /(arm64|aarch64|apple.?silicon).*\.dmg$/i },
+    { id: 'mac-x64', name: 'macOS', arch: 'Intel', ext: '.dmg', size: '154 MB', asset: /(x64|x86_64|intel).*\.dmg$/i },
+    { id: 'win', name: 'Windows', arch: 'x64', ext: '.exe', size: '125 MB', asset: /\.exe$/i },
+    { id: 'linux', name: 'Linux', arch: 'x86_64', ext: '.AppImage', size: '146 MB', asset: /\.AppImage$/i },
   ],
+
+  recommended: {
+    kicker: 'Recommended for this computer',
+    note: 'Read from your browser. Not this machine? Every build is below.',
+  },
 
   mac: {
     kicker: 'First launch on macOS',
