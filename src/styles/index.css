@@ -1021,7 +1021,7 @@
   align-items: center;
   gap: 0.75rem;
   height: 2.75rem;
-  padding: 0 0.5rem 0 0.5rem;
+  padding: 0 0.5rem;
 }
 .player_key,
 .player_icon {
@@ -1056,6 +1056,8 @@
   text-overflow: ellipsis;
   color: var(--text-60);
 }
+/* The dialog prints the title under the frame, so the bar does not repeat it. */
+.player.is-theatre .player_title { visibility: hidden; }
 .player_volume { display: flex; flex: none; align-items: center; gap: 0.375rem; }
 .player_range {
   width: 4.5rem;
