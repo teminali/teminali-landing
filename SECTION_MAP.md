@@ -233,3 +233,17 @@ the text above:
   timeline (`autoAlpha`, 0.5, at `'<0.3'` after the float card), so they never
   show during the crossfade; they stay mounted and `hidden` while playing so
   that tween target survives.
+- **Downloads read the live release.** `downloads.tsx` derives the GitHub
+  repo from `site.releaseUrl` (`teminali/releases`; the old constant named a
+  repo that does not exist, so the page had always fallen back to the static
+  copy). The latest-release response is cached in `sessionStorage` under
+  `tc:release` for one hour, because the unauthenticated API allows 60
+  requests an hour per IP. The page shows the version, the release date and
+  each asset's real size. Detection is best effort and only ever promotes a
+  build, never hides one: phones and tablets (UA-CH `mobile`, the mobile UA
+  strings, a Mac UA with more than one touch point) get no recommendation;
+  then Windows, Linux and Mac by `userAgentData.platform` or the UA; on a Mac
+  the architecture comes from the `architecture` client hint first, then the
+  WebGL renderer string, defaulting to Apple Silicon. The match is promoted
+  into a "Recommended for this computer" block above the cards with a direct
+  link to that asset.
