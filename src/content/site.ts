@@ -503,8 +503,11 @@ export const downloads = {
   body: 'The full studio, video editor, routing gateway, and all five verification runtimes. One install, no cloud account, nothing to configure before it runs.',
   secondary: { label: 'All releases on GitHub', href: site.releaseUrl },
 
-  /* Indicative sizes only: they were measured on the last pre-0.0.1 build,
-     and the live release's real asset sizes overwrite them on load. */
+  /* Indicative sizes only: they were measured on the last pre-0.0.1 build, and
+     the live release's real asset sizes overwrite them on load. A platform the
+     live release has no asset for says so instead — see `absent` in
+     sections/downloads.tsx. These numbers are a placeholder for a build that
+     has not been READ yet, never a claim that one exists. */
   platforms: [
     { id: 'mac-arm', name: 'macOS', arch: 'Apple Silicon', ext: '.dmg', size: '148 MB', asset: /(arm64|aarch64|apple.?silicon).*\.dmg$/i },
     { id: 'mac-x64', name: 'macOS', arch: 'Intel', ext: '.dmg', size: '154 MB', asset: /(x64|x86_64|intel).*\.dmg$/i },

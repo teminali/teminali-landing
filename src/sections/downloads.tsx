@@ -203,6 +203,22 @@ export function Downloads() {
   const mine = downloads.platforms.find((p) => p.id === me)
   const mineAsset = mine ? assetFor(mine) : undefined
 
+  /*
+    A platform the CURRENT release does not build for.
+
+    The sizes in `site.ts` are indicative and are overwritten by the real ones
+    the moment the release loads — which is right while a build merely has not
+    been read yet, and wrong once it has been read and is not there. Every
+    0.0.x release so far has shipped without a Windows .exe, so a Windows
+    visitor was told "`.exe · 125 MB`" under a Download button that led to a
+    releases page with no .exe on it: a fabricated size attached to a file
+    that has never existed.
+
+    Only once `rel` has actually arrived, because before that "missing" and
+    "not fetched yet" look identical and the placeholder is the honest answer.
+  */
+  const absent = (p: (typeof downloads.platforms)[number]) => rel != null && assetFor(p) == null
+
   return (
     <>
       {/* Header */}
@@ -239,12 +255,13 @@ export function Downloads() {
                   {mine.name} · {mine.arch}
                 </p>
                 <p className="mt-2 font-mono text-micro text-ink-muted">
-                  {version} · {mine.ext} · {mineAsset ? mb(mineAsset.size) : mine.size}
+                  {version} · {mine.ext} ·{' '}
+                  {mineAsset ? mb(mineAsset.size) : absent(mine) ? 'not in this release' : mine.size}
                 </p>
                 <p className="mt-2 text-small text-ink-soft">{downloads.recommended.note}</p>
               </div>
               <a className="btn btn-primary shrink-0" href={mineAsset?.url ?? downloads.secondary.href}>
-                Download for {mine.name}
+                {absent(mine) ? 'See all releases' : `Download for ${mine.name}`}
               </a>
             </div>
           )}
@@ -269,13 +286,13 @@ export function Downloads() {
                 </div>
                 <p className="mt-1 text-small text-ink-soft">{p.arch}</p>
                 <p className="mt-6 font-mono text-micro text-ink-muted">
-                  {p.ext} · {asset ? mb(asset.size) : p.size}
+                  {p.ext} · {asset ? mb(asset.size) : absent(p) ? 'not in this release' : p.size}
                 </p>
                 <a
                   className="btn btn-primary mt-5 w-full"
                   href={asset?.url ?? downloads.secondary.href}
                 >
-                  Download
+                  {absent(p) ? 'See all releases' : 'Download'}
                 </a>
               </div>
             )
