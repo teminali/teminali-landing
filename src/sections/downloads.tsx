@@ -8,7 +8,18 @@ type PlatformId = (typeof downloads.platforms)[number]['id']
 /** The public releases repo, read off the releases link so the two can never drift. */
 const REPO = new URL(site.releaseUrl).pathname.split('/').filter(Boolean).slice(0, 2).join('/')
 const CACHE_KEY = 'tc:release'
-const CACHE_TTL = 60 * 60 * 1000
+/*
+  Five minutes, not an hour.
+
+  The cache exists because GitHub allows sixty unauthenticated calls an hour
+  and a visitor should not spend them navigating. But an hour is long enough to
+  outlive a release: v0.0.1 was published, found to be broken, and deleted
+  inside forty minutes, and every tab that had loaded the page in between went
+  on offering its assets — download links that now 404. Five minutes bounds how
+  wrong the page can be while still collapsing a burst of navigation into one
+  call.
+*/
+const CACHE_TTL = 5 * 60 * 1000
 const mb = (n: number) => `${Math.round(n / 1e6)} MB`
 const formatDate = (iso: string) =>
   iso ? new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : ''
@@ -24,10 +35,26 @@ async function fetchRelease(): Promise<Release | null> {
   } catch {
     /* Storage can be unavailable; fetch instead. */
   }
-  const r = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`, {
-    headers: { Accept: 'application/vnd.github+json' },
-  })
-  if (!r.ok) return null
+  // A stale cache beats no downloads at all: if GitHub is rate-limiting or
+  // unreachable, show what was last known rather than an empty page.
+  const stale = (): Release | null => {
+    try {
+      const raw = sessionStorage.getItem(CACHE_KEY)
+      return raw ? (JSON.parse(raw) as { rel: Release }).rel : null
+    } catch {
+      return null
+    }
+  }
+
+  let r: Response
+  try {
+    r = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`, {
+      headers: { Accept: 'application/vnd.github+json' },
+    })
+  } catch {
+    return stale()
+  }
+  if (!r.ok) return stale()
   const j = await r.json()
   const assets: Asset[] = (j.assets ?? []).map((a: Record<string, unknown>) => ({
     name: String(a.name),
