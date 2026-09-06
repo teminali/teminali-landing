@@ -565,7 +565,7 @@ export const downloads = {
     rows: [
       { k: 'macOS', v: 'macOS 11 Big Sur or later. Apple Silicon and Intel.' },
       { k: 'Windows', v: 'Windows 10 or later, 64-bit.' },
-      { k: 'Linux', v: 'A modern 64-bit distribution with FUSE for AppImage.' },
+      { k: 'Linux', v: 'A modern 64-bit distribution with FUSE for AppImage (libfuse2 on Ubuntu 22.04 and later).' },
       { k: 'Disk', v: 'About 1 GB for the app. Local models are downloaded separately and sized by you.' },
       { k: 'Network', v: 'Only to download the app and any models. The studio itself runs offline.' },
     ],
