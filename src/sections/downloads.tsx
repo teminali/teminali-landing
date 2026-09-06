@@ -278,13 +278,26 @@ export function Downloads() {
                 <span className="kicker">{s.n}</span>
                 <h3 className="mt-4 text-h4 text-ink-bright balance">{s.title}</h3>
                 <p className="mt-3 text-body text-ink-soft pretty">{s.body}</p>
-                {/* The screenshots are supplied later; the layout has to read
-                    correctly with the frames empty, so they carry their own
-                    caption rather than relying on an image to explain them. */}
+                {/* A step may or may not have its screenshot yet, so the empty
+                    frame stays: the caption explains the step either way, and
+                    the layout reads correctly with a mix of the two. The shots
+                    are real dialogs at their own aspect ratios, so they are not
+                    forced into 16/10 — that would letterbox a tall dialog into
+                    an unreadable strip. */}
                 <figure className="mt-6 flex flex-col gap-2">
-                  <div className="grid aspect-[16/10] place-items-center rounded-ctl border border-dashed border-line-strong bg-ground">
-                    <span className="px-4 text-center text-micro text-ink-ghost">Screenshot to come</span>
-                  </div>
+                  {s.image ? (
+                    <img
+                      src={s.image}
+                      alt={s.figure}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full rounded-ctl border border-line-strong bg-ground"
+                    />
+                  ) : (
+                    <div className="grid aspect-[16/10] place-items-center rounded-ctl border border-dashed border-line-strong bg-ground">
+                      <span className="px-4 text-center text-micro text-ink-ghost">Screenshot to come</span>
+                    </div>
+                  )}
                   <figcaption className="text-micro text-ink-muted">{s.figure}</figcaption>
                 </figure>
               </li>
