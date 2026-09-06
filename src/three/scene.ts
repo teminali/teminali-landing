@@ -196,7 +196,7 @@ export function createLaptopScene(config: LaptopSceneConfig): LaptopSceneInstanc
       // Screen overlay fade in
       timeline.to('[data-intro="wrap"]', { duration: 0.2, opacity: 1 }, 1.9)
 
-      // Scene 1: Autonomous Code Studio
+      // Scene 1: Autonomous AI Studio
       timeline.to('[data-intro="overlay-1"]', { opacity: 1, duration: 0.5 })
       timeline.to('[data-intro="text-wrap-1"]', { opacity: 1, duration: 1 }, '<')
       timeline.to('[data-intro=\"img-float-1\"]', { y: 0, opacity: 1, z: 40, duration: 0.5 }, '<0.15')

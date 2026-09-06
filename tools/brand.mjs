@@ -6,7 +6,24 @@
 // appear in Nav and the footer. Re-run this after any change to the mark or to
 // --accent so the raster assets cannot drift from the SVG.
 import { chromium } from 'playwright-core'
-const EXE = `${process.env.HOME}/Library/Caches/ms-playwright/chromium-1228/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing`
+import { existsSync } from 'node:fs'
+
+// playwright-core ships no browser of its own, and the pinned build under the
+// Playwright cache is only there once `playwright install` has run. A system
+// Chrome or Edge renders this card identically — it is a wordmark, a stroke
+// mark and one webfont — so the pinned build is preferred and either is
+// accepted rather than failing on a machine that never ran the installer.
+const CANDIDATES = [
+  `${process.env.HOME}/Library/Caches/ms-playwright/chromium-1228/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing`,
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+  '/Applications/Chromium.app/Contents/MacOS/Chromium',
+]
+const EXE = CANDIDATES.find(existsSync)
+if (!EXE) {
+  console.error('No Chromium found. Run `npx playwright install chromium`, or install Google Chrome.')
+  process.exit(1)
+}
 
 const GROUND = '#151515'
 const ACCENT = '#65c466'
@@ -36,9 +53,9 @@ const jobs = [
     out: 'public/og.png', w: 1200, h: 630,
     body: page(`<div style="display:flex;flex-direction:column;align-items:center;gap:44px">
       ${MARK(200, 2.4)}
-      <div style="font-size:64px;font-weight:500;letter-spacing:-0.02em">Teminali Code</div>
+      <div style="font-size:64px;font-weight:500;letter-spacing:-0.02em">Teminali OS</div>
       <div style="font-size:28px;font-weight:300;color:#9f9f9f;text-align:center;max-width:760px;line-height:1.5">
-        An autonomous code studio that runs where your code already lives
+        An autonomous studio that runs where your code already lives
       </div>
     </div>`),
   },

@@ -23,10 +23,10 @@
  */
 
 export const site = {
-  name: 'Teminali Code',
-  tagline: 'An autonomous code studio, screen recorder and video editor that runs on your machine.',
+  name: 'Teminali OS',
+  tagline: 'An autonomous studio, screen recorder and video editor that runs on your machine.',
   releaseUrl: 'https://github.com/teminali/releases/releases',
-  version: 'v1.2.9',
+  version: 'v0.0.1',
   email: 'hello@teminali.com',
 }
 
@@ -41,7 +41,7 @@ export const nav = [
 export const hero = {
   title: 'Write the code, prove it works and film the demo. All of it on your machine.',
   body: [
-    'Teminali Code is an autonomous code studio, a screen recorder and a video editor in one desktop app. It plans and edits across your repository, runs the real tests, and cuts the walkthrough, with local models, local speech and nothing leaving the machine unless you send it.',
+    'Teminali OS is an autonomous studio, a screen recorder and a video editor in one desktop app. It plans and edits across your repository, runs the real tests, and cuts the walkthrough, with local models, local speech and nothing leaving the machine unless you send it.',
     'Hosted providers are one setting away when you want them. They are never required.',
   ],
 }
@@ -97,13 +97,13 @@ export const scenes = [
     icon: 'play',
     /** The last scene is a player: the demo plays on the laptop screen and in
         the full-screen dialog. The shot is the studio's home screen. */
-    video: { id: 'WNAK7KHBLIs', title: 'Teminali Code demo' },
+    video: { id: 'WNAK7KHBLIs', title: 'Teminali OS demo' },
     caption: 'Watch it run, start to finish.',
     alt: 'The studio at rest: the mark, the composer and the recent repositories, ready for the demo to start.',
     float: {
       status: 'ok',
       kicker: 'Demo video',
-      title: 'Teminali Code demo · 4:17',
+      title: 'Teminali OS demo · 4:17',
       sub: 'Plays on this screen or full screen',
       slot: 'bottom-right',
     },
@@ -113,7 +113,7 @@ export const scenes = [
 export const platform = {
   badge: 'What it does',
   title: 'One app for the loop you already run: write, record, cut, verify.',
-  body: 'Most tools stop at the suggestion. Teminali Code keeps going, through the tests, the screen recording and the export, and shows its work at every step.',
+  body: 'Most tools stop at the suggestion. Teminali OS keeps going, through the tests, the screen recording and the export, and shows its work at every step.',
   rows: [
     {
       tagline: 'The autonomous agent',
@@ -365,10 +365,10 @@ export const process = {
 export const compare = {
   badge: 'The difference',
   title: 'Why one local studio beats four subscriptions',
-  sub: 'Teminali Code against the stack you are juggling now',
+  sub: 'Teminali OS against the stack you are juggling now',
   body: 'A hosted assistant, a screen recorder, a video editor and somewhere to keep it all. Each one good at its piece; none of them knows about the others, and every one of them wants your source.',
   ours: [
-    'Code studio, screen recorder and timeline editor in one window, on one loopback gateway.',
+    'Studio, screen recorder and timeline editor in one window, on one loopback gateway.',
     'Your source stays on the machine. Local models and local speech are the first lane, not a fallback.',
     'The take lands already cut. Beats matched, captions placed, camera choreographed, export ready.',
     'Verification runs against your real toolchain and reports the actual output, failures included.',
@@ -395,7 +395,7 @@ export const midCta = {
 export const about = {
   badge: 'About',
   title: 'Built by people who were tired of the gap',
-  body: 'Teminali Code came out of years of using developer and creator tools that were each excellent at their piece and useless at the seams between them.',
+  body: 'Teminali OS came out of years of using developer and creator tools that were each excellent at their piece and useless at the seams between them.',
   rows: [
     {
       title: 'The gap we kept hitting',
@@ -499,11 +499,12 @@ export const contact = {
 
 export const downloads = {
   kicker: 'Downloads',
-  title: 'Download Teminali Code',
+  title: 'Download Teminali OS',
   body: 'The full studio, video editor, routing gateway, and all five verification runtimes. One install, no cloud account, nothing to configure before it runs.',
   secondary: { label: 'All releases on GitHub', href: site.releaseUrl },
 
-  /* Fallback sizes are v1.2.9's assets; the live release overrides them. */
+  /* Indicative sizes only: they were measured on the last pre-0.0.1 build,
+     and the live release's real asset sizes overwrite them on load. */
   platforms: [
     { id: 'mac-arm', name: 'macOS', arch: 'Apple Silicon', ext: '.dmg', size: '148 MB', asset: /(arm64|aarch64|apple.?silicon).*\.dmg$/i },
     { id: 'mac-x64', name: 'macOS', arch: 'Intel', ext: '.dmg', size: '154 MB', asset: /(x64|x86_64|intel).*\.dmg$/i },
@@ -519,19 +520,19 @@ export const downloads = {
   mac: {
     kicker: 'First launch on macOS',
     title: 'The first time you open it, macOS will ask',
-    body: 'Teminali Code is not notarized by Apple yet, so the first time you open it macOS shows a dialog saying it cannot verify the developer. The only buttons it offers are Done and Move to Bin. That is expected, the app is safe, and clearing it takes about ten seconds.',
+    body: 'Teminali OS is not notarized by Apple yet, so the first time you open it macOS shows a dialog saying it cannot verify the developer. The only buttons it offers are Done and Move to Bin. That is expected, the app is safe, and clearing it takes about ten seconds.',
     once: 'This happens once, ever. Every launch after it is normal.',
     steps: [
       {
         n: '01',
         title: 'Open the app once, then click Done',
-        body: 'Double-click Teminali Code in Applications. When the dialog appears, click Done. Do not click Move to Bin. That deletes the app and you would have to download it again.',
+        body: 'Double-click Teminali OS in Applications. When the dialog appears, click Done. Do not click Move to Bin. That deletes the app and you would have to download it again.',
         figure: 'The macOS dialog, with Done and Move to Bin',
       },
       {
         n: '02',
         title: 'Open System Settings, then Privacy & Security',
-        body: 'Scroll down to the Security heading. You will see a line reading “Teminali Code was blocked to protect your Mac.” Click Open Anyway next to it.',
+        body: 'Scroll down to the Security heading. You will see a line reading “Teminali OS was blocked to protect your Mac.” Click Open Anyway next to it.',
         figure: 'Privacy & Security, showing Open Anyway',
       },
       {

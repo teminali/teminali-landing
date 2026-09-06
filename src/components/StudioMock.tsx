@@ -1,5 +1,5 @@
 /**
- * The Teminali Code studio: real captures of the shipping app.
+ * The Teminali OS studio: real captures of the shipping app.
  *
  * These are screenshots of the product itself, taken at 3x device pixel ratio
  * (3840x2400) so they survive the dolly push-in onto the laptop screen without
@@ -32,10 +32,10 @@ const shots = {
 export type ShotName = keyof typeof shots
 
 const alts = {
-  run: 'The Teminali Code studio running a task: a completed three-step plan, an edit to gateway/router.ts, and the run cost at $0.0000 on this Mac.',
-  video: 'The Teminali Code video editor: multi-track timeline, program monitor, inspector, and AI Video Copilot syncing cuts to 130 BPM beats.',
-  route: 'The Teminali Code studio showing which engine answered a task, the reason it was routed locally, and its token counts.',
-  verify: 'The Teminali Code studio after a verification run: typecheck, unit, core and build green, lint reporting three warnings.',
+  run: 'The Teminali OS studio running a task: a completed three-step plan, an edit to gateway/router.ts, and the run cost at $0.0000 on this Mac.',
+  video: 'The Teminali OS video editor: multi-track timeline, program monitor, inspector, and AI Video Copilot syncing cuts to 130 BPM beats.',
+  route: 'The Teminali OS studio showing which engine answered a task, the reason it was routed locally, and its token counts.',
+  verify: 'The Teminali OS studio after a verification run: typecheck, unit, core and build green, lint reporting three warnings.',
   copilot: 'The agent adding captions to a recording through the video tools, with the program monitor showing the screen and camera take.',
   editor: 'The video editor: media pool, program monitor, transform inspector and a timeline with grade, camera, cursor and screen tracks.',
   'editor-wide': 'The video editor expanded to the full window width.',
