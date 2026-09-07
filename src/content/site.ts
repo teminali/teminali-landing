@@ -26,7 +26,7 @@ export const site = {
   name: 'Teminali OS',
   tagline: 'An autonomous studio, screen recorder and video editor that runs on your machine.',
   releaseUrl: 'https://github.com/teminali/releases/releases',
-  version: 'v0.0.1',
+  version: 'v0.0.4',
   email: 'hello@teminali.com',
 }
 
@@ -168,9 +168,9 @@ export const platform = {
 
 export const studio = {
   badge: 'Inside the studio',
-  title: 'Twelve panel kinds, one window, one loopback gateway.',
+  title: 'Thirteen panel kinds, one window, one loopback gateway.',
   body: 'Click a module. Everything below ships in the same desktop app and talks to the same local gateway on 127.0.0.1.',
-  stats: ['12 panel kinds', '1 gateway', '127.0.0.1'],
+  stats: ['13 panel kinds', '1 gateway', '127.0.0.1'],
   modules: [
     {
       id: 'agent-runner',
@@ -461,12 +461,12 @@ export const roadmapCta = {
   action: 'Get the build',
 }
 
-/** SNAPSHOT: read off the product READMEs on 2026-09-05. */
+/** SNAPSHOT: read off the product READMEs on 2026-09-07. */
 export const stats = {
   title: 'What ships today',
   figures: [
-    { value: '1,006', label: 'tests green on every build: 863 in the studio, 143 in the gateway and runner. No skips.' },
-    { value: '12', label: 'workspace panel kinds: file, terminal, browser, canvas, guardian, video editor, agent CLIs and more.' },
+    { value: '1,918', label: 'tests green on every build: 1,775 in the studio, 143 in the gateway and runner. No skips.' },
+    { value: '13', label: 'workspace panel kinds: file, terminal, browser, canvas, guardian, video editor, agent CLIs and more.' },
     { value: '5', label: 'verification runtimes: agent, quality, visual, performance and MCP. Each one dependency-free.' },
     { value: '127.0.0.1', label: 'is the only host the gateway will bind to. It refuses every other one.' },
     { value: '$0.00', label: 'for local models, local voice, beat detection and on-device transcription. A cost it cannot read is null.' },
