@@ -208,11 +208,16 @@ export function Downloads() {
 
     The sizes in `site.ts` are indicative and are overwritten by the real ones
     the moment the release loads — which is right while a build merely has not
-    been read yet, and wrong once it has been read and is not there. Every
-    0.0.x release so far has shipped without a Windows .exe, so a Windows
-    visitor was told "`.exe · 125 MB`" under a Download button that led to a
-    releases page with no .exe on it: a fabricated size attached to a file
-    that has never existed.
+    been read yet, and wrong once it has been read and is not there.
+
+    This existed because every 0.0.x release up to and including 0.0.5 shipped
+    without a Windows .exe: a Windows visitor was told "`.exe · 125 MB`" under
+    a Download button that led to a releases page with no .exe on it — a
+    fabricated size attached to a file that had never existed. **0.0.6 is the
+    first release that does ship one** (157 MB), so Windows no longer takes
+    this path. The guard stays: it is about any platform a given release did
+    not build for, and the reason it was written is exactly the kind of thing
+    that comes back.
 
     Only once `rel` has actually arrived, because before that "missing" and
     "not fetched yet" look identical and the placeholder is the honest answer.

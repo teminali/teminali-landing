@@ -26,7 +26,7 @@ export const site = {
   name: 'Teminali OS',
   tagline: 'An autonomous studio, screen recorder and video editor that runs on your machine.',
   releaseUrl: 'https://github.com/teminali/releases/releases',
-  version: 'v0.0.5',
+  version: 'v0.0.6',
   email: 'hello@teminali.com',
 }
 
@@ -509,10 +509,10 @@ export const downloads = {
      sections/downloads.tsx. These numbers are a placeholder for a build that
      has not been READ yet, never a claim that one exists. */
   platforms: [
-    { id: 'mac-arm', name: 'macOS', arch: 'Apple Silicon', ext: '.dmg', size: '148 MB', asset: /(arm64|aarch64|apple.?silicon).*\.dmg$/i },
-    { id: 'mac-x64', name: 'macOS', arch: 'Intel', ext: '.dmg', size: '154 MB', asset: /(x64|x86_64|intel).*\.dmg$/i },
-    { id: 'win', name: 'Windows', arch: 'x64', ext: '.exe', size: '125 MB', asset: /\.exe$/i },
-    { id: 'linux', name: 'Linux', arch: 'x86_64', ext: '.AppImage', size: '146 MB', asset: /\.AppImage$/i },
+    { id: 'mac-arm', name: 'macOS', arch: 'Apple Silicon', ext: '.dmg', size: '168 MB', asset: /(arm64|aarch64|apple.?silicon).*\.dmg$/i },
+    { id: 'mac-x64', name: 'macOS', arch: 'Intel', ext: '.dmg', size: '176 MB', asset: /(x64|x86_64|intel).*\.dmg$/i },
+    { id: 'win', name: 'Windows', arch: 'x64', ext: '.exe', size: '157 MB', asset: /\.exe$/i },
+    { id: 'linux', name: 'Linux', arch: 'x86_64', ext: '.AppImage', size: '382 MB', asset: /\.AppImage$/i },
   ],
 
   recommended: {
