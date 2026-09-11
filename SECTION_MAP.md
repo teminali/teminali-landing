@@ -130,11 +130,16 @@ the text above:
 - **Type**: h3 2rem/1.3 for row and card titles, h4 1.5rem/1.5 for card
   headings, body 1rem/1.5, dimmed copy at 70% white. Buttons are 1rem padding,
   0.75rem radius, 11.25rem minimum.
-- **Real captures.** `public/shots/{copilot,editor,editor-wide,record,take,
-  export,settings,home}.webp` are screenshots of v1.2.8 supplied on 2026-09-05,
-  encoded at their native 2880px. The staged `run/route/verify` captures stay
-  for the agent, routing and verification scenes, which the real set does not
-  cover.
+- **Real captures.** `src/assets/shots/{copilot,editor,editor-wide,record,
+  settings,home}.webp` were captured on 2026-09-11 as whole-screen 3024x1964
+  grabs, menu bar included, and `demo-poster.webp` is the same home capture.
+  `take` and `export` are still the v1.2.8 screenshots supplied on 2026-09-05
+  at 2880px. The staged `run/video/route/verify` captures stay for the agent,
+  routing and verification scenes, which the real set does not cover.
+  They sit under `src/` rather than `public/` so that Vite puts a content hash
+  in each filename. Replacing a capture in `public/` never changed its URL, and
+  with a seven day max-age on that path a returning visitor kept the image they
+  had already cached. See `src/lib/shots.ts`.
 - `~/Downloads/refference-landing.{webp,mp4}` are **not** the reference: they
   are a ".vid_it" video-editor template. The reference is
   `~/Desktop/landing-refference/` and the live site.

@@ -16,22 +16,25 @@
  * when the studio's shell changes.
  */
 
-/* Served straight out of `public/`, so these are URLs, not module imports. */
+import { shotUrl } from '@/lib/shots'
+
+/* Resolved through Vite so each file carries a content hash: replacing a
+   capture changes its URL, which is the only thing a cached browser respects. */
 const shots = {
-  run: '/shots/run.webp',
-  video: '/shots/video.webp',
-  route: '/shots/route.webp',
-  verify: '/shots/verify.webp',
+  run: shotUrl('run'),
+  video: shotUrl('video'),
+  route: shotUrl('route'),
+  verify: shotUrl('verify'),
   // Hand-captured. These six were refreshed from v0.0.6 on 2026-09-11;
   // `take` and `export` are still the v1.2.8 captures supplied 2026-09-05.
-  copilot: '/shots/copilot.webp',
-  editor: '/shots/editor.webp',
-  'editor-wide': '/shots/editor-wide.webp',
-  record: '/shots/record.webp',
-  take: '/shots/take.webp',
-  export: '/shots/export.webp',
-  settings: '/shots/settings.webp',
-  home: '/shots/home.webp',
+  copilot: shotUrl('copilot'),
+  editor: shotUrl('editor'),
+  'editor-wide': shotUrl('editor-wide'),
+  record: shotUrl('record'),
+  take: shotUrl('take'),
+  export: shotUrl('export'),
+  settings: shotUrl('settings'),
+  home: shotUrl('home'),
 }
 export type ShotName = keyof typeof shots
 

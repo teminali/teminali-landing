@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { createLaptopScene, type LaptopSceneInstance } from '../three/scene'
+import { shotUrl } from '@/lib/shots'
 import { isCompact, lockScroll, prefersReducedMotion } from '@/lib/motion'
 import { VideoPlayer } from '@/components/VideoPlayer'
 import { Icon } from './ui'
@@ -226,7 +227,7 @@ export function HeroRail() {
                         style={{ zIndex: i + 1 }}
                       >
                         <div className="home-intro_screen">
-                          <img src={`/shots/${scene.shot}.webp`} alt={scene.alt} className="home-intro_img" />
+                          <img src={shotUrl(scene.shot)} alt={scene.alt} className="home-intro_img" />
                           <div data-intro={`overlay-${i + 1}`} className="home-intro_overlay" />
                           <div data-intro={`text-wrap-${i + 1}`} className="hero_intro-text-wrap">
                             <h2 className="hero-intro_h balance">{scene.caption}</h2>
@@ -235,7 +236,7 @@ export function HeroRail() {
                             <ScreenPlayer
                               intro={`player-${i + 1}`}
                               video={scene.video}
-                              poster={`/shots/${scene.shot}.webp`}
+                              poster={shotUrl(scene.shot)}
                               playing={video === 'inline'}
                               onPlay={() => setVideo('inline')}
                               onStop={() => setVideo('poster')}
@@ -259,7 +260,7 @@ export function HeroRail() {
       {videoScene?.video && (
         <VideoDialog
           video={videoScene.video}
-          poster={`/shots/${videoScene.shot}.webp`}
+          poster={shotUrl(videoScene.shot)}
           open={video === 'theatre'}
           onClose={() => setVideo('poster')}
         />

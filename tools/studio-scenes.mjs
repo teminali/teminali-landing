@@ -7,7 +7,7 @@ import { mkdirSync, existsSync } from 'node:fs'
 import { execSync } from 'node:child_process'
 
 const EXE = `${process.env.HOME}/Library/Caches/ms-playwright/chromium-1228/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing`
-const OUT = process.env.OUT ?? './public/shots'
+const OUT = process.env.OUT ?? './src/assets/shots'
 const DPR = Number(process.env.DPR ?? 3)
 const W = Number(process.env.W ?? 1200)
 const H = Number(process.env.H ?? 750)

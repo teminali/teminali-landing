@@ -22,6 +22,8 @@
  * beside it. Nothing here is rounded up.
  */
 
+import { shotUrl } from '@/lib/shots'
+
 export const site = {
   name: 'Teminali OS',
   tagline: 'An autonomous studio, screen recorder and video editor that runs on your machine.',
@@ -531,28 +533,28 @@ export const downloads = {
         title: 'Open the app once, then click Done',
         body: 'Double-click Teminali OS in Applications. When the dialog appears, click Done. Do not click Move to Bin — that deletes the app and you would have to download it again.',
         figure: 'The first-launch dialog. Done, not Move to Bin.',
-        image: '/shots/mac-01-blocked.webp',
+        image: shotUrl('mac-01-blocked'),
       },
       {
         n: '02',
         title: 'Open System Settings, then Privacy & Security',
         body: 'Scroll down to the Security heading. You will see a line reading “Teminali OS was blocked to protect your Mac.” Click Open Anyway next to it.',
         figure: 'Privacy & Security, Security section, with Open Anyway',
-        image: '/shots/mac-02-open-anyway.webp',
+        image: shotUrl('mac-02-open-anyway'),
       },
       {
         n: '03',
         title: 'Click Open Anyway again — the middle button',
         body: 'macOS asks a second time, and this dialog is the one to read carefully: Move to Bin is the highlighted blue button, so pressing Return here deletes the app. Click Open Anyway, the second button down.',
         figure: 'The second dialog. Move to Bin is the default — do not press Return.',
-        image: '/shots/mac-03-confirm.webp',
+        image: shotUrl('mac-03-confirm'),
       },
       {
         n: '04',
         title: 'Confirm with Touch ID or your password',
         body: 'macOS asks an administrator to authorise it. Use Touch ID, or click Use Password and enter your login password. The app opens straight away, and it will keep opening normally from then on.',
         figure: 'The administrator confirmation prompt',
-        image: '/shots/mac-04-authorise.webp',
+        image: shotUrl('mac-04-authorise'),
       },
     ],
     note: 'Right-click → Open does not work on macOS 15 and later. Use the steps above.',
