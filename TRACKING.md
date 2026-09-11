@@ -68,6 +68,21 @@ anyone who reads this file. That is the same exposure as the DukaBot storefront
 tracker and is accepted for the same reason: these are product signals, not
 billing.
 
+### Checking RLS without scaring yourself
+
+RLS is on with **zero** policies, so the anon key gets nothing. But a read with
+the anon key answers `200`, not `403` — PostgREST applies RLS as a row filter,
+so "denied" looks like an empty result, and the status code alone tells you
+nothing. Measured 2026-09-11 with a row planted via the service-role key:
+
+```
+anon key         → 200 []
+service-role key → 200 [{"asset_name":"…"}]
+```
+
+Read the body, not the status. A write with the anon key does fail loudly, with
+`401`.
+
 ## Verifying it live
 
 ```bash
