@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { downloads, site } from '@/content/site'
+import { trackDownload } from '@/lib/track'
 
 type Asset = { name: string; url: string; size: number }
 type Release = { version: string; publishedAt: string; assets: Asset[]; sums: Record<string, string> }
@@ -265,7 +266,20 @@ export function Downloads() {
                 </p>
                 <p className="mt-2 text-small text-ink-soft">{downloads.recommended.note}</p>
               </div>
-              <a className="btn btn-primary shrink-0" href={mineAsset?.url ?? downloads.secondary.href}>
+              <a
+                className="btn btn-primary shrink-0"
+                href={mineAsset?.url ?? downloads.secondary.href}
+                onClick={() => {
+                  /* Only a real asset is a download; the fallback is a link to the releases page. */
+                  if (mineAsset)
+                    trackDownload({
+                      platform: mine.id,
+                      version,
+                      assetName: mineAsset.name,
+                      assetSize: mineAsset.size,
+                    })
+                }}
+              >
                 {absent(mine) ? 'See all releases' : `Download for ${mine.name}`}
               </a>
             </div>
@@ -296,6 +310,15 @@ export function Downloads() {
                 <a
                   className="btn btn-primary mt-5 w-full"
                   href={asset?.url ?? downloads.secondary.href}
+                  onClick={() => {
+                    if (asset)
+                      trackDownload({
+                        platform: p.id,
+                        version,
+                        assetName: asset.name,
+                        assetSize: asset.size,
+                      })
+                  }}
                 >
                   {absent(p) ? 'See all releases' : 'Download'}
                 </a>
