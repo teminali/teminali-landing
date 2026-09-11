@@ -1006,9 +1006,13 @@
 }
 .player_track {
   position: relative;
-  height: 0.875rem;
+  height: 1.5rem;
   cursor: pointer;
   touch-action: none;
+}
+/* A finger needs roughly 44px; the painted line stays 2px either way. */
+@media (pointer: coarse) {
+  .player_track { height: 2.5rem; }
 }
 .player_track::before,
 .player_loaded,
@@ -1046,6 +1050,46 @@
 .player_track:focus-visible .player_knob { scale: 1; }
 .player_track:focus-visible { outline: none; }
 .player_track:focus-visible .player_knob { box-shadow: var(--focus-ring); }
+/* The time under the pointer. Scrubbing without it is done blind: the clock
+   in the row below reports where playback is, not where you are about to
+   drop it. Positioned from `--hint`, which the player writes on pointermove,
+   and clamped so it never hangs off either end of the track. */
+.player_hint {
+  position: absolute;
+  bottom: calc(100% - 0.375rem);
+  left: clamp(1.5rem, calc(var(--hint, 0) * 100%), calc(100% - 1.5rem));
+  padding: 0.25rem 0.4rem;
+  translate: -50% 0;
+  border: 1px solid var(--line-12);
+  border-radius: var(--r-sm);
+  background: var(--ground);
+  color: var(--white);
+  font-family: theme('fontFamily.mono');
+  font-size: 0.625rem;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s var(--ease);
+}
+.player_track:hover .player_hint,
+.player_track:focus-visible .player_hint { opacity: 1; }
+
+/* The player failed to load. Says so, and still gets them to the video. */
+.player_error {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+  background: rgb(0 0 0 / 0.72);
+}
+.player_error-head { color: var(--white); font-size: 0.9375rem; }
+.player_error-body { max-width: 26rem; color: var(--text-60); font-size: 0.8125rem; line-height: 1.5; }
 
 .player_row {
   display: flex;

@@ -43,20 +43,36 @@ let apiPromise: Promise<YTApi> | null = null
 function loadApi(): Promise<YTApi> {
   const w = window as YTWindow
   if (!apiPromise) {
-    apiPromise = new Promise<YTApi>((resolve) => {
+    apiPromise = new Promise<YTApi>((resolve, reject) => {
       if (w.YT?.Player) {
         resolve(w.YT)
         return
       }
       const previous = w.onYouTubeIframeAPIReady
+      // An ad blocker, a content blocker or a dead network all end the same
+      // way: the callback never fires. Without this the player sits on its
+      // poster for ever with nothing to say and no way out.
+      const timer = window.setTimeout(() => reject(new Error('timeout')), 8000)
       w.onYouTubeIframeAPIReady = () => {
         previous?.()
-        if (w.YT) resolve(w.YT)
+        if (w.YT) {
+          window.clearTimeout(timer)
+          resolve(w.YT)
+        }
       }
       const tag = document.createElement('script')
       tag.src = 'https://www.youtube.com/iframe_api'
       tag.async = true
+      tag.onerror = () => {
+        window.clearTimeout(timer)
+        reject(new Error('blocked'))
+      }
       document.head.appendChild(tag)
+    })
+    // Never cache a rejection, or the first failure makes every later mount
+    // fail too, including one the visitor triggers after turning a blocker off.
+    apiPromise.catch(() => {
+      apiPromise = null
     })
   }
   return apiPromise
@@ -70,8 +86,9 @@ function clock(seconds: number) {
   return `${m}:${s < 10 ? '0' : ''}${s}`
 }
 
-export type PlayerVideo = { id: string; title: string }
-type Status = 'loading' | 'playing' | 'paused' | 'ended'
+/** `start` is where the demo actually begins, skipping the cold open. */
+export type PlayerVideo = { id: string; title: string; start?: number }
+type Status = 'loading' | 'playing' | 'paused' | 'ended' | 'error'
 
 export function VideoPlayer({
   video,
@@ -90,6 +107,7 @@ export function VideoPlayer({
 }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const hostRef = useRef<HTMLDivElement>(null)
+  const hintRef = useRef<HTMLSpanElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const timeRef = useRef<HTMLSpanElement>(null)
   const playerRef = useRef<YTPlayer | null>(null)
@@ -108,11 +126,16 @@ export function VideoPlayer({
   // which doubles as the buffering state a seek really is. The token restarts
   // the fade each time it is armed.
   const [guard, setGuard] = useState(0)
+  // The centre disc belongs to a starting video, not to a scrub. Every arrow
+  // key used to raise a spinner over the picture for five seconds, so holding
+  // one to seek blanketed the thing you were trying to look at.
+  const [guardDisc, setGuardDisc] = useState(false)
   const guardTimer = useRef<number | undefined>(undefined)
 
-  const arm = useCallback(() => {
+  const arm = useCallback((withDisc: boolean) => {
     window.clearTimeout(guardTimer.current)
     setGuard((n) => n + 1)
+    setGuardDisc(withDisc)
     guardTimer.current = window.setTimeout(() => setGuard(0), 5000)
   }, [])
 
@@ -146,6 +169,8 @@ export function VideoPlayer({
       player = new YT.Player(mount, {
         videoId: video.id,
         host: 'https://www.youtube-nocookie.com',
+        // Where the demo actually begins; the cold open is not the product.
+        startSeconds: video.start ?? 0,
         playerVars: {
           autoplay: 1,
           controls: 0,
@@ -155,6 +180,7 @@ export function VideoPlayer({
           modestbranding: 1,
           playsinline: 1,
           rel: 0,
+          start: video.start ?? 0,
           origin: window.location.origin,
         },
         events: {
@@ -183,6 +209,9 @@ export function VideoPlayer({
               }
             }, 1800)
           },
+          onError: () => {
+            if (!dead) setStatus('error')
+          },
           onStateChange: (e: { data: number; target: YTPlayer }) => {
             if (dead) return
             const S = YT.PlayerState
@@ -190,20 +219,25 @@ export function VideoPlayer({
             if (e.data === S.PLAYING) {
               setStatus('playing')
               setDuration(e.target.getDuration() || 0)
-              arm()
+              arm(true)
             } else if (e.data === S.PAUSED) {
               setStatus('paused')
             } else if (e.data === S.ENDED) {
               // Rewind and hold on the first frame, so YouTube never gets to
-              // draw its end screen of other people's videos.
-              e.target.seekTo(0, true)
+              // draw its end screen of other people's videos. Back to the
+              // start offset, not to zero: replay should skip what the first
+              // play skipped.
+              const from = video.start ?? 0
+              e.target.seekTo(from, true)
               e.target.pauseVideo()
               setStatus('ended')
-              paint(0, e.target.getDuration() || 0, 0)
+              paint(from, e.target.getDuration() || 0, 0)
             }
           },
         },
       })
+    }).catch(() => {
+      if (!dead) setStatus('error')
     })
 
     return () => {
@@ -217,7 +251,7 @@ export function VideoPlayer({
       }
       mount.remove()
     }
-  }, [video.id, paint, arm])
+  }, [video.id, video.start, paint, arm])
 
   /** One animation frame loop, alive only while the video is. */
   useEffect(() => {
@@ -247,7 +281,7 @@ export function VideoPlayer({
       const time = Math.max(0, Math.min(total, fraction * total))
       p.seekTo(time, commit)
       paint(time, total, p.getVideoLoadedFraction())
-      arm()
+      arm(false)
     },
     [duration, paint, arm],
   )
@@ -355,7 +389,7 @@ export function VideoPlayer({
         />
         {/* The frame is covered until the video is running, then the two
             bands hold over the strip YouTube titles until it fades. */}
-        {(status === 'loading' || (playing && guard > 0)) && (
+        {(status === 'loading' || status === 'error' || (playing && guard > 0)) && (
           <span
             className={`player_veil${playing ? ' is-fading' : ''}`}
             style={poster ? { backgroundImage: `url(${poster})` } : undefined}
@@ -366,7 +400,7 @@ export function VideoPlayer({
           <span key={guard} className="player_guard" aria-hidden="true">
             <span className="player_band is-top" />
             <span className="player_band is-bottom" />
-            <span className="player_wait" />
+            {guardDisc && <span className="player_wait" />}
           </span>
         )}
         {buffering && guard === 0 && (
@@ -374,10 +408,28 @@ export function VideoPlayer({
             <span className="player_wait" />
           </span>
         )}
-        {!playing && !buffering && status !== 'loading' && (
+        {!playing && !buffering && status !== 'loading' && status !== 'error' && (
           <span className="player_resume" aria-hidden="true">
             <Icon name={status === 'ended' ? 'replay' : 'play'} className="h-6 w-6" />
           </span>
+        )}
+        {status === 'error' && (
+          <div className="player_error" role="alert">
+            <p className="player_error-head">This player could not load</p>
+            <p className="player_error-body">
+              A content blocker or the network stopped YouTube from answering. The demo is still
+              there, on YouTube itself.
+            </p>
+            <a
+              className="player_btn"
+              href={`https://www.youtube.com/watch?v=${video.id}${video.start ? `&t=${video.start}s` : ''}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon name="play" className="h-3.5 w-3.5" />
+              Watch on YouTube
+            </a>
+          </div>
         )}
       </div>
 
@@ -397,7 +449,13 @@ export function VideoPlayer({
             seekTo(fractionAt(e.clientX), false)
           }}
           onPointerMove={(e) => {
-            if (dragging.current) seekTo(fractionAt(e.clientX), false)
+            const at = fractionAt(e.clientX)
+            e.currentTarget.style.setProperty('--hint', String(at))
+            if (hintRef.current) {
+              const total = playerRef.current?.getDuration() || duration
+              hintRef.current.textContent = clock(at * total)
+            }
+            if (dragging.current) seekTo(at, false)
           }}
           onPointerUp={(e) => {
             if (!dragging.current) return
@@ -414,6 +472,9 @@ export function VideoPlayer({
           <span className="player_loaded" />
           <span className="player_played" />
           <span className="player_knob" />
+          <span ref={hintRef} className="player_hint" aria-hidden="true">
+            0:00
+          </span>
         </div>
 
         <div className="player_row">

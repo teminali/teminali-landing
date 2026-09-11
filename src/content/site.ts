@@ -97,9 +97,9 @@ export const scenes = [
     icon: 'play',
     /** The last scene is a player: the demo plays on the laptop screen and in
         the full-screen dialog. The shot is the studio's home screen. */
-    video: { id: 'WNAK7KHBLIs', title: 'Teminali OS demo' },
+    video: { id: 'SNaN6GNDVlM', title: 'Teminali OS demo', start: 35 },
     caption: 'Watch it run, start to finish.',
-    alt: 'The studio at rest: the mark, the composer and the recent repositories, ready for the demo to start.',
+    alt: 'The studio at rest: the mark, the composer set to Frontier Auto, and the recent projects, ready for the demo to start.',
     float: {
       status: 'ok',
       kicker: 'Demo video',
