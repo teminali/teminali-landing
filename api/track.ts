@@ -3,8 +3,8 @@
  *
  * The page is a static SPA, so there is nowhere else to put a write: this edge
  * function is the only server-side code in the repo. It holds the Supabase
- * service-role key, which is why the insert cannot happen from the browser —
- * the table has RLS on and no policies, so the anon key would be refused.
+ * service-role key, which is why the insert cannot happen from the browser.
+ * The table has RLS on and no policies, so the anon key would be refused.
  *
  * The rows land in `teminali_events` in the DukaBot Supabase project
  * (supabase/migrations/20260911000001_teminali_events.sql over in

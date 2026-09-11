@@ -34,7 +34,7 @@ edge function's environment.
 `teminali_events`, created by
 `my_projects/teminali/dukabot/supabase/migrations/20260911000001_teminali_events.sql`.
 
-It is general, not downloads-only — an `event_type` column carries the kind, so
+It is general, not downloads-only. An `event_type` column carries the kind, so
 a later signup or demo-play event needs no migration. Only `download` is emitted
 today, and `api/track.ts` rejects anything else with a 400. Widen the `EVENTS`
 set there and the table comment together.
@@ -47,12 +47,12 @@ fallback is a navigation, not a download, and is not recorded.
 
 | Variable | Where it comes from |
 | --- | --- |
-| `SUPABASE_URL` | DukaBot project URL — `dukabot/apps/web-app/.env.local` |
+| `SUPABASE_URL` | DukaBot project URL, in `dukabot/apps/web-app/.env.local` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Same file. Never commit it; never expose it to the client. |
 
 Set on **production** and **development**. Preview is *not* set: the Vercel CLI
 (2.105.0) loops on its own documented `--value … --yes` command for preview
-branches. This is not worth fixing — preview traffic polluting real download
+branches. This is not worth fixing: preview traffic polluting real download
 counts would be worse than not recording it. An unset key makes the endpoint log
 a warning and return 204; it never throws.
 
@@ -71,7 +71,7 @@ billing.
 ### Checking RLS without scaring yourself
 
 RLS is on with **zero** policies, so the anon key gets nothing. But a read with
-the anon key answers `200`, not `403` — PostgREST applies RLS as a row filter,
+the anon key answers `200`, not `403`. PostgREST applies RLS as a row filter,
 so "denied" looks like an empty result, and the status code alone tells you
 nothing. Measured 2026-09-11 with a row planted via the service-role key:
 
@@ -87,7 +87,7 @@ Read the body, not the status. A write with the anon key does fail loudly, with
 
 ```bash
 curl -s -o /dev/null -w '%{http_code}\n' https://teminali.dukabotai.com/api/track
-#   405 — the function is live and the SPA rewrite is not swallowing it
+#   405: the function is live and the SPA rewrite is not swallowing it
 
 curl -s -X POST https://teminali.dukabotai.com/api/track \
   -H 'Content-Type: application/json' -d '{"event_type":"nonsense"}'
@@ -101,4 +101,4 @@ curl -s -o /dev/null -w '%{http_code}\n' -X POST https://teminali.dukabotai.com/
 
 The three codes are distinguishable on purpose: 204 and 502 mean different
 things and would otherwise both look like "it didn't work". A 202 writes a real
-row — delete test rows afterwards.
+row, so delete test rows afterwards.

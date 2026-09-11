@@ -57,7 +57,7 @@ function utmSource(): string | null {
   }
 }
 
-/** Hostname only — where they came from, not what they were reading. */
+/** Hostname only: where they came from, not what they were reading. */
 function referrerHost(): string | null {
   try {
     if (!document.referrer) return null
