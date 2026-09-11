@@ -334,29 +334,29 @@ export function Downloads() {
           <p className="kicker" data-reveal>
             {downloads.mac.kicker}
           </p>
-          <h2 className="mt-6 max-w-2xl text-h2 text-ink-bright balance" data-reveal>
+          <h2 className="mt-4 max-w-2xl text-h2 text-ink-bright balance" data-reveal>
             {downloads.mac.title}
           </h2>
-          <p className="mt-6 max-w-2xl text-body text-ink-soft pretty" data-reveal>
+          <p className="mt-4 max-w-2xl text-body text-ink-soft pretty" data-reveal>
             {downloads.mac.body}
           </p>
-          <p className="mt-4 max-w-2xl text-body text-ink-bright" data-reveal>
+          <p className="mt-3 max-w-2xl text-body text-ink-bright" data-reveal>
             {downloads.mac.once}
           </p>
 
-          <ol className="mt-12 grid gap-5 lg:grid-cols-3">
+          <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {downloads.mac.steps.map((s) => (
-              <li key={s.n} className="card flex flex-col p-6" data-reveal>
+              <li key={s.n} className="card flex flex-col p-5" data-reveal>
                 <span className="kicker">{s.n}</span>
-                <h3 className="mt-4 text-h4 text-ink-bright balance">{s.title}</h3>
-                <p className="mt-3 text-body text-ink-soft pretty">{s.body}</p>
+                <h3 className="mt-3 text-h4 text-ink-bright balance">{s.title}</h3>
+                <p className="mt-2 text-small text-ink-soft pretty">{s.body}</p>
                 {/* A step may or may not have its screenshot yet, so the empty
                     frame stays: the caption explains the step either way, and
                     the layout reads correctly with a mix of the two. The shots
                     are real dialogs at their own aspect ratios, so they are not
                     forced into 16/10 — that would letterbox a tall dialog into
                     an unreadable strip. */}
-                <figure className="mt-6 flex flex-col gap-2">
+                <figure className="mt-4 flex flex-col gap-2">
                   {s.image ? (
                     <img
                       src={s.image}
@@ -376,7 +376,7 @@ export function Downloads() {
             ))}
           </ol>
 
-          <div className="mt-10 flex flex-col gap-3" data-reveal>
+          <div className="mt-8 flex flex-col gap-3" data-reveal>
             <p className="text-body text-ink-bright">{downloads.mac.note}</p>
             <p className="text-small text-ink-muted">{downloads.mac.closing}</p>
           </div>

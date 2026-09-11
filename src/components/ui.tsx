@@ -38,6 +38,13 @@ const paths: Record<string, string> = {
   wave: 'M2.5 10h2l1.5-4 2 8 2-8 2 6 1.5-2h4',
   linkedin: 'M5 8v7M5 5v.01M9 15V8m0 3.2c0-2 1-3.2 2.8-3.2 1.7 0 2.7 1.1 2.7 3.1V15',
   pause: 'M6.5 4.5h2.5v11H6.5zM11 4.5h2.5v11H11z',
+  /* Transport, matching the studio's own player: two filled skip glyphs and
+     two stroked chevrons either side of the play control. */
+  'skip-back': 'M4.6 5h1.8v10H4.6zM16 5 8.2 10 16 15z',
+  'skip-fwd': 'M15.4 5h-1.8v10h1.8zM4 5l7.8 5L4 15z',
+  'chevron-left': 'M12.5 5 7.5 10l5 5',
+  'chevron-right': 'M7.5 5l5 5-5 5',
+  cc: 'M4 6h12a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 12.5v-5A1.5 1.5 0 0 1 4 6zM9 9.4a1.8 1.8 0 1 0 0 1.2M14 9.4a1.8 1.8 0 1 0 0 1.2',
   replay: 'M10 5.5a4.5 4.5 0 1 0 4.4 5.4M10 5.5H13M10 5.5 12 3.5',
   volume: 'M4 8h2.4L9.5 5.2v9.6L6.4 12H4zM12.4 8.3a2.5 2.5 0 0 1 0 3.4M14.5 6.4a5.2 5.2 0 0 1 0 7.2',
   mute: 'M4 8h2.4L9.5 5.2v9.6L6.4 12H4zM12.5 8.5l4 3M16.5 8.5l-4 3',
@@ -46,7 +53,8 @@ const paths: Record<string, string> = {
 
 export function Icon({ name, className = '' }: { name: string; className?: string }) {
   const d = paths[name] ?? paths.spark
-  const filled = name === 'play' || name === 'pause' || name === 'github'
+  const filled =
+    name === 'play' || name === 'pause' || name === 'github' || name === 'skip-back' || name === 'skip-fwd'
   return (
     <svg
       viewBox="0 0 20 20"
@@ -145,7 +153,21 @@ export function Nav() {
         id="nav-layout"
         className="grid h-[var(--nav-h)] grid-cols-[auto_1fr_auto] items-center lg:grid-cols-[1fr_auto_1fr]"
       >
-        <a href="#top" className="flex h-full items-center" aria-label={site.name}>
+        {/* The brand is a route link, not a fragment. `#top` only ever worked by
+            the browser's scroll-to-document-top fallback, so on /downloads it
+            scrolled that page instead of returning home. */}
+        <a
+          {...linkProps('/')}
+          onClick={(e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+            e.preventDefault()
+            setOpen(false)
+            if (onHome) window.scrollTo({ top: 0, behavior: 'smooth' })
+            else navigate('/')
+          }}
+          className="flex h-full items-center"
+          aria-label={`${site.name}, home`}
+        >
           <span className="grid h-[var(--nav-h)] w-[var(--nav-h)] flex-none place-items-center border-r border-[var(--bg-lines)] px-3 text-mark lg:mr-6">
             <Mark className="h-9 w-9" />
           </span>

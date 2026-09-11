@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { createLaptopScene, type LaptopSceneInstance } from '../three/scene'
 import { shotUrl } from '@/lib/shots'
 import { isCompact, lockScroll, prefersReducedMotion } from '@/lib/motion'
-import { VideoPlayer } from '@/components/VideoPlayer'
+import { VideoPlayer, warmPlayer } from '@/components/VideoPlayer'
 import { Icon } from './ui'
 import { StudioMock } from './StudioMock'
 import { hero, scenes } from '@/content/site'
@@ -292,19 +292,53 @@ function ScreenPlayer({
   onStop: () => void
   onExpand: () => void
 }) {
+  /*
+    Priming. Mounting the player only on the click meant the visitor waited for
+    the IFrame API script, then for the player to be constructed, then for the
+    first bytes of video, all after they had already asked for it.
+
+    Hover, focus and the press half of a tap are all statements of intent, and
+    any of them is enough to build the iframe in a cued state behind the
+    poster. By the time the click lands there is nothing left to fetch. Someone
+    who never goes near the control still loads no video at all, which is why
+    this is not simply done on mount.
+  */
+  const [primed, setPrimed] = useState(false)
+  const prime = useCallback(() => {
+    warmPlayer()
+    setPrimed(true)
+  }, [])
+
   return (
     <>
       <div data-intro={intro} className="screen-player_controls" hidden={playing}>
-        <button type="button" className="screen-player_play" onClick={onPlay} aria-label={`Play ${video.title}`}>
+        <button
+          type="button"
+          className="screen-player_play"
+          onClick={onPlay}
+          onPointerEnter={prime}
+          onPointerDown={prime}
+          onFocus={prime}
+          aria-label={`Play ${video.title}`}
+        >
           <Icon name="play" className="h-6 w-6" />
         </button>
-        <button type="button" className="screen-player_btn" onClick={onExpand}>
+        <button type="button" className="screen-player_btn" onClick={onExpand} onPointerEnter={prime} onFocus={prime}>
           <Icon name="expand" className="h-3.5 w-3.5" />
           Full screen
         </button>
       </div>
-      {playing && (
-        <VideoPlayer video={video} variant="inline" poster={poster} onClose={onStop} onExpand={onExpand} />
+      {(playing || primed) && (
+        <div className={playing ? 'contents' : 'player-primed'} aria-hidden={!playing}>
+          <VideoPlayer
+            video={video}
+            variant="inline"
+            poster={poster}
+            autoPlay={playing}
+            onClose={onStop}
+            onExpand={onExpand}
+          />
+        </div>
       )}
     </>
   )

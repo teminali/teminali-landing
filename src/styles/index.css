@@ -1021,9 +1021,9 @@
   position: absolute;
   top: 50%;
   left: 0;
-  height: 2px;
+  height: 4px;
   translate: 0 -50%;
-  border-radius: 1px;
+  border-radius: 2px;
   transition: height 0.15s var(--ease);
 }
 .player_track::before { right: 0; background: var(--line-12); }
@@ -1033,11 +1033,12 @@
   position: absolute;
   top: 50%;
   left: calc(var(--played, 0) * 100%);
-  width: 0.625rem;
-  height: 0.625rem;
+  width: 0.75rem;
+  height: 0.75rem;
   translate: -50% -50%;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--white);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.7);
   scale: 0;
   transition: scale 0.15s var(--ease);
 }
@@ -1045,7 +1046,7 @@
 .player_track:focus-visible::before,
 .player_track:hover .player_loaded,
 .player_track:hover .player_played,
-.player_track:focus-visible .player_played { height: 4px; }
+.player_track:focus-visible .player_played { height: 6px; }
 .player_track:hover .player_knob,
 .player_track:focus-visible .player_knob { scale: 1; }
 .player_track:focus-visible { outline: none; }
@@ -1091,13 +1092,47 @@
 .player_error-head { color: var(--white); font-size: 0.9375rem; }
 .player_error-body { max-width: 26rem; color: var(--text-60); font-size: 0.8125rem; line-height: 1.5; }
 
+/* Three parts, the studio's balance: the clock leads, the transport is
+   centred by giving the flanking groups the same minimum width, and the
+   actions close the row. */
 .player_row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  height: 2.75rem;
-  padding: 0 0.5rem;
+  min-height: 3.25rem;
+  padding: 0.25rem 0.5rem;
 }
+.player_transport {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+.player_actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  min-width: 8.5rem;
+}
+/* The one bright control on the player. The colour never changes with state:
+   the icon alone says play or pause. */
+.player_play {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0 0.25rem;
+  border-radius: 50%;
+  color: var(--ground);
+  background: var(--accent);
+  transition: filter 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+.player_play:hover { filter: brightness(1.08); box-shadow: 0 0 0 1px var(--accent-18), 0 0 28px var(--accent-18); }
+.player_play:active { filter: brightness(0.96); }
 .player_key,
 .player_icon {
   display: grid;
@@ -1113,26 +1148,77 @@
 .player_key:hover,
 .player_icon:hover { color: var(--white); background: var(--solid-12); }
 .player_time {
+  display: flex;
   flex: none;
+  align-items: baseline;
+  min-width: 8.5rem;
   font-family: theme('fontFamily.mono');
-  font-size: 0.6875rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
   line-height: 1;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  color: var(--text-75);
+  letter-spacing: -0.01em;
+  color: var(--white);
 }
-.player_time-total { color: var(--text-60); }
-.player_title {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  font-size: 0.75rem;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.player_time-total {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
   color: var(--text-60);
 }
-/* The dialog prints the title under the frame, so the bar does not repeat it. */
-.player.is-theatre .player_title { visibility: hidden; }
+/* A primed player: the iframe is built and the video cued, but nothing is
+   shown or reachable until the visitor actually presses play. */
+.player-primed { display: none; }
+
+/* Captions. Ours, not YouTube's, so they can sit above the guard bands and
+   never be half covered by them. */
+.player_cue {
+  position: absolute;
+  right: 6%;
+  bottom: 7%;
+  left: 6%;
+  z-index: 4;
+  margin: 0;
+  text-align: center;
+  text-wrap: balance;
+  font-size: clamp(0.8125rem, 1.9cqw, 1.25rem);
+  line-height: 1.35;
+  color: var(--white);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.95), 0 0 14px rgb(0 0 0 / 0.75);
+  pointer-events: none;
+}
+.player_cue:empty { display: none; }
+
+/* Subtitle menu. */
+.player_subs { position: relative; display: flex; flex: none; }
+.player_icon.is-on { color: var(--accent); }
+.player_menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.5rem);
+  z-index: 6;
+  display: flex;
+  min-width: 9rem;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0.25rem;
+  border: 1px solid var(--line-12);
+  border-radius: var(--r-sm);
+  background: var(--ground);
+  box-shadow: var(--shadow-float);
+}
+.player_menu-item {
+  padding: 0.4rem 0.6rem;
+  border-radius: calc(var(--r-sm) - 2px);
+  text-align: left;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  color: var(--text-75);
+  transition: color 0.15s, background 0.15s;
+}
+.player_menu-item:hover { color: var(--white); background: var(--solid-12); }
+.player_menu-item.is-on { color: var(--accent); }
+
 .player_volume { display: flex; flex: none; align-items: center; gap: 0.375rem; }
 .player_range {
   width: 4.5rem;
@@ -1493,3 +1579,11 @@
   transition: color 0.2s, border-color 0.2s, background-color 0.2s;
 }
 .software_card-close:hover { color: var(--white); border-color: var(--line-16); background: var(--solid-12); }
+
+@media (max-width: 40rem) {
+  .player_time { min-width: 0; font-size: 0.8125rem; }
+  .player_actions { min-width: 0; }
+  .player_range { display: none; }
+  .player_transport .player_icon:first-child,
+  .player_transport .player_icon:last-child { display: none; }
+}
