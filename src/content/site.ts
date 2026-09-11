@@ -26,7 +26,7 @@ export const site = {
   name: 'Teminali OS',
   tagline: 'An autonomous studio, screen recorder and video editor that runs on your machine.',
   releaseUrl: 'https://github.com/teminali/releases/releases',
-  version: 'v0.0.8',
+  version: 'v0.0.9',
   email: 'hello@teminali.com',
 }
 
@@ -465,7 +465,7 @@ export const roadmapCta = {
 export const stats = {
   title: 'What ships today',
   figures: [
-    { value: '2,475', label: 'tests green on every build: 2,332 in the studio, 143 in the gateway and runner. No skips.' },
+    { value: '2,491', label: 'tests green on every build: 2,348 in the studio, 143 in the gateway and runner. No skips.' },
     { value: '13', label: 'workspace panel kinds: file, terminal, browser, canvas, guardian, video editor, agent CLIs and more.' },
     { value: '5', label: 'verification runtimes: agent, quality, visual, performance and MCP. Each one dependency-free.' },
     { value: '127.0.0.1', label: 'is the only host the gateway will bind to. It refuses every other one.' },
@@ -509,10 +509,10 @@ export const downloads = {
      sections/downloads.tsx. These numbers are a placeholder for a build that
      has not been READ yet, never a claim that one exists. */
   platforms: [
-    { id: 'mac-arm', name: 'macOS', arch: 'Apple Silicon', ext: '.dmg', size: '199 MB', asset: /(arm64|aarch64|apple.?silicon).*\.dmg$/i },
-    { id: 'mac-x64', name: 'macOS', arch: 'Intel', ext: '.dmg', size: '207 MB', asset: /(x64|x86_64|intel).*\.dmg$/i },
-    { id: 'win', name: 'Windows', arch: 'x64', ext: '.exe', size: '165 MB', asset: /\.exe$/i },
-    { id: 'linux', name: 'Linux', arch: 'x86_64', ext: '.AppImage', size: '400 MB', asset: /\.AppImage$/i },
+    { id: 'mac-arm', name: 'macOS', arch: 'Apple Silicon', ext: '.dmg', size: '201 MB', asset: /(arm64|aarch64|apple.?silicon).*\.dmg$/i },
+    { id: 'mac-x64', name: 'macOS', arch: 'Intel', ext: '.dmg', size: '209 MB', asset: /(x64|x86_64|intel).*\.dmg$/i },
+    { id: 'win', name: 'Windows', arch: 'x64', ext: '.exe', size: '167 MB', asset: /\.exe$/i },
+    { id: 'linux', name: 'Linux', arch: 'x86_64', ext: '.AppImage', size: '403 MB', asset: /\.AppImage$/i },
   ],
 
   recommended: {
