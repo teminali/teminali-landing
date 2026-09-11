@@ -29,7 +29,7 @@ export const site = {
   tagline: 'An autonomous studio, screen recorder and video editor that runs on your machine.',
   releaseUrl: 'https://github.com/teminali/releases/releases',
   version: 'v0.0.9',
-  email: 'hello@teminali.com',
+  email: 'teminali@dukabotai.com',
 }
 
 export const nav = [
@@ -481,7 +481,7 @@ export const contact = {
   body: 'Questions about running it in your environment, or something that broke. Both welcome.',
   quickTitle: 'Quick Contact',
   quick: [
-    { kind: 'mail', label: 'hello@teminali.com', href: 'mailto:hello@teminali.com' },
+    { kind: 'mail', label: 'teminali@dukabotai.com', href: 'mailto:teminali@dukabotai.com' },
     { kind: 'github', label: 'github.com/teminali/releases', href: 'https://github.com/teminali/releases' },
   ],
   fields: [
@@ -492,6 +492,9 @@ export const contact = {
   ],
   message: 'Your Message',
   send: 'Send',
+  sending: 'Sending',
+  sent: 'Thank you. Your message is on its way, and a reply will come to the address you gave.',
+  failed: 'That did not send. Try again, or write to teminali@dukabotai.com directly.',
   legal: [
     { label: 'Privacy Policy', href: '#' },
     { label: 'Terms', href: '#' },

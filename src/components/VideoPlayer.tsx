@@ -37,6 +37,7 @@ type YTPlayer = {
   getDuration(): number
   getVideoLoadedFraction(): number
   getPlayerState(): number
+  unloadModule?(name: string): void
   destroy(): void
 }
 
@@ -139,6 +140,25 @@ function clock(seconds: number) {
   const m = Math.floor(total / 60)
   const s = total % 60
   return `${m}:${s < 10 ? '0' : ''}${s}`
+}
+
+/**
+ * Turn YouTube's own captions off and keep them off.
+ *
+ * `cc_load_policy: 0` covers the initial load, but the captions module is
+ * loaded lazily and a viewer whose YouTube account defaults subtitles on can
+ * still end up with two sets drawn at once, theirs underneath ours. Unloading
+ * the module is the only thing that reliably stops it, and it is safe to call
+ * when no module is loaded.
+ */
+function silenceYouTubeCaptions(p: YTPlayer): void {
+  for (const name of ['captions', 'cc']) {
+    try {
+      p.unloadModule?.(name)
+    } catch {
+      /* the module was never loaded, which is the outcome we wanted anyway */
+    }
+  }
 }
 
 export type PlayerVideo = { id: string; title: string; start?: number }
@@ -269,6 +289,10 @@ export function VideoPlayer({
             controls: 0,
             disablekb: 1,
             fs: 0,
+            // 0 leaves YouTube's own captions off. A viewer whose YouTube
+            // account defaults them on would otherwise get two sets of
+            // subtitles at once, theirs under ours.
+            cc_load_policy: 0,
             iv_load_policy: 3,
             modestbranding: 1,
             playsinline: 1,
@@ -280,6 +304,7 @@ export function VideoPlayer({
             onReady: (e: { target: YTPlayer }) => {
               if (dead) return
               playerRef.current = e.target
+              silenceYouTubeCaptions(e.target)
               setDuration(e.target.getDuration() || 0)
               setVolume(Math.round(e.target.getVolume?.() ?? 100))
               if (!wantsPlay.current) {
@@ -315,6 +340,9 @@ export function VideoPlayer({
               const S = YT.PlayerState
               setBuffering(e.data === S.BUFFERING)
               if (e.data === S.PLAYING) {
+                // The captions module can load late, after playback starts, so
+                // once is not enough.
+                silenceYouTubeCaptions(e.target)
                 setStatus('playing')
                 setDuration(e.target.getDuration() || 0)
                 arm(true)

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Badge, SectionHead, Icon, EmailCapture, WorldDots, Mark } from '@/components/ui'
 import { StudioMock, BreakoutCard, type ShotName } from '@/components/StudioMock'
 import { linkProps } from '@/lib/route'
@@ -347,6 +347,86 @@ export function Stats() {
 /* ------------------------------------------------------- contact + footer ---*/
 
 /** A label above one control. The star is decorative; the control carries `required`. */
+/**
+ * The contact form.
+ *
+ * It used to call preventDefault and nothing else, so every message typed into
+ * it was thrown away. It posts to /api/contact now, which mails
+ * teminali@dukabotai.com through Resend.
+ *
+ * The browser's own `required` handles the empty cases before anything is sent,
+ * and the endpoint checks again because a form is not a security boundary.
+ * `website` is a honeypot: it is off-screen and marked so that neither a person
+ * nor a screen reader ever meets it, and anything that fills it is answered
+ * with a polite 202 and dropped.
+ */
+function ContactForm() {
+  const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (state === 'sending') return
+    const form = e.currentTarget
+    const data = Object.fromEntries(new FormData(form).entries())
+    setState('sending')
+    try {
+      const r = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (!r.ok) throw new Error(String(r.status))
+      form.reset()
+      setState('sent')
+    } catch {
+      setState('error')
+    }
+  }
+
+  return (
+    <form className="contact-form" onSubmit={onSubmit} data-reveal-stagger>
+      <div className="form-2col">
+        {contact.fields.map((f) => (
+          <Field key={f.name} label={f.label} required={f.required}>
+            <input
+              name={f.name}
+              type={f.type}
+              required={f.required}
+              placeholder="Type here"
+              className="input"
+              autoComplete={f.name === 'email' ? 'email' : f.name === 'name' ? 'name' : 'organization'}
+            />
+          </Field>
+        ))}
+      </div>
+      <Field label={contact.message} required>
+        <textarea name="message" required rows={5} placeholder="Type here" className="input is-area" />
+      </Field>
+
+      {/* Honeypot. Hidden from sight and from assistive tech, and never focusable. */}
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="contact-trap"
+      />
+
+      <div className="contact-send" data-reveal>
+        <button type="submit" className="btn" data-magnetic disabled={state === 'sending'}>
+          <span>{state === 'sending' ? contact.sending : contact.send}</span>
+        </button>
+        {state !== 'idle' && state !== 'sending' && (
+          <p className={`contact-status is-${state}`} role="status">
+            {state === 'sent' ? contact.sent : contact.failed}
+          </p>
+        )}
+      </div>
+    </form>
+  )
+}
+
 function Field({ label, required, children }: { label: string; required?: boolean; children: ReactNode }) {
   return (
     <label className="block" data-reveal>
@@ -400,23 +480,7 @@ export function Contact() {
             </div>
           </div>
 
-          <form className="contact-form" onSubmit={(e) => e.preventDefault()} data-reveal-stagger>
-            <div className="form-2col">
-              {contact.fields.map((f) => (
-                <Field key={f.name} label={f.label} required={f.required}>
-                  <input name={f.name} type={f.type} required={f.required} placeholder="Type here" className="input" />
-                </Field>
-              ))}
-            </div>
-            <Field label={contact.message} required>
-              <textarea name="message" required rows={5} placeholder="Type here" className="input is-area" />
-            </Field>
-            <div className="contact-send" data-reveal>
-              <button type="submit" className="btn" data-magnetic>
-                <span>{contact.send}</span>
-              </button>
-            </div>
-          </form>
+          <ContactForm />
         </div>
 
         <footer className="footer-bar">

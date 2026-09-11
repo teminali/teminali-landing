@@ -1587,3 +1587,24 @@
   .player_transport .player_icon:first-child,
   .player_transport .player_icon:last-child { display: none; }
 }
+
+/* The contact form's honeypot. Off-screen rather than display:none, because
+   some bots skip anything that is not rendered at all. Never focusable, and
+   aria-hidden in the markup, so nobody using the page can reach it. */
+.contact-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.contact-status {
+  margin-top: 0.875rem;
+  max-width: 34rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.contact-status.is-sent { color: var(--accent); }
+.contact-status.is-error { color: #ff8d7a; }
+.contact-form button[disabled] { opacity: 0.55; cursor: progress; }
