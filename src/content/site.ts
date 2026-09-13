@@ -28,7 +28,7 @@ export const site = {
   name: 'Teminali OS',
   tagline: 'An autonomous studio, screen recorder and video editor that runs on your machine.',
   releaseUrl: 'https://github.com/teminali/releases/releases',
-  version: 'v0.0.14',
+  version: 'v0.0.15',
   email: 'teminali@dukabotai.com',
 }
 
@@ -463,11 +463,11 @@ export const roadmapCta = {
   action: 'Get the build',
 }
 
-/** SNAPSHOT: read off the product READMEs on 2026-09-11. */
+/** SNAPSHOT: read off the product READMEs on 2026-09-13. */
 export const stats = {
   title: 'What ships today',
   figures: [
-    { value: '3,097', label: 'tests green on every build: 2,954 in the studio, 143 in the gateway and runner. No skips.' },
+    { value: '3,103', label: 'tests green on every build: 2,960 in the studio, 143 in the gateway and runner. No skips.' },
     { value: '13', label: 'workspace panel kinds: file, terminal, browser, canvas, guardian, video editor, agent CLIs and more.' },
     { value: '5', label: 'verification runtimes: agent, quality, visual, performance and MCP. Each one dependency-free.' },
     { value: '127.0.0.1', label: 'is the only host the gateway will bind to. It refuses every other one.' },
@@ -514,10 +514,10 @@ export const downloads = {
      sections/downloads.tsx. These numbers are a placeholder for a build that
      has not been READ yet, never a claim that one exists. */
   platforms: [
-    { id: 'mac-arm', name: 'macOS', arch: 'Apple Silicon', ext: '.dmg', size: '193 MB', asset: /(arm64|aarch64|apple.?silicon).*\.dmg$/i },
-    { id: 'mac-x64', name: 'macOS', arch: 'Intel', ext: '.dmg', size: '201 MB', asset: /(x64|x86_64|intel).*\.dmg$/i },
-    { id: 'win', name: 'Windows', arch: 'x64', ext: '.exe', size: '161 MB', asset: /\.exe$/i },
-    { id: 'linux', name: 'Linux', arch: 'x86_64', ext: '.AppImage', size: '386 MB', asset: /\.AppImage$/i },
+    { id: 'mac-arm', name: 'macOS', arch: 'Apple Silicon', ext: '.dmg', size: '203 MB', asset: /(arm64|aarch64|apple.?silicon).*\.dmg$/i },
+    { id: 'mac-x64', name: 'macOS', arch: 'Intel', ext: '.dmg', size: '211 MB', asset: /(x64|x86_64|intel).*\.dmg$/i },
+    { id: 'win', name: 'Windows', arch: 'x64', ext: '.exe', size: '169 MB', asset: /\.exe$/i },
+    { id: 'linux', name: 'Linux', arch: 'x86_64', ext: '.AppImage', size: '405 MB', asset: /\.AppImage$/i },
   ],
 
   recommended: {
