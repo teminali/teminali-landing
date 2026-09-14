@@ -28,7 +28,7 @@ export const site = {
   name: 'Teminali OS',
   tagline: 'An autonomous studio, screen recorder and video editor that runs on your machine.',
   releaseUrl: 'https://github.com/teminali/releases/releases',
-  version: 'v0.0.17',
+  version: 'v0.0.18',
   email: 'teminali@dukabotai.com',
 }
 
@@ -467,7 +467,7 @@ export const roadmapCta = {
 export const stats = {
   title: 'What ships today',
   figures: [
-    { value: '3,109', label: 'tests green on every build: 2,966 in the studio, 143 in the gateway and runner. No skips.' },
+    { value: '3,146', label: 'tests green on every build: 3,003 in the studio, 143 in the gateway and runner. No skips.' },
     { value: '13', label: 'workspace panel kinds: file, terminal, browser, canvas, guardian, video editor, agent CLIs and more.' },
     { value: '5', label: 'verification runtimes: agent, quality, visual, performance and MCP. Each one dependency-free.' },
     { value: '127.0.0.1', label: 'is the only host the gateway will bind to. It refuses every other one.' },
