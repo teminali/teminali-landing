@@ -28,7 +28,7 @@ export const site = {
   name: 'Teminali OS',
   tagline: 'An autonomous studio, screen recorder and video editor that runs on your machine.',
   releaseUrl: 'https://github.com/teminali/releases/releases',
-  version: 'v0.0.25',
+  version: 'v0.0.26',
   email: 'teminali@dukabotai.com',
 }
 
@@ -463,11 +463,11 @@ export const roadmapCta = {
   action: 'Get the build',
 }
 
-/** SNAPSHOT: read off the product READMEs on 2026-09-13. */
+/** SNAPSHOT: read off the product READMEs on 2026-09-13; the tests figure measured on 2026-09-27. */
 export const stats = {
   title: 'What ships today',
   figures: [
-    { value: '4,282', label: 'tests green on every build: 4,146 in the studio, 136 in the gateway and runner. No skips.' },
+    { value: '4,987', label: 'tests passing, 0 failing: 4,851 in the studio, 136 in the gateway and runner. One opt-in check against the real Claude Code CLI is skipped.' },
     { value: '13', label: 'workspace panel kinds: file, terminal, browser, canvas, guardian, video editor, agent CLIs and more.' },
     { value: '5', label: 'verification runtimes: agent, quality, visual, performance and MCP. Each one dependency-free.' },
     { value: '127.0.0.1', label: 'is the only host the gateway will bind to. It refuses every other one.' },
