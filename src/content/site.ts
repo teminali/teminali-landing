@@ -28,7 +28,7 @@ export const site = {
   name: 'Teminali OS',
   tagline: 'An autonomous studio, screen recorder and video editor that runs on your machine.',
   releaseUrl: 'https://github.com/teminali/releases/releases',
-  version: 'v0.0.27',
+  version: 'v0.0.28',
   email: 'teminali@dukabotai.com',
 }
 
